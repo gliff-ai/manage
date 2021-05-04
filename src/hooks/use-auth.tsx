@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext, createContext } from "react";
+import { useState, useEffect, useContext, createContext } from "react";
+import * as React from "react";
 
 interface Props {
   children: React.ReactElement;
@@ -29,7 +30,7 @@ function useProvideAuth() {
   const [user, setUser] = useState<User>(null);
 
   const saveUser = (email: string, accessToken: string) => {
-      setUser({email, accessToken});
+    setUser({ email, accessToken });
   };
   // const getUser = (): Promise<User> => {
   //   const u = {
@@ -51,7 +52,7 @@ function useProvideAuth() {
   // Return the user object and auth methods
   return {
     user,
-    saveUser
+    saveUser,
   };
 }
 

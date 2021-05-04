@@ -1,5 +1,3 @@
-import React from "react";
-
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -15,7 +13,10 @@ export const UsersView = (props: Props) => {
   return (
     <>
       <h1>USERS</h1>
-      <button type="button">Hello {auth?.user.email}</button>
+      <button type="button">
+        Hello
+        {auth?.user.email}
+      </button>
       <button
         type="button"
         onClick={async () => {

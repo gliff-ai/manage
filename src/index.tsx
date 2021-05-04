@@ -1,4 +1,4 @@
-import React, { Component, ReactNode, useEffect } from "react";
+import { Component, ReactNode, useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 
 import { initApiRequest, Services, User } from "@/api";
@@ -28,7 +28,8 @@ export function UserInterface(props: Props) {
   let services = initApiRequest(props.apiUrl, props.services, null);
 
   useEffect(() => {
-    if (!auth.user && props.user) { // Autologin if we've been passed a login
+    if (!auth.user && props.user) {
+      // Autologin if we've been passed a login
       const { email, accessToken } = props.user;
       auth.saveUser(email, accessToken);
 
