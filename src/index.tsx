@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 
 import { initApiRequest, Services, User } from "@/api";
@@ -21,7 +21,7 @@ const defaultProps = {
   user: undefined as User,
 };
 
-export function UserInterface(props: Props): ReactNode {
+export function UserInterface(props: Props): JSX.Element {
   const auth = useAuth();
 
   // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
