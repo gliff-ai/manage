@@ -5,10 +5,8 @@ import { UserInterface } from "@/index";
 import { Services } from "@/api";
 import { ProvideAuth } from "@/hooks/use-auth";
 
-const user = {
-  email: "c@c9r.dev",
-  accessToken: "VVtIVOjXn5f9ZlMvDdEAYwOE0ih0kX3S8sARcBlF",
-};
+
+import user from "../user.json";
 
 const config = {
   // If defining services, you must define ALL of them as they are not merged with defaults!
