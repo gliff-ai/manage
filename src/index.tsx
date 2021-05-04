@@ -1,36 +1,45 @@
-import React, { Component, ReactNode } from "react";
+import React, { Component, ReactNode, useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 
-import { initApiRequest, ServiceFunctions, Services } from "@/api";
+import { initApiRequest, Services, User } from "@/api";
+import { UsersView } from "@/views/UsersView";
+import { useAuth } from "@/hooks/use-auth";
 
 const defaultServices = {
-  queryUsers: "GET /users",
+  queryTeam: "GET /team",
   loginUser: "POST /user/login",
 } as Services;
 
 interface Props {
   apiUrl: string;
-  services: Readonly<typeof defaultServices>;
+  services?: Readonly<typeof defaultServices>;
+  user?: User; // Optional mock user
 }
 
 const defaultProps = {
-  apiUrl: "http://localhost:8000/",
   services: defaultServices,
+  user: undefined as User,
 };
 
-export class UserInterface extends Component<Props> {
-  static defaultProps = defaultProps;
+export function UserInterface(props: Props) {
+  const auth = useAuth();
 
-  services: ServiceFunctions;
+  // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
+  let services = initApiRequest(props.apiUrl, props.services, null);
 
-  constructor(props: Props) {
-    super(props);
+  useEffect(() => {
+    if (!auth.user && props.user) { // Autologin if we've been passed a login
+      const { email, accessToken } = props.user;
+      auth.saveUser(email, accessToken);
 
-    // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
-    this.services = initApiRequest(props.apiUrl, props.services);
-  }
+      // Reload once we have an access token
+      services = initApiRequest(props.apiUrl, props.services, accessToken);
+    }
 
-  render = (): ReactNode => (
+    console.log(auth);
+  });
+
+  return (
     <div>
       <h1>MANAGE</h1>
       <Link to=".">Home</Link>
@@ -43,39 +52,19 @@ export class UserInterface extends Component<Props> {
       <br />
       <br />
       <Routes>
-        <Route
-          path="users"
-          element={
-            <>
-              <h1>USERS</h1>
-              <button type="button">Hello</button>
-              <button
-                type="button"
-                onClick={async () => {
-                  console.log(this.services);
-                  const users = await this.services.loginUser("test");
-                  console.log(users);
-                  console.log("query users");
-                  const userList = await this.services.queryUsers();
-                  console.log(userList);
-                }}
-              >
-                Get Users
-              </button>
-            </>
-          }
-        />
+        <Route path="users" element={<UsersView services={services} />} />
         <Route path="projects">
           <h1>PROJECTS</h1>
         </Route>
         <Route path=".">
           <h1>HOME</h1>
         </Route>
-        <Route path="/never" element={<h1>never</h1>} />
       </Routes>
     </div>
   );
 }
+
+UserInterface.defaultProps = defaultProps;
 
 /*
 Login (ete)

@@ -1,97 +1,77 @@
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 type Method = "GET" | "POST";
 type APIRoute = `${Method} /${string}`;
 
-type ServiceFunction = (
-  arg0?: any
-) => Promise<void | {
-  success: boolean;
-  message: string;
-  statusCode: number;
-  data: any;
-}>;
-
-interface Services {
-  queryUsers: APIRoute | ServiceFunction;
-  loginUser: APIRoute | ServiceFunction;
+function isApiRoute(arg: APIRoute | ServiceFunction<unknown>): arg is APIRoute {
+  return typeof (arg as APIRoute) === "string";
 }
 
-type ServiceFunctions = Record<keyof Services, ServiceFunction>;
+type ServiceFunction<T> = (
+  data?: Record<string, unknown>
+) => Promise<T | AxiosResponse<T>>;
 
-const gen = (apiPrefix: string, params: APIRoute | ServiceFunction) => {
-  if (typeof params === "string") {
-    let url = `${apiPrefix}${params}`;
-    let method = "GET";
-
-    const paramsArray = params.split(" ");
-    if (paramsArray.length === 2) {
-      [method] = paramsArray;
-      url = `${apiPrefix}${paramsArray[1]}`;
-    }
-
-    return (data) =>
-      request({
-        url,
-        data,
-        method,
-      });
-  } else {
-    return params;
-  }
+export type User = {
+  email: string;
+  accessToken: string;
 };
 
-const initApiRequest = (API_URL: string, services: Services) => {
-  const APIFunction = Object.keys(services).reduce(
+interface Services {
+  queryTeam: APIRoute | ServiceFunction<unknown>;
+  loginUser: APIRoute | ServiceFunction<User>;
+}
+
+type ServiceFunctions = Record<keyof Services, ServiceFunction<unknown>>;
+
+function request(
+  url: string,
+  method: Method,
+  auth?: Record<string, string>, // This is a {header, value} pair
+  body?: Record<string, unknown>,
+  config?: AxiosRequestConfig
+) {
+  return axios.request({
+    method,
+    url,
+    headers: {
+      "Content-Type": "application/json",
+      ...auth,
+    },
+    data: body || {},
+    ...config,
+  });
+}
+
+const gen = (
+  apiPrefix: string,
+  params: APIRoute | ServiceFunction<unknown>,
+  token?: string
+) => {
+  if (!isApiRoute(params)) {
+    return params;
+  }
+
+  let url = `${apiPrefix}${params}`;
+  let method = "GET" as Method;
+
+  const paramsArray = params.split(" ");
+
+  // This is until I can work out TS type inference for template strings!
+  if (paramsArray[0] === "POST") method = "POST";
+
+  url = `${apiPrefix}${paramsArray[1]}`;
+
+  return (data: Record<string, unknown>) =>
+    request(url, method, { Authorization: `Token ${token}` }, data);
+};
+
+const initApiRequest = (API_URL: string, services: Services, token?: string) =>
+  Object.keys(services).reduce(
     (acc: Partial<ServiceFunctions>, key: keyof Services) => {
-      acc[key] = gen(API_URL, services[key]);
+      acc[key] = gen(API_URL, services[key], token);
       return acc;
     },
     {}
   ) as ServiceFunctions;
-
-  return APIFunction;
-
-  // return function apiRequest<T>(
-  //   path: string,
-  //   method: Method,
-  //   body?: Record<string, unknown>,
-  //   config?: AxiosRequestConfig
-  // ): Promise<T> {
-  //   return axios.request({
-  //     method,
-  //     url: `${API_URL}${path}`,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     data: body || {},
-  //     withCredentials: true,
-  //     ...config,
-  //   });
-  // };
-};
-
-function request(options) {
-  return axios(options)
-    .then((response) => {
-      const { statusText, status, data } = response;
-
-      return Promise.resolve({
-        success: true,
-        message: statusText,
-        statusCode: status,
-        data,
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-      /* eslint-disable */
-      // return Promise.reject({
-      //   success: false,
-      //   statusCode,
-      //   message: msg,
-      // })
-    });
-}
 
 export { Services, ServiceFunctions, initApiRequest };
