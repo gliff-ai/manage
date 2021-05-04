@@ -1,11 +1,12 @@
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
+import { ReactNode } from "react";
 
 interface Props {
   services: ServiceFunctions;
 }
 
-export const UsersView = (props: Props) => {
+export const UsersView = (props: Props): ReactNode => {
   const auth = useAuth();
 
   console.log(auth);
