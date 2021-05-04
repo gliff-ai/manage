@@ -65,7 +65,11 @@ const gen = (
     request(url, method, { Authorization: `Token ${token}` }, data);
 };
 
-const initApiRequest = (API_URL: string, services: Services, token?: string): ServiceFunctions =>
+const initApiRequest = (
+  API_URL: string,
+  services: Services,
+  token?: string
+): ServiceFunctions =>
   Object.keys(services).reduce(
     (acc: Partial<ServiceFunctions>, key: keyof Services) => {
       acc[key] = gen(API_URL, services[key], token);
