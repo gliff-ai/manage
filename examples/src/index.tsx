@@ -6,7 +6,7 @@ import { UserInterface } from "@/index";
 import { Services } from "@/api";
 import { ProvideAuth } from "@/hooks/use-auth";
 
-const user= {
+const user = {
   email: "c@c9r.dev",
   accessToken: "VVtIVOjXn5f9ZlMvDdEAYwOE0ih0kX3S8sARcBlF",
 };
@@ -32,13 +32,13 @@ ReactDOM.render(
         <Route path="/" element={<h1>HOME</h1>} />
         <Route
           path="manage/*"
-          element={
+          element={(
             <UserInterface
-              apiUrl={"http://localhost:8000/api"}
+              apiUrl="http://localhost:8000/api"
               user={user}
               services={config.services}
             />
-          }
+          )}
         />
       </Routes>
     </BrowserRouter>
