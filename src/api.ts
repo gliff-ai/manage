@@ -3,50 +3,58 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 type Method = "GET" | "POST";
 type APIRoute = `${Method} /${string}`;
 
-function isApiRoute(arg: APIRoute | ServiceFunction<unknown>): arg is APIRoute {
+function isApiRoute(arg: APIRoute | ServiceFunction): arg is APIRoute {
   return typeof (arg as APIRoute) === "string";
 }
 
+interface Services {
+  queryTeam: APIRoute | ServiceFunction;
+  loginUser: APIRoute | ServiceFunction;
+}
+
 type ServiceFunction<T> = (
-  data?: Record<string, unknown>
-) => Promise<T | AxiosResponse<T>>;
+  data?: Record<string, unknown>,
+  token?: string
+) => Promise<T>;
 
 export type User = {
   email: string;
   accessToken: string;
 };
 
-interface Services {
-  queryTeam: APIRoute | ServiceFunction<unknown>;
-  loginUser: APIRoute | ServiceFunction<User>;
+
+
+// type ServiceFunctions = Record<keyof Services, ServiceFunction<unknown>>;
+interface ServiceFunctions {
+  [index: string]: ServiceFunction
 }
 
-type ServiceFunctions = Record<keyof Services, ServiceFunction<unknown>>;
 
-function request(
+function request<T>(
   url: string,
   method: Method,
   auth?: Record<string, string>, // This is a {header, value} pair
   body?: Record<string, unknown>,
   config?: AxiosRequestConfig
-) {
-  return axios.request({
-    method,
-    url,
-    headers: {
-      "Content-Type": "application/json",
-      ...auth,
-    },
-    data: body || {},
-    ...config,
-  });
+): Promise<T> {
+  return axios
+    .request<T>({
+      method,
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        ...auth,
+      },
+      data: body || {},
+      ...config,
+    })
+    .then((response) => response.data);
 }
 
-const gen = (
+function gen(
   apiPrefix: string,
-  params: APIRoute | ServiceFunction<unknown>,
-  token?: string
-) => {
+  params: APIRoute | ServiceFunction
+): ServiceFunction {
   if (!isApiRoute(params)) {
     return params;
   }
@@ -61,18 +69,23 @@ const gen = (
 
   url = `${apiPrefix}${paramsArray[1]}`;
 
-  return (data: Record<string, unknown>) =>
-    request(url, method, { Authorization: `Token ${token}` }, data);
+  return function req<T>(data: Record<string, unknown>, token?: string): Promise<T> {
+     return request(
+          url,
+          method,
+          token ? {Authorization: `Token ${token}`} : null,
+          data
+      );
+  }
 };
 
 const initApiRequest = (
   API_URL: string,
-  services: Services,
-  token?: string
+  services: Services
 ): ServiceFunctions =>
   Object.keys(services).reduce(
     (acc: Partial<ServiceFunctions>, key: keyof Services) => {
-      acc[key] = gen(API_URL, services[key], token);
+      acc[key] = gen(API_URL, services[key]);
       return acc;
     },
     {}

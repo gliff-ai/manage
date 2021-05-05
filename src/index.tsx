@@ -25,19 +25,14 @@ export function UserInterface(props: Props): JSX.Element {
   const auth = useAuth();
 
   // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
-  let services = initApiRequest(props.apiUrl, props.services, null);
+  const services = initApiRequest(props.apiUrl, props.services);
 
   useEffect(() => {
     if (!auth.user && props.user) {
-      // Autologin if we've been passed a login
+        // Autologin if we've been passed a login
       const { email, accessToken } = props.user;
       auth.saveUser(email, accessToken);
-
-      // Reload once we have an access token
-      services = initApiRequest(props.apiUrl, props.services, accessToken);
     }
-
-    console.log(auth);
   });
 
   return (

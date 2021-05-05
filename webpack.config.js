@@ -48,10 +48,16 @@ module.exports = {
       template: "examples/index.html",
     }),
   ],
+  output: {
+    publicPath: "/",
+    path: path.join(__dirname, "public"),
+  },
   devServer: {
     host: "localhost",
     port,
-    historyApiFallback: true,
+    historyApiFallback: {
+      index: "/",
+    },
     open: true,
   },
 };

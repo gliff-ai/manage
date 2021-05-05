@@ -31,7 +31,7 @@ ReactDOM.render(
           path="manage/*"
           element={(
             <UserInterface
-              apiUrl="http://localhost:8000/api"
+              apiUrl="http://localhost:8000/django/api"
               user={user}
               services={config.services}
             />

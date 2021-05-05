@@ -20,9 +20,10 @@ export const UsersView = (props: Props): JSX.Element => {
       <button
         type="button"
         onClick={async () => {
-          const teamList = await props.services.queryTeam();
+          const team = await props.services.queryTeam<string[]>(null, auth.user.accessToken);
 
-          console.log(teamList);
+          console.log(team);
+          console.log(team[0]);
         }}
       >
         Get Users
