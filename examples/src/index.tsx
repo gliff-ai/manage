@@ -5,8 +5,12 @@ import { UserInterface } from "@/index";
 import { Services } from "@/api";
 import { ProvideAuth } from "@/hooks/use-auth";
 
+// import user from "../user.json";
+const user = {
+  email: "a@b.com",
+  accessToken: "22345",
+};
 
-import user from "../user.json";
 
 const config = {
   // If defining services, you must define ALL of them as they are not merged with defaults!
@@ -30,13 +34,13 @@ ReactDOM.render(
         <Route path="/" element={<h1>HOME</h1>} />
         <Route
           path="manage/*"
-          element={(
+          element={
             <UserInterface
               apiUrl="http://localhost:8000/django/api"
               user={user}
               services={config.services}
             />
-          )}
+          }
         />
       </Routes>
     </BrowserRouter>
