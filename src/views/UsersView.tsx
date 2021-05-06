@@ -13,8 +13,6 @@ type User = {
 export const UsersView = (props: Props): JSX.Element => {
   const auth = useAuth();
 
-  console.log(auth);
-
   return (
     <>
       <h1>USERS</h1>
@@ -31,7 +29,6 @@ export const UsersView = (props: Props): JSX.Element => {
           )) as User[];
 
           console.log(team);
-          console.log(team[0]);
         }}
       >
         Get Users

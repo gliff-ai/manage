@@ -34,7 +34,7 @@ export function UserInterface(props: Props): JSX.Element {
 
   useEffect(() => {
     if (!auth.user && props.user) {
-        // Autologin if we've been passed a login
+      // Autologin if we've been passed a login
       const { email, accessToken } = props.user;
       auth.saveUser(email, accessToken);
     }
@@ -66,16 +66,3 @@ export function UserInterface(props: Props): JSX.Element {
 }
 
 UserInterface.defaultProps = defaultProps;
-
-/*
-Login (ete)
-Logout (ete)
-
-Get team members  (djanog)
-Remove (revoke) team members (ete + django)?
-Add (invite) Team Members
-
-Create a Project (ete)
-Invite user to project (ete)
-List projects (ete) (open in CURATE?)
- */
