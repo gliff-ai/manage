@@ -8,7 +8,7 @@
     "dist/*"
   ],
   "scripts": {
-    "build": "webpack --progress --config webpack.build.js",
+    "build": "webpack --progress --config webpack.config.js",
     "lint": "npm run lint:ts && npm run prettier",
     "prettier": "npx prettier -c **/*.ts*",
     "lint:ts": "npx eslint \"**/*.ts*\"",
