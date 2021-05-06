@@ -5,6 +5,11 @@ interface Props {
   services: ServiceFunctions;
 }
 
+type User = {
+  email: string;
+  accessToken: string;
+};
+
 export const UsersView = (props: Props): JSX.Element => {
   const auth = useAuth();
 
@@ -20,7 +25,10 @@ export const UsersView = (props: Props): JSX.Element => {
       <button
         type="button"
         onClick={async () => {
-          const team = await props.services.queryTeam<string[]>(null, auth.user.accessToken);
+          const team = (await props.services.queryTeam(
+            null,
+            auth.user.accessToken
+          )) as User[];
 
           console.log(team);
           console.log(team[0]);

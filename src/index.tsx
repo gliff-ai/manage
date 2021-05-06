@@ -1,9 +1,14 @@
 import { useEffect } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 
-import { initApiRequest, Services, User } from "@/api";
+import { initApiRequest, Services } from "@/api";
 import { UsersView } from "@/views/UsersView";
 import { useAuth } from "@/hooks/use-auth";
+
+type User = {
+  email: string;
+  accessToken: string;
+};
 
 const defaultServices = {
   queryTeam: "GET /team",

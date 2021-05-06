@@ -12,7 +12,8 @@ const config = {
   // If defining services, you must define ALL of them as they are not merged with defaults!
   // These are actually the defaults, but are here to show what you can do!
   services: {
-    queryTeam: "GET /team",
+    // queryTeam: "GET /team",
+    queryTeam: () => Promise.resolve(1),
     loginUser: "GET /login",
   } as Services,
 };

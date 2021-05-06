@@ -1,7 +1,12 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
 
 type Method = "GET" | "POST";
 type APIRoute = `${Method} /${string}`;
+
+type ServiceFunction = (
+  data?: Record<string, unknown>,
+  token?: string
+) => Promise<unknown>;
 
 function isApiRoute(arg: APIRoute | ServiceFunction): arg is APIRoute {
   return typeof (arg as APIRoute) === "string";
@@ -12,53 +17,11 @@ interface Services {
   loginUser: APIRoute | ServiceFunction;
 }
 
-type ServiceFunction<T> = (
-  data?: Record<string, unknown>,
-  token?: string
-) => Promise<T>;
-
-export type User = {
-  email: string;
-  accessToken: string;
+type ServiceFunctions = {
+  [Property in keyof Services]: ServiceFunction;
 };
 
-
-
-// type ServiceFunctions = Record<keyof Services, ServiceFunction<unknown>>;
-interface ServiceFunctions {
-  [index: string]: ServiceFunction
-}
-
-
-function request<T>(
-  url: string,
-  method: Method,
-  auth?: Record<string, string>, // This is a {header, value} pair
-  body?: Record<string, unknown>,
-  config?: AxiosRequestConfig
-): Promise<T> {
-  return axios
-    .request<T>({
-      method,
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        ...auth,
-      },
-      data: body || {},
-      ...config,
-    })
-    .then((response) => response.data);
-}
-
-function gen(
-  apiPrefix: string,
-  params: APIRoute | ServiceFunction
-): ServiceFunction {
-  if (!isApiRoute(params)) {
-    return params;
-  }
-
+function gen(apiPrefix: string, params: APIRoute): ServiceFunction {
   let url = `${apiPrefix}${params}`;
   let method = "GET" as Method;
 
@@ -69,15 +32,25 @@ function gen(
 
   url = `${apiPrefix}${paramsArray[1]}`;
 
-  return function req<T>(data: Record<string, unknown>, token?: string): Promise<T> {
-     return request(
-          url,
-          method,
-          token ? {Authorization: `Token ${token}`} : null,
-          data
-      );
-  }
-};
+  return async function req<T>(
+    data: Record<string, unknown> = {},
+    token?: string
+  ) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: token ? `Token ${token}` : null,
+    };
+
+    const response = await axios.request<T>({
+      method,
+      url,
+      headers,
+      data,
+    });
+
+    return response.data;
+  };
+}
 
 const initApiRequest = (
   API_URL: string,
@@ -85,7 +58,10 @@ const initApiRequest = (
 ): ServiceFunctions =>
   Object.keys(services).reduce(
     (acc: Partial<ServiceFunctions>, key: keyof Services) => {
-      acc[key] = gen(API_URL, services[key]);
+      const service = services[key];
+
+      acc[key] = isApiRoute(service) ? gen(API_URL, service) : service;
+
       return acc;
     },
     {}
