@@ -60,6 +60,8 @@ jobs:
         node-version: 15
     - name: Setup dependencies
       run: npm i --omit=peer
+    - name: Prepare
+      run: npm run prepublishOnly
     - name: Publish
       uses: mikeal/merge-release@master
       env:
