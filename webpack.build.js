@@ -8,6 +8,7 @@ module.exports = {
     filename: "main.js",
     path: path.resolve(__dirname, "dist"),
     libraryTarget: "commonjs",
+    clean: true,
   },
   externals: {
     // Don't bundle react or react-dom
