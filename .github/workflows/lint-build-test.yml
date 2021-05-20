@@ -59,7 +59,7 @@ jobs:
       with:
         node-version: 15
     - name: Setup dependencies
-      run: npm i --omit=peer
+      run: npm i
     - name: Prepare
       run: npm run prepublishOnly
     - name: Publish
