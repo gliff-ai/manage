@@ -3,7 +3,9 @@ import { Routes, Route, Link } from "react-router-dom";
 
 import { initApiRequest, Services } from "@/api";
 import { UsersView } from "@/views/UsersView";
-import { useAuth } from "@/hooks/use-auth";
+import { ProvideAuth, useAuth } from "@/hooks/use-auth";
+
+export { ProvideAuth } from "@/hooks/use-auth";
 
 type User = {
   email: string;
@@ -33,7 +35,7 @@ export function UserInterface(props: Props): JSX.Element {
   const services = initApiRequest(props.apiUrl, props.services);
 
   useEffect(() => {
-    if (!auth.user && props.user) {
+    if (!auth?.user && props.user) {
       // Autologin if we've been passed a login
       const { email, accessToken } = props.user;
       auth.saveUser(email, accessToken);
@@ -53,12 +55,14 @@ export function UserInterface(props: Props): JSX.Element {
       <br />
       <br />
       <Routes>
-        <Route path="users" element={<UsersView services={services} />} />
-        <Route path="projects">
-          <h1>PROJECTS</h1>
-        </Route>
-        <Route path=".">
-          <h1>HOME</h1>
+        <Route path="//*">
+          <Route path="users" element={<UsersView services={services} />} />
+          <Route path="projects">
+            <h1>PROJECTS</h1>
+          </Route>
+          <Route path=".">
+            <h1>HOME</h1>
+          </Route>
         </Route>
       </Routes>
     </div>

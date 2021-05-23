@@ -61,7 +61,7 @@ jobs:
     - name: Setup dependencies
       run: npm i
     - name: Prepare
-      run: npm run prepublishOnly
+      run: npm run prepublishOnly # mikeal/merge-release doesn't currently run this correctly
     - name: Publish
       uses: mikeal/merge-release@master
       env:
