@@ -11,7 +11,6 @@ const user = {
   accessToken: "22345",
 };
 
-
 const config = {
   // If defining services, you must define ALL of them as they are not merged with defaults!
   // These are actually the defaults, but are here to show what you can do!
@@ -20,6 +19,9 @@ const config = {
     queryTeam: () => Promise.resolve(1),
     loginUser: "GET /login",
     getProjects: "GET /projects",
+    createProject: (data) => {
+      return Promise.resolve(1);
+    },
   } as Services,
 };
 

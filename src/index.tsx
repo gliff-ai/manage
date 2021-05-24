@@ -17,6 +17,7 @@ const defaultServices = {
   queryTeam: "GET /team",
   loginUser: "POST /user/login",
   getProjects: "GET /projects",
+  createProject: "POST /projects",
 } as Services;
 
 interface Props {

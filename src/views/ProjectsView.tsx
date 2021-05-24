@@ -1,6 +1,6 @@
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
   services: ServiceFunctions;
@@ -13,28 +13,44 @@ type Project = {
 export const ProjectsView = (props: Props): JSX.Element => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [projectName, setProjectName] = useState("");
 
-  return (
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    setProjectName(value);
+  };
+
+  useEffect(() => {
+    void props.services
+      .getProjects(null, auth.user.accessToken)
+      .then((p: Project[]) => {
+        setProjects(p);
+      });
+  }, [auth]);
+
+  return !auth ? null : (
     <>
       <h1>Projects</h1>
-
+      <input
+        type="text"
+        name="project-name"
+        onChange={handleChange}
+        value={projectName}
+      />
       <button
         type="button"
         onClick={async () => {
-          const p = (await props.services.getProjects(
-            null,
-            auth.user.accessToken
-          )) as Project[];
-
-          console.log(p);
-
-          setProjects(p);
+          await props.services.createProject({ name: projectName });
+          await props.services.getProjects();
         }}
       >
-        Get Projects
+        New Project
       </button>
-
-      {{ projects }}
+      <ul>
+        {projects.map((project) => (
+          <li key={project.name}>{project.name}</li>
+        ))}
+      </ul>
     </>
   );
 };
