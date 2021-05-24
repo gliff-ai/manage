@@ -24,10 +24,10 @@ module.exports = {
       amd: "ReactDOM",
       root: "ReactDOM",
     },
-    "react-router-dom" : {
+    "react-router-dom": {
       commonjs: "react-router-dom",
       commonjs2: "react-router-dom",
-    }
+    },
   },
   module: {
     rules: [
@@ -42,7 +42,15 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env", "@babel/react"],
+            presets: [
+              "@babel/preset-env",
+              [
+                "@babel/preset-react",
+                {
+                  runtime: "automatic", // defaults to classic
+                },
+              ],
+            ],
             plugins: ["@babel/proposal-class-properties"],
           },
         },

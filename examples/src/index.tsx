@@ -19,6 +19,7 @@ const config = {
     // queryTeam: "GET /team",
     queryTeam: () => Promise.resolve(1),
     loginUser: "GET /login",
+    getProjects: "GET /projects",
   } as Services,
 };
 
