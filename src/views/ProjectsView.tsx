@@ -44,7 +44,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
         type="button"
         onClick={async () => {
           await props.services.createProject({ name: projectName });
-          const p = await props.services.getProjects() as Project[];
+          const p = (await props.services.getProjects()) as Project[];
           setProjects(p);
           setProjectName("");
         }}
