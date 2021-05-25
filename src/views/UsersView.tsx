@@ -42,8 +42,7 @@ export const UsersView = (props: Props): JSX.Element => {
         ))}
       </ul>
 
-
-        { /*  TODO make component */ }
+      {/*  TODO make component */}
       <form
         onSubmit={async (event) => {
           event.preventDefault();
