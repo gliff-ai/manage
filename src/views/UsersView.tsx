@@ -23,7 +23,7 @@ export const UsersView = (props: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    if (auth?.user?.accessToken) {
+    if (auth?.user?.email) {
       void props.services
         .queryTeam(null, auth.user.accessToken)
         .then((u: User[]) => {

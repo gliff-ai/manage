@@ -21,7 +21,8 @@ export const ProjectsView = (props: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    if (auth?.user?.accessToken) {
+    if (auth?.user?.email) {
+      console.log("auth");
       void props.services
         .getProjects(null, auth.user.accessToken)
         .then((p: Project[]) => {
@@ -43,7 +44,9 @@ export const ProjectsView = (props: Props): JSX.Element => {
         type="button"
         onClick={async () => {
           await props.services.createProject({ name: projectName });
-          await props.services.getProjects();
+          const p = await props.services.getProjects() as Project[];
+          setProjects(p);
+          setProjectName("");
         }}
       >
         New Project
