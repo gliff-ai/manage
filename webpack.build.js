@@ -21,15 +21,11 @@ module.exports = {
       root: "React",
     },
     "react-dom": {
-      commonjs: "react-dom",
-      commonjs2: "react-dom",
-      amd: "ReactDOM",
-      root: "ReactDOM",
-    },
-    "react-router-dom": {
-      commonjs: "react-router-dom",
-      commonjs2: "react-router-dom",
-    },
+        commonjs: "react-dom",
+        commonjs2: "react-dom",
+        amd: "ReactDOM",
+        root: "ReactDOM",
+    }
   },
   module: {
     rules: [
