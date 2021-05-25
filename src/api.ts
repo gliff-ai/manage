@@ -16,6 +16,7 @@ interface Services {
   queryTeam: APIRoute | ServiceFunction;
   loginUser: APIRoute | ServiceFunction;
   getProjects: APIRoute | ServiceFunction;
+  getProject: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
 }
 

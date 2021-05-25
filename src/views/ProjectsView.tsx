@@ -21,11 +21,13 @@ export const ProjectsView = (props: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    void props.services
-      .getProjects(null, auth.user.accessToken)
-      .then((p: Project[]) => {
-        setProjects(p);
-      });
+    if (auth?.user?.accessToken) {
+      void props.services
+        .getProjects(null, auth.user.accessToken)
+        .then((p: Project[]) => {
+          setProjects(p);
+        });
+    }
   }, [auth]);
 
   return !auth ? null : (

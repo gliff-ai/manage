@@ -16,11 +16,13 @@ const config = {
   // These are actually the defaults, but are here to show what you can do!
   services: {
     // queryTeam: "GET /team",
-    queryTeam: () => Promise.resolve(1),
+    queryTeam: () => Promise.resolve([]),
     loginUser: "GET /login",
     getProjects: "GET /projects",
+    getUsers: "GET /users",
+    getProject: "GET /projects",
     createProject: (data) => {
-      return Promise.resolve(1);
+      return Promise.resolve([]);
     },
   } as Services,
 };
@@ -33,6 +35,7 @@ ReactDOM.render(
         <Link to="/">Home</Link>
         <Link to="/manage">MANAGE</Link>
       </nav>
+      <br />
       <Routes>
         <Route path="/" element={<h1>HOME</h1>} />
         <Route
