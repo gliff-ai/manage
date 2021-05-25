@@ -22,7 +22,6 @@ export const ProjectsView = (props: Props): JSX.Element => {
 
   useEffect(() => {
     if (auth?.user?.email) {
-      console.log("auth");
       void props.services
         .getProjects(null, auth.user.accessToken)
         .then((p: Project[]) => {
