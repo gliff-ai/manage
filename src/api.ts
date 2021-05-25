@@ -15,6 +15,9 @@ function isApiRoute(arg: APIRoute | ServiceFunction): arg is APIRoute {
 interface Services {
   queryTeam: APIRoute | ServiceFunction;
   loginUser: APIRoute | ServiceFunction;
+  getProjects: APIRoute | ServiceFunction;
+  getProject: APIRoute | ServiceFunction;
+  createProject: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {

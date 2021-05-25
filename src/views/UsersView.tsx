@@ -1,5 +1,6 @@
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
+import { useEffect, useState } from "react";
 
 interface Props {
   services: ServiceFunctions;
@@ -12,27 +13,27 @@ type User = {
 
 export const UsersView = (props: Props): JSX.Element => {
   const auth = useAuth();
+  const [users, setUsers] = useState<User[]>([]);
 
-  return (
+  useEffect(() => {
+    if (auth?.user?.accessToken) {
+      void props.services
+        .queryTeam(null, auth.user.accessToken)
+        .then((u: User[]) => {
+          setUsers(u);
+        });
+    }
+  }, [auth]);
+
+  return !auth ? null : (
     <>
-      <h1>USERS</h1>
-      <button type="button">
-        Hello
-        {auth?.user.email}
-      </button>
-      <button
-        type="button"
-        onClick={async () => {
-          const team = (await props.services.queryTeam(
-            null,
-            auth.user.accessToken
-          )) as User[];
+      <h1>Users</h1>
 
-          console.log(team);
-        }}
-      >
-        Get Users
-      </button>
+      <ul>
+        {users.map((user) => (
+          <li key={user.email}>{user.email}</li>
+        ))}
+      </ul>
     </>
   );
 };

@@ -3,7 +3,8 @@ import { Routes, Route, Link } from "react-router-dom";
 
 import { initApiRequest, Services } from "@/api";
 import { UsersView } from "@/views/UsersView";
-import { ProvideAuth, useAuth } from "@/hooks/use-auth";
+import { ProjectsView } from "@/views/ProjectsView";
+import { useAuth } from "@/hooks/use-auth";
 
 export { ProvideAuth } from "@/hooks/use-auth";
 
@@ -15,6 +16,9 @@ type User = {
 const defaultServices = {
   queryTeam: "GET /team",
   loginUser: "POST /user/login",
+  getProjects: "GET /projects",
+  getProject: "GET /project", // TODO: Support named params for GET? Body works tho...
+  createProject: "POST /projects",
 } as Services;
 
 interface Props {
@@ -44,9 +48,6 @@ export function UserInterface(props: Props): JSX.Element {
 
   return (
     <div>
-      <h1>MANAGE</h1>
-      <Link to=".">Home</Link>
-      &nbsp;
       <Link to="users">Users</Link>
       &nbsp;
       <Link to="projects">Projects</Link>
@@ -57,12 +58,10 @@ export function UserInterface(props: Props): JSX.Element {
       <Routes>
         <Route path="//*">
           <Route path="users" element={<UsersView services={services} />} />
-          <Route path="projects">
-            <h1>PROJECTS</h1>
-          </Route>
-          <Route path=".">
-            <h1>HOME</h1>
-          </Route>
+          <Route
+            path="projects"
+            element={<ProjectsView services={services} />}
+          />
         </Route>
       </Routes>
     </div>

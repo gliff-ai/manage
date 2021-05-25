@@ -4,6 +4,8 @@ module.exports = {
   entry: {
     main: "./src/index.tsx",
   },
+  mode: "development",
+  devtool: "source-map",
   output: {
     filename: "main.js",
     path: path.resolve(__dirname, "dist"),
@@ -23,7 +25,11 @@ module.exports = {
       commonjs2: "react-dom",
       amd: "ReactDOM",
       root: "ReactDOM",
-    }
+    },
+    "react-router-dom": {
+      commonjs: "react-router-dom",
+      commonjs2: "react-router-dom",
+    },
   },
   module: {
     rules: [
@@ -38,7 +44,15 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
-            presets: ["@babel/preset-env", "@babel/react"],
+            presets: [
+              "@babel/preset-env",
+              [
+                "@babel/preset-react",
+                {
+                  runtime: "automatic", // defaults to classic
+                },
+              ],
+            ],
             plugins: ["@babel/proposal-class-properties"],
           },
         },
