@@ -59,15 +59,15 @@ const initApiRequest = (
   API_URL: string,
   services: Services
 ): ServiceFunctions =>
-Object.keys(services).reduce(
-  (acc: Partial<ServiceFunctions>, key: keyof Services) => {
-    const service = services[key];
+  Object.keys(services).reduce(
+    (acc: Partial<ServiceFunctions>, key: keyof Services) => {
+      const service = services[key];
 
-    acc[key] = isApiRoute(service) ? gen(API_URL, service) : service;
+      acc[key] = isApiRoute(service) ? gen(API_URL, service) : service;
 
-    return acc;
-  },
-  {}
-) as ServiceFunctions;
+      return acc;
+    },
+    {}
+  ) as ServiceFunctions;
 
 export { Services, ServiceFunctions, initApiRequest };
