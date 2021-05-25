@@ -16,6 +16,7 @@ type User = {
 const defaultServices = {
   queryTeam: "GET /team",
   loginUser: "POST /user/login",
+  inviteUser: "POST /user/invite",
   getProjects: "GET /projects",
   getProject: "GET /project", // TODO: Support named params for GET? Body works tho...
   createProject: "POST /projects",

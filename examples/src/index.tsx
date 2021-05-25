@@ -5,7 +5,6 @@ import { UserInterface } from "@/index";
 import { Services } from "@/api";
 import { ProvideAuth } from "@/hooks/use-auth";
 
-// import user from "../user.json";
 const user = {
   email: "a@b.com",
   accessToken: "22345",
@@ -13,7 +12,6 @@ const user = {
 
 const config = {
   // If defining services, you must define ALL of them as they are not merged with defaults!
-  // These are actually the defaults, but are here to show what you can do!
   services: {
     // queryTeam: "GET /team",
     queryTeam: () => Promise.resolve([]),
@@ -24,6 +22,10 @@ const config = {
     createProject: (data) => {
       return Promise.resolve([]);
     },
+    inviteUser: (data): Promise<boolean> => {
+      console.log(data.email);
+      return Promise.resolve(true)
+    }
   } as Services,
 };
 
