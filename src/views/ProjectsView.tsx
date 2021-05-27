@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { useEffect, useState } from "react";
 
 interface Props {
   services: ServiceFunctions;
@@ -21,7 +21,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    if (auth?.user?.accessToken) {
+    if (auth?.user?.email) {
       void props.services
         .getProjects(null, auth.user.accessToken)
         .then((p: Project[]) => {
@@ -43,7 +43,9 @@ export const ProjectsView = (props: Props): JSX.Element => {
         type="button"
         onClick={async () => {
           await props.services.createProject({ name: projectName });
-          await props.services.getProjects();
+          const p = (await props.services.getProjects()) as Project[];
+          setProjects(p);
+          setProjectName("");
         }}
       >
         New Project

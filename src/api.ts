@@ -1,6 +1,5 @@
-import axios from "axios";
+import axios, { Method } from "axios";
 
-type Method = "GET" | "POST";
 type APIRoute = `${Method} /${string}`;
 
 type ServiceFunction = (
@@ -15,6 +14,7 @@ function isApiRoute(arg: APIRoute | ServiceFunction): arg is APIRoute {
 interface Services {
   queryTeam: APIRoute | ServiceFunction;
   loginUser: APIRoute | ServiceFunction;
+  inviteUser: APIRoute | ServiceFunction;
   getProjects: APIRoute | ServiceFunction;
   getProject: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
