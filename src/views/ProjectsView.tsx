@@ -12,8 +12,8 @@ type Project = {
 };
 
 interface Profile {
-    email: string;
-    name: string;
+  email: string;
+  name: string;
 }
 interface Team {
   profiles: Profile[];
@@ -57,8 +57,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
           console.log("got team");
           console.log(team);
           setInvitees(
-            team.profiles
-              .filter(({ email }) => email !== auth?.user?.email)
+            team.profiles.filter(({ email }) => email !== auth?.user?.email)
           );
         });
     }

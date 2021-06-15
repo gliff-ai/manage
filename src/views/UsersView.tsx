@@ -1,6 +1,6 @@
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { ChangeEvent, useEffect, useState} from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 interface Props {
   services: ServiceFunctions;
@@ -42,8 +42,6 @@ export const UsersView = (props: Props): JSX.Element => {
     }
   }, [auth]);
 
-
-
   let pendingInvites;
   if (team?.pending_invites?.length > 0) {
     pendingInvites = (
@@ -63,7 +61,7 @@ export const UsersView = (props: Props): JSX.Element => {
     <>
       <h1>Current Users</h1>
       <ul>
-        {team?.profiles.map(({ email ,name}) => (
+        {team?.profiles.map(({ email, name }) => (
           <li key={email}>{name}</li>
         ))}
       </ul>
