@@ -54,10 +54,12 @@ export const ProjectsView = (props: Props): JSX.Element => {
       void props.services
         .queryTeam(null, auth.user.authToken)
         .then((team: Team) => {
-          const invitees = team.profiles.filter(({ email }) => email !== auth?.user?.email)
+          const invitees = team.profiles.filter(
+            ({ email }) => email !== auth?.user?.email
+          );
           setInvitees(invitees);
-          if(invitees.length > 0) {
-              setInvitee(invitees[0].email)
+          if (invitees.length > 0) {
+            setInvitee(invitees[0].email);
           }
         });
     }
