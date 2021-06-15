@@ -18,6 +18,7 @@ interface Services {
   getProjects: APIRoute | ServiceFunction;
   getProject: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
+  inviteToProject: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {

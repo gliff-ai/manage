@@ -20,6 +20,7 @@ const defaultServices = {
   getProjects: "GET /projects",
   getProject: "GET /project", // TODO: Support named params for GET? Body works tho...
   createProject: "POST /projects",
+  inviteToProject: "POST /projects/invite",
 } as Services;
 
 interface Props {
