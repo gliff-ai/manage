@@ -15,6 +15,7 @@ interface Profile {
   email: string;
   name: string;
 }
+
 interface Team {
   profiles: Profile[];
   pending_invites: Array<{
@@ -47,18 +48,17 @@ export const ProjectsView = (props: Props): JSX.Element => {
       void props.services
         .getProjects(null, auth.user.authToken)
         .then((p: Project[]) => {
-          console.log(p);
           setProjects(p);
         });
 
       void props.services
         .queryTeam(null, auth.user.authToken)
         .then((team: Team) => {
-          console.log("got team");
-          console.log(team);
-          setInvitees(
-            team.profiles.filter(({ email }) => email !== auth?.user?.email)
-          );
+          const invitees = team.profiles.filter(({ email }) => email !== auth?.user?.email)
+          setInvitees(invitees);
+          if(invitees.length > 0) {
+              setInvitee(invitees[0].email)
+          }
         });
     }
   }, [auth]);
