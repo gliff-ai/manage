@@ -7,7 +7,7 @@ import { ProvideAuth } from "@/hooks/use-auth";
 
 const user = {
   email: "a@b.com",
-  accessToken: "22345",
+  authToken: "22345",
 };
 
 const config = {
@@ -23,7 +23,6 @@ const config = {
       return Promise.resolve([]);
     },
     inviteUser: (data): Promise<boolean> => {
-      console.log(data.email);
       return Promise.resolve(true)
     }
   } as Services,

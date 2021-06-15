@@ -23,7 +23,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
   useEffect(() => {
     if (auth?.user?.email) {
       void props.services
-        .getProjects(null, auth.user.accessToken)
+        .getProjects(null, auth.user.authToken)
         .then((p: Project[]) => {
           setProjects(p);
         });

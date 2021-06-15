@@ -6,14 +6,22 @@ interface Props {
   services: ServiceFunctions;
 }
 
-type User = {
-  email: string;
-  accessToken: string;
-};
+interface Team {
+  profiles: Array<{
+    email: string;
+  }>;
+  pending_invites: Array<{
+    email: string;
+    sent_date: string;
+  }>;
+}
 
 export const UsersView = (props: Props): JSX.Element => {
   const auth = useAuth();
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<Team>({
+    profiles: [],
+    pending_invites: [],
+  });
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
 
@@ -25,22 +33,42 @@ export const UsersView = (props: Props): JSX.Element => {
   useEffect(() => {
     if (auth?.user?.email) {
       void props.services
-        .queryTeam(null, auth.user.accessToken)
-        .then((u: User[]) => {
-          setUsers(u);
+        .queryTeam(null, auth.user.authToken)
+        .then((team: Team) => {
+          setUsers(team);
         });
     }
   }, [auth]);
 
-  return !auth ? null : (
+  if (!auth) return null;
+
+  let pendingInvites;
+  if (users?.pending_invites?.length > 0) {
+    pendingInvites = (
+      <ul>
+        {users?.pending_invites.map(({ email, sent_date }) => (
+          <li key={email}>
+            {email} - {sent_date}
+          </li>
+        ))}
+      </ul>
+    );
+  } else {
+    pendingInvites = <>No Pending Invites</>;
+  }
+
+  return (
     <>
       <h1>Current Users</h1>
 
       <ul>
-        {users.map((user) => (
-          <li key={user.email}>{user.email}</li>
+        {users?.profiles.map(({email}) => (
+          <li key={email}>{email}</li>
         ))}
       </ul>
+
+      <h1>Pending Invites</h1>
+      {pendingInvites}
 
       {/*  TODO make component */}
       <form
