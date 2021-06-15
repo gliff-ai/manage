@@ -14,7 +14,6 @@ interface Context {
   saveUser: (email: string, authToken: string) => void;
 }
 
-
 const authContext = createContext<Context>(null);
 
 // Hook for child components to get the auth object ...
