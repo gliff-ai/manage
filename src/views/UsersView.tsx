@@ -18,7 +18,7 @@ interface Team {
 
 export const UsersView = (props: Props): JSX.Element => {
   const auth = useAuth();
-  const [users, setUsers] = useState<Team>({
+  const [team, setTeam] = useState<Team>({
     profiles: [],
     pending_invites: [],
   });
@@ -34,19 +34,17 @@ export const UsersView = (props: Props): JSX.Element => {
     if (auth?.user?.email) {
       void props.services
         .queryTeam(null, auth.user.authToken)
-        .then((team: Team) => {
-          setUsers(team);
-        });
+        .then((t: Team) => setTeam(t));
     }
   }, [auth]);
 
   if (!auth) return null;
 
   let pendingInvites;
-  if (users?.pending_invites?.length > 0) {
+  if (team?.pending_invites?.length > 0) {
     pendingInvites = (
       <ul>
-        {users?.pending_invites.map(({ email, sent_date }) => (
+        {team?.pending_invites.map(({ email, sent_date }) => (
           <li key={email}>
             {email} - {sent_date}
           </li>
@@ -62,7 +60,7 @@ export const UsersView = (props: Props): JSX.Element => {
       <h1>Current Users</h1>
 
       <ul>
-        {users?.profiles.map(({email}) => (
+        {team?.profiles.map(({ email }) => (
           <li key={email}>{email}</li>
         ))}
       </ul>
