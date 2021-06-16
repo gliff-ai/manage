@@ -1,7 +1,7 @@
 import { useEffect, useState, ChangeEvent } from "react";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import {Profile, Project, Team} from "@/interfaces";
+import { Profile, Project, Team } from "@/interfaces";
 
 interface Props {
   services: ServiceFunctions;
@@ -61,7 +61,10 @@ export const ProjectsView = (props: Props): JSX.Element => {
   const project = ({ name, uid }: Project) => (
     <li key={name}>
       <div>{name}</div>
-      <button type="button" onClick={() => inviteToProject(uid, projectInvitee)}>
+      <button
+        type="button"
+        onClick={() => inviteToProject(uid, projectInvitee)}
+      >
         Invite
       </button>
     </li>

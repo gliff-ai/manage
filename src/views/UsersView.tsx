@@ -1,9 +1,8 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
-import {Team} from "@/interfaces";
+import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-
 
 interface Props {
   services: ServiceFunctions;
