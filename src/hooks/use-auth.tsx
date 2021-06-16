@@ -1,12 +1,8 @@
 import { useState, useContext, createContext, ReactElement } from "react";
+import { User } from "@/interfaces";
 
 interface Props {
   children: ReactElement;
-}
-
-interface User {
-  email: string;
-  authToken: string;
 }
 
 interface Context {

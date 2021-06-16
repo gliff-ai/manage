@@ -1,20 +1,12 @@
+import { ChangeEvent, useEffect, useState } from "react";
+
+import {Team} from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { ChangeEvent, useEffect, useState } from "react";
+
 
 interface Props {
   services: ServiceFunctions;
-}
-
-interface Team {
-  profiles: Array<{
-    email: string;
-    name: string;
-  }>;
-  pending_invites: Array<{
-    email: string;
-    sent_date: string;
-  }>;
 }
 
 export const UsersView = (props: Props): JSX.Element => {

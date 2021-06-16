@@ -1,27 +1,10 @@
 import { useEffect, useState, ChangeEvent } from "react";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
+import {Profile, Project, Team} from "@/interfaces";
 
 interface Props {
   services: ServiceFunctions;
-}
-
-type Project = {
-  id: string;
-  name: string;
-};
-
-interface Profile {
-  email: string;
-  name: string;
-}
-
-interface Team {
-  profiles: Profile[];
-  pending_invites: Array<{
-    email: string;
-    sent_date: string;
-  }>;
 }
 
 export const ProjectsView = (props: Props): JSX.Element => {
@@ -75,10 +58,10 @@ export const ProjectsView = (props: Props): JSX.Element => {
       });
   };
 
-  const project = ({ name, id }: Project) => (
+  const project = ({ name, uid }: Project) => (
     <li key={name}>
       <div>{name}</div>
-      <button type="button" onClick={() => inviteToProject(id, projectInvitee)}>
+      <button type="button" onClick={() => inviteToProject(uid, projectInvitee)}>
         Invite
       </button>
     </li>
