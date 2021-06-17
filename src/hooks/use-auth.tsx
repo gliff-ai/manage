@@ -1,17 +1,13 @@
 import { useState, useContext, createContext, ReactElement } from "react";
+import { User } from "@/interfaces";
 
 interface Props {
   children: ReactElement;
 }
 
-interface User {
-  email: string;
-  accessToken: string;
-}
-
 interface Context {
   user: User;
-  saveUser: (email: string, accessToken: string) => void;
+  saveUser: (email: string, authToken: string) => void;
 }
 
 const authContext = createContext<Context>(null);
@@ -24,8 +20,8 @@ export const useAuth = (): Context => useContext(authContext);
 function useProvideAuth() {
   const [user, setUser] = useState<User>(null);
 
-  const saveUser = (email: string, accessToken: string) => {
-    setUser({ email, accessToken });
+  const saveUser = (email: string, authToken: string) => {
+    setUser({ email, authToken });
   };
 
   // Return the user object and auth methods

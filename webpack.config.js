@@ -11,7 +11,7 @@ function resolve(dir) {
 module.exports = {
   entry: "./examples/src/index.tsx",
   mode: "development",
-  devtool: "source-map",
+  devtool: "eval-cheap-module-source-map",
   module: {
     rules: [
       {

@@ -1,23 +1,26 @@
+import { ChangeEvent, useEffect, useState } from "react";
+
+import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { useEffect, useState } from "react";
 
 interface Props {
   services: ServiceFunctions;
 }
 
-type User = {
-  email: string;
-  accessToken: string;
-};
-
 export const UsersView = (props: Props): JSX.Element => {
   const auth = useAuth();
-  const [users, setUsers] = useState<User[]>([]);
+
+  const [team, setTeam] = useState<Team>({
+    profiles: [],
+    pending_invites: [],
+  });
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  if (!auth) return null;
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setInviteEmail(value);
   };
@@ -25,22 +28,37 @@ export const UsersView = (props: Props): JSX.Element => {
   useEffect(() => {
     if (auth?.user?.email) {
       void props.services
-        .queryTeam(null, auth.user.accessToken)
-        .then((u: User[]) => {
-          setUsers(u);
-        });
+        .queryTeam(null, auth.user.authToken)
+        .then((t: Team) => setTeam(t));
     }
   }, [auth]);
 
-  return !auth ? null : (
-    <>
-      <h1>Current Users</h1>
-
+  let pendingInvites;
+  if (team?.pending_invites?.length > 0) {
+    pendingInvites = (
       <ul>
-        {users.map((user) => (
-          <li key={user.email}>{user.email}</li>
+        {team?.pending_invites.map(({ email, sent_date }) => (
+          <li key={email}>
+            {email} - {sent_date}
+          </li>
         ))}
       </ul>
+    );
+  } else {
+    pendingInvites = <>No Pending Invites</>;
+  }
+
+  return (
+    <>
+      <h1>Current Users</h1>
+      <ul>
+        {team?.profiles.map(({ email, name }) => (
+          <li key={email}>{name}</li>
+        ))}
+      </ul>
+
+      <h1>Pending Invites</h1>
+      {pendingInvites}
 
       {/*  TODO make component */}
       <form

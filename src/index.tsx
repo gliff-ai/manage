@@ -10,7 +10,7 @@ export { ProvideAuth } from "@/hooks/use-auth";
 
 type User = {
   email: string;
-  accessToken: string;
+  authToken: string;
 };
 
 const defaultServices = {
@@ -20,6 +20,7 @@ const defaultServices = {
   getProjects: "GET /projects",
   getProject: "GET /project", // TODO: Support named params for GET? Body works tho...
   createProject: "POST /projects",
+  inviteToProject: "POST /projects/invite",
 } as Services;
 
 interface Props {
@@ -42,8 +43,8 @@ export function UserInterface(props: Props): JSX.Element {
   useEffect(() => {
     if (!auth?.user && props.user) {
       // Autologin if we've been passed a login
-      const { email, accessToken } = props.user;
-      auth.saveUser(email, accessToken);
+      const { email, authToken } = props.user;
+      auth.saveUser(email, authToken);
     }
   });
 
@@ -70,3 +71,5 @@ export function UserInterface(props: Props): JSX.Element {
 }
 
 UserInterface.defaultProps = defaultProps;
+
+export { Services };

@@ -7,25 +7,34 @@ import { ProvideAuth } from "@/hooks/use-auth";
 
 const user = {
   email: "a@b.com",
-  accessToken: "22345",
+  authToken: "22345",
 };
 
 const config = {
   // If defining services, you must define ALL of them as they are not merged with defaults!
   services: {
-    // queryTeam: "GET /team",
-    queryTeam: () => Promise.resolve([]),
+    queryTeam: () =>
+      Promise.resolve({
+        profiles: [
+          { email: "user1@gliff.app", name: "Mike Jones" },
+          { email: "user2@gliff.app", name: "John Smith"},
+          { email: "user3@gliff.app", name: "Jane James" },
+        ],
+        pending_invites: [],
+      }),
     loginUser: "GET /login",
-    getProjects: "GET /projects",
+    getProject: "GET /project",
     getUsers: "GET /users",
-    getProject: "GET /projects",
+    getProjects: () => Promise.resolve([{ name: "Project 1", id: "1" }, { name: "Project 2", id: "2" }]),
     createProject: (data) => {
       return Promise.resolve([]);
     },
     inviteUser: (data): Promise<boolean> => {
-      console.log(data.email);
-      return Promise.resolve(true)
-    }
+      return Promise.resolve(true);
+    },
+    inviteToProject: (data): Promise<boolean> => {
+      return Promise.resolve(true);
+    },
   } as Services,
 };
 
