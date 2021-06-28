@@ -5,6 +5,7 @@ import { initApiRequest, Services } from "@/api";
 import { UsersView } from "@/views/UsersView";
 import { ProjectsView } from "@/views/ProjectsView";
 import { useAuth } from "@/hooks/use-auth";
+import { ThemeProvider, theme } from "@/theme";
 
 export { ProvideAuth } from "@/hooks/use-auth";
 
@@ -49,24 +50,26 @@ export function UserInterface(props: Props): JSX.Element {
   });
 
   return (
-    <div>
-      <Link to="users">Users</Link>
-      &nbsp;
-      <Link to="projects">Projects</Link>
-      &nbsp;
-      <br />
-      <br />
-      <br />
-      <Routes>
-        <Route path="//*">
-          <Route path="users" element={<UsersView services={services} />} />
-          <Route
-            path="projects"
-            element={<ProjectsView services={services} />}
-          />
-        </Route>
-      </Routes>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div>
+        <Link to="users">Users</Link>
+        &nbsp;
+        <Link to="projects">Projects</Link>
+        &nbsp;
+        <br />
+        <br />
+        <br />
+        <Routes>
+          <Route path="//*">
+            <Route path="users" element={<UsersView services={services} />} />
+            <Route
+              path="projects"
+              element={<ProjectsView services={services} />}
+            />
+          </Route>
+        </Routes>
+      </div>
+    </ThemeProvider>
   );
 }
 
