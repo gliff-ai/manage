@@ -9,6 +9,12 @@ import {
   Theme,
   List,
   ListItem,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
   TextField,
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
@@ -18,7 +24,7 @@ import { useAuth } from "@/hooks/use-auth";
 
 const useStyles = makeStyles((theme: Theme) => ({
   topography: {
-    color: "#ffffff",
+    color: "#000000",
     display: "inline",
     fontSize: "21px",
     marginRight: "125px",
@@ -34,7 +40,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: "17px",
   },
   pendingInvitesCard: {
-    marginTop: "20px",
+    marginLeft: "20px",
   },
 }));
 
@@ -115,8 +121,8 @@ export const UsersView = (props: Props): JSX.Element => {
   );
 
   return (
-    <>
-      <Grid container direction="row">
+    <Grid container direction="row">
+      <Grid item style={{ width: "70%" }}>
         <Card>
           <Paper
             elevation={0}
@@ -128,16 +134,34 @@ export const UsersView = (props: Props): JSX.Element => {
               Current Users
             </Typography>
           </Paper>
-          <Paper elevation={0} square className={classes.paperBody}>
+          {/* <Paper elevation={0} square className={classes.paperBody}>
             <List>
               {team?.profiles.map(({ email, name }) => (
                 <ListItem key={email}>{name}</ListItem>
               ))}
             </List>
-          </Paper>
+          </Paper> */}
+          <TableContainer component={Paper}>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {team?.profiles.map(({ email, name }) => (
+                  <TableRow key={email}>
+                    <TableCell>{name}</TableCell>
+                    <TableCell>{email}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Card>
       </Grid>
-      <Grid container direction="row">
+      <Grid item style={{ width: "30%" }}>
         <Card className={classes.pendingInvitesCard}>
           <Paper
             elevation={0}
@@ -155,6 +179,6 @@ export const UsersView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </Grid>
-    </>
+    </Grid>
   );
 };
