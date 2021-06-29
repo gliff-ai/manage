@@ -7,6 +7,7 @@ import { ProjectsView } from "@/views/ProjectsView";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeProvider, theme } from "@/theme";
 
+import { PageSelector } from "@/components/PageSelector";
 export { ProvideAuth } from "@/hooks/use-auth";
 
 type User = {
@@ -52,13 +53,6 @@ export function UserInterface(props: Props): JSX.Element {
   return (
     <ThemeProvider theme={theme}>
       <div>
-        <Link to="users">Users</Link>
-        &nbsp;
-        <Link to="projects">Projects</Link>
-        &nbsp;
-        <br />
-        <br />
-        <br />
         <Routes>
           <Route path="//*">
             <Route path="users" element={<UsersView services={services} />} />

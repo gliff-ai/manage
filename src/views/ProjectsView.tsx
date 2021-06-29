@@ -18,6 +18,7 @@ import { Add } from "@material-ui/icons";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Team } from "@/interfaces";
 import { InvitePopover } from "@/components/InvitePopover";
+import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = (props: Props) =>
   makeStyles((theme: Theme) => ({
@@ -112,8 +113,18 @@ export const ProjectsView = (props: Props): JSX.Element => {
   );
 
   return (
-    <Grid container direction="row" style={{ width: "100%" }}>
-      <Card style={{ width: "100%" }}>
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          flexGrow: 0,
+          flexShrink: 0,
+          marginLeft: "20px",
+          marginRight: "20px",
+        }}
+      >
+        <PageSelector page="projects" />
+      </div>
+      <Card style={{ width: "100%", marginRight: "20px" }}>
         <Paper
           elevation={0}
           variant="outlined"
@@ -151,6 +162,6 @@ export const ProjectsView = (props: Props): JSX.Element => {
           <List>{projects.map(project)}</List>
         </Paper>
       </Card>
-    </Grid>
+    </div>
   );
 };

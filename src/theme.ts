@@ -65,7 +65,7 @@ const theme: Theme = createMuiTheme({
         borderRadius: "9px",
         padding: "8px",
         background: "#fafafa",
-        width: "63px",
+        // width: "63px",
       },
     },
     MuiDivider: {

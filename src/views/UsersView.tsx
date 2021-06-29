@@ -21,6 +21,7 @@ import { Send } from "@material-ui/icons";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
+import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = makeStyles((theme: Theme) => ({
   topography: {
@@ -39,8 +40,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "auto",
     fontSize: "17px",
   },
-  pendingInvitesCard: {
-    marginLeft: "20px",
+  usersCard: {
+    marginRight: "20px",
   },
 }));
 
@@ -128,57 +129,62 @@ export const UsersView = (props: Props): JSX.Element => {
   );
 
   return (
-    <Grid container direction="row">
-      <Grid item style={{ width: "70%" }}>
-        <Card>
-          <Paper
-            elevation={0}
-            variant="outlined"
-            square
-            className={classes.paperHeader}
-          >
-            <Typography className={classes.topography}>
-              Current Users
-            </Typography>
-          </Paper>
-          <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          flexGrow: 0,
+          flexShrink: 0,
+          marginLeft: "20px",
+          marginRight: "20px",
+        }}
+      >
+        <PageSelector page="users" />
+      </div>
+      <Card className={classes.usersCard} style={{ width: "70%" }}>
+        <Paper
+          elevation={0}
+          variant="outlined"
+          square
+          className={classes.paperHeader}
+        >
+          <Typography className={classes.topography}>Current Users</Typography>
+        </Paper>
+        <TableContainer component={Paper}>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {team?.profiles.map(({ email, name }) => (
+                <TableRow key={email}>
+                  <TableCell>{name}</TableCell>
+                  <TableCell>{email}</TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {team?.profiles.map(({ email, name }) => (
-                  <TableRow key={email}>
-                    <TableCell>{name}</TableCell>
-                    <TableCell>{email}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Card>
-      </Grid>
-      <Grid item style={{ width: "30%" }}>
-        <Card className={classes.pendingInvitesCard}>
-          <Paper
-            elevation={0}
-            variant="outlined"
-            square
-            className={classes.paperHeader}
-          >
-            <Typography className={classes.topography}>
-              Pending Invites
-            </Typography>
-          </Paper>
-          <Paper elevation={0} square className={classes.paperBody}>
-            {pendingInvites}
-            {inviteForm}
-          </Paper>
-        </Card>
-      </Grid>
-    </Grid>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
+
+      <Card className={classes.usersCard} style={{ width: "30%" }}>
+        <Paper
+          elevation={0}
+          variant="outlined"
+          square
+          className={classes.paperHeader}
+        >
+          <Typography className={classes.topography}>
+            Pending Invites
+          </Typography>
+        </Paper>
+        <Paper elevation={0} square className={classes.paperBody}>
+          {pendingInvites}
+          {inviteForm}
+        </Paper>
+      </Card>
+    </div>
   );
 };
