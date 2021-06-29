@@ -101,23 +101,30 @@ export const UsersView = (props: Props): JSX.Element => {
       </List>
     );
   } else {
-    pendingInvites = <>No pending invites</>;
+    pendingInvites = (
+      <Typography style={{ marginTop: "10px", marginBottom: "15px" }}>
+        No pending invites
+      </Typography>
+    );
   }
 
   const inviteForm = (
-    <form autoComplete="off" onSubmit={() => inviteNewUser}>
-      <div>{inviteMessage}</div>
-      <TextField
-        id="invite-email"
-        type="email"
-        required
-        onChange={handleChange}
-        value={inviteEmail}
-      />
-      <IconButton type="submit" onSubmit={(e) => e.preventDefault()}>
-        <Send />
-      </IconButton>
-    </form>
+    <>
+      <Typography>Why not invite someone else to collaborate?</Typography>
+      <form autoComplete="off" onSubmit={() => inviteNewUser}>
+        <div>{inviteMessage}</div>
+        <TextField
+          id="invite-email"
+          type="email"
+          required
+          onChange={handleChange}
+          value={inviteEmail}
+        />
+        <IconButton type="submit" onSubmit={(e) => e.preventDefault()}>
+          <Send />
+        </IconButton>
+      </form>
+    </>
   );
 
   return (
@@ -134,13 +141,6 @@ export const UsersView = (props: Props): JSX.Element => {
               Current Users
             </Typography>
           </Paper>
-          {/* <Paper elevation={0} square className={classes.paperBody}>
-            <List>
-              {team?.profiles.map(({ email, name }) => (
-                <ListItem key={email}>{name}</ListItem>
-              ))}
-            </List>
-          </Paper> */}
           <TableContainer component={Paper}>
             <Table aria-label="simple table">
               <TableHead>

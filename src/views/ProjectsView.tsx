@@ -26,13 +26,10 @@ const useStyles = (props: Props) =>
       backgroundColor: theme.palette.primary.main,
     },
     projectsTopography: {
-      color: "#ffffff",
+      color: "#000000",
       display: "inline",
       fontSize: "21px",
       marginRight: "125px",
-    },
-    projectAddIconBtn: {
-      right: "16px",
     },
   }));
 
@@ -102,6 +99,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
   const project = ({ name, uid }: Project) => (
     <ListItem key={name}>
       <ListItemText key={name} primary={name} />
+      {/* <ListItemText key={name+"_members"} primary={} /> */}
       <ListItemSecondaryAction>
         <InvitePopover
           projectInvitee={projectInvitee}
@@ -114,8 +112,8 @@ export const ProjectsView = (props: Props): JSX.Element => {
   );
 
   return (
-    <Grid container direction="row">
-      <Card>
+    <Grid container direction="row" style={{ width: "100%" }}>
+      <Card style={{ width: "100%" }}>
         <Paper
           elevation={0}
           variant="outlined"
@@ -127,20 +125,29 @@ export const ProjectsView = (props: Props): JSX.Element => {
           </Typography>
         </Paper>
         <Paper elevation={0} square>
-          <InputBase
-            placeholder="New project"
-            value={projectName}
-            onChange={handleChange}
-            inputProps={{
-              style: { fontSize: 18, marginLeft: 15, marginRight: 50 },
-            }}
-          />
           <IconButton
-            onClick={createProject}
-            className={classes.projectAddIconBtn}
+            onClick={(e) => {
+              console.log(e);
+              createProject();
+            }}
+            style={{ marginBottom: "5px" }}
           >
             <Add />
           </IconButton>
+          <InputBase
+            placeholder="Create New Project"
+            value={projectName}
+            onChange={handleChange}
+            onKeyPress={(e) => {
+              if (e.code === "Enter") {
+                createProject();
+              }
+            }}
+            inputProps={{
+              style: { fontSize: 18 },
+            }}
+          />
+
           <List>{projects.map(project)}</List>
         </Paper>
       </Card>
