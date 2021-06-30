@@ -3,7 +3,6 @@ import { ServiceFunctions } from "@/api";
 import {
   Paper,
   IconButton,
-  Grid,
   Typography,
   Card,
   makeStyles,
@@ -13,6 +12,7 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  Divider,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { useAuth } from "@/hooks/use-auth";
@@ -98,18 +98,21 @@ export const ProjectsView = (props: Props): JSX.Element => {
   };
 
   const project = ({ name, uid }: Project) => (
-    <ListItem key={name}>
-      <ListItemText key={name} primary={name} />
-      {/* <ListItemText key={name+"_members"} primary={} /> */}
-      <ListItemSecondaryAction>
-        <InvitePopover
-          projectInvitee={projectInvitee}
-          projectInvitees={projectInvitees}
-          handleSelectChange={handleSelectChange}
-          inviteToProject={() => inviteToProject(uid, projectInvitee)}
-        />
-      </ListItemSecondaryAction>
-    </ListItem>
+    <>
+      <ListItem key={name}>
+        <ListItemText key={name} primary={name} />
+        {/* <ListItemText key={name+"_members"} primary={} /> */}
+        <ListItemSecondaryAction>
+          <InvitePopover
+            projectInvitee={projectInvitee}
+            projectInvitees={projectInvitees}
+            handleSelectChange={handleSelectChange}
+            inviteToProject={() => inviteToProject(uid, projectInvitee)}
+          />
+        </ListItemSecondaryAction>
+      </ListItem>
+      <Divider />
+    </>
   );
 
   return (
@@ -124,7 +127,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
       >
         <PageSelector page="projects" />
       </div>
-      <Card style={{ width: "100%", marginRight: "20px" }}>
+      <Card style={{ width: "100%", height: "90vh", marginRight: "20px" }}>
         <Paper
           elevation={0}
           variant="outlined"

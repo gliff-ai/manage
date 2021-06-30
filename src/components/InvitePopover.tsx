@@ -11,7 +11,7 @@ import {
   TextField,
   MenuItem,
 } from "@material-ui/core";
-import { PersonAdd } from "@material-ui/icons";
+import { Edit } from "@material-ui/icons";
 import { Profile } from "@/interfaces";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -77,7 +77,7 @@ export function InvitePopover(props: Props): React.ReactElement {
   return (
     <>
       <IconButton onClick={handleClick}>
-        <PersonAdd />
+        <Edit />
       </IconButton>
       <Popover
         open={Boolean(anchorEl)}

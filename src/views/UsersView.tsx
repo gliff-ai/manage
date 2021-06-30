@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   paperBody: {
     margin: "15px",
     width: "400px",
-    height: "auto",
+    // height: "auto",
     fontSize: "17px",
   },
   usersCard: {
@@ -140,7 +140,10 @@ export const UsersView = (props: Props): JSX.Element => {
       >
         <PageSelector page="users" />
       </div>
-      <Card className={classes.usersCard} style={{ width: "70%" }}>
+      <Card
+        className={classes.usersCard}
+        style={{ width: "70%", height: "90vh" }}
+      >
         <Paper
           elevation={0}
           variant="outlined"
@@ -149,7 +152,7 @@ export const UsersView = (props: Props): JSX.Element => {
         >
           <Typography className={classes.topography}>Current Users</Typography>
         </Paper>
-        <TableContainer component={Paper}>
+        <TableContainer>
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -169,7 +172,10 @@ export const UsersView = (props: Props): JSX.Element => {
         </TableContainer>
       </Card>
 
-      <Card className={classes.usersCard} style={{ width: "30%" }}>
+      <Card
+        className={classes.usersCard}
+        style={{ width: "30%", height: "100%" }}
+      >
         <Paper
           elevation={0}
           variant="outlined"
