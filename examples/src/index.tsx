@@ -17,7 +17,7 @@ const config = {
       Promise.resolve({
         profiles: [
           { email: "user1@gliff.app", name: "Mike Jones" },
-          { email: "user2@gliff.app", name: "John Smith"},
+          { email: "user2@gliff.app", name: "John Smith" },
           { email: "user3@gliff.app", name: "Jane James" },
         ],
         pending_invites: [],
@@ -25,7 +25,11 @@ const config = {
     loginUser: "GET /login",
     getProject: "GET /project",
     getUsers: "GET /users",
-    getProjects: () => Promise.resolve([{ name: "Project 1", id: "1" }, { name: "Project 2", id: "2" }]),
+    getProjects: () =>
+      Promise.resolve([
+        { name: "Project 1", id: "1" },
+        { name: "Project 2", id: "2" },
+      ]),
     createProject: (data) => {
       return Promise.resolve([]);
     },
@@ -44,7 +48,7 @@ ReactDOM.render(
     <BrowserRouter>
       <nav>
         <Link to="/">Home</Link>
-        <Link to="/manage">MANAGE</Link>
+        <Link to="/manage/users">MANAGE</Link>
       </nav>
       <br />
       <Routes>
