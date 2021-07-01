@@ -72,7 +72,9 @@ export function UserInterface(props: Props): JSX.Element {
         <Grid container direction="row">
           <Grid item className={classes.logo}>
             <img
+              /* eslint-disable global-require */
               src={require(`./assets/gliff-master-black.svg`) as string}
+              /* eslint-enable global-require */
               width="79px"
               height="60px"
               alt="gliff logo"
