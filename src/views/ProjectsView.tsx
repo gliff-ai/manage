@@ -99,7 +99,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
 
   const project = ({ name, uid }: Project) => (
     <>
-      <ListItem key={name}>
+      <ListItem key={name} divider>
         <ListItemText key={name} primary={name} />
         {/* <ListItemText key={name+"_members"} primary={} /> */}
         <ListItemSecondaryAction>
@@ -111,7 +111,6 @@ export const ProjectsView = (props: Props): JSX.Element => {
           />
         </ListItemSecondaryAction>
       </ListItem>
-      <Divider />
     </>
   );
 
@@ -139,30 +138,33 @@ export const ProjectsView = (props: Props): JSX.Element => {
           </Typography>
         </Paper>
         <Paper elevation={0} square>
-          <IconButton
-            onClick={(e) => {
-              console.log(e);
-              createProject();
-            }}
-            style={{ marginBottom: "5px" }}
-          >
-            <Add />
-          </IconButton>
-          <InputBase
-            placeholder="Create New Project"
-            value={projectName}
-            onChange={handleChange}
-            onKeyPress={(e) => {
-              if (e.code === "Enter") {
-                createProject();
-              }
-            }}
-            inputProps={{
-              style: { fontSize: 18 },
-            }}
-          />
-
-          <List>{projects.map(project)}</List>
+          <List>
+            <ListItem divider style={{ padding: "0px 0px 0px 10px" }}>
+              <IconButton
+                onClick={(e) => {
+                  console.log(e);
+                  createProject();
+                }}
+                style={{ marginBottom: "5px" }}
+              >
+                <Add />
+              </IconButton>
+              <InputBase
+                placeholder="Create New Project"
+                value={projectName}
+                onChange={handleChange}
+                onKeyPress={(e) => {
+                  if (e.code === "Enter") {
+                    createProject();
+                  }
+                }}
+                inputProps={{
+                  style: { fontSize: 18 },
+                }}
+              />
+            </ListItem>
+            {projects.map(project)}
+          </List>
         </Paper>
       </Card>
     </div>
