@@ -120,6 +120,8 @@ export const BaseIconButton = (props: Props): ReactElement => {
 
 BaseIconButton.defaultProps = {
   tooltipPlacement: "right",
+  buttonSize: null,
+  buttonEdge: null,
   setRefCallback: null,
   onMouseUp: null,
   onMouseDown: null,

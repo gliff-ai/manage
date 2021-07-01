@@ -12,7 +12,6 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  Divider,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { useAuth } from "@/hooks/use-auth";
@@ -143,7 +142,9 @@ export const ProjectsView = (props: Props): JSX.Element => {
               <IconButton
                 onClick={(e) => {
                   console.log(e);
-                  createProject();
+                  createProject().catch((err) => {
+                    console.log(err);
+                  });
                 }}
                 style={{ marginBottom: "5px" }}
               >
@@ -155,7 +156,9 @@ export const ProjectsView = (props: Props): JSX.Element => {
                 onChange={handleChange}
                 onKeyPress={(e) => {
                   if (e.code === "Enter") {
-                    createProject();
+                    createProject().catch((err) => {
+                      console.log(err);
+                    });
                   }
                 }}
                 inputProps={{

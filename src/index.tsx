@@ -7,7 +7,6 @@ import { ProjectsView } from "@/views/ProjectsView";
 import { useAuth } from "@/hooks/use-auth";
 import { ThemeProvider, theme } from "@/theme";
 
-import { PageSelector } from "@/components/PageSelector";
 export { ProvideAuth } from "@/hooks/use-auth";
 
 type User = {

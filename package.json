@@ -11,9 +11,9 @@
     "build:package": "npm run prepublishOnly",
     "build": "webpack --progress --config webpack.config.js",
     "format": "npx --no-install prettier --write src/*",
-    "prettier": "npx --no-install prettier -c src/*",
+    "prettier": "npx --no-install prettier -c src",
     "lint": "npm run lint:ts && npm run prettier",
-    "lint:ts": "npx eslint src/*",
+    "lint:ts": "npx eslint --no-error-on-unmatched-pattern src/*",
     "serve": "webpack serve --config webpack.config.js",
     "test": "jest --coverage --passWithNoTests",
     "prepublishOnly": "webpack --progress --config webpack.build.js"
