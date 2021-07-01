@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import { initApiRequest, Services } from "@/api";
 import { UsersView } from "@/views/UsersView";

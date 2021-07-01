@@ -1,9 +1,4 @@
-import React, {
-  MouseEvent,
-  ReactElement,
-  CSSProperties,
-  useState,
-} from "react";
+import React, { MouseEvent, ReactElement, CSSProperties } from "react";
 import {
   IconButton,
   Avatar,
