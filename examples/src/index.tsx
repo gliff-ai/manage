@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { UserInterface } from "@/index";
 import { Services } from "@/api";
@@ -46,13 +46,8 @@ const config = {
 ReactDOM.render(
   <ProvideAuth>
     <BrowserRouter>
-      <nav>
-        <Link to="/">Home</Link>
-        <Link to="/manage/users">MANAGE</Link>
-      </nav>
-      <br />
       <Routes>
-        <Route path="/" element={<h1>HOME</h1>} />
+        <Route path="/" element={<Navigate to="/manage/users" />} />
         <Route
           path="manage/*"
           element={
@@ -60,6 +55,7 @@ ReactDOM.render(
               apiUrl="http://localhost:8000/django/api"
               user={user}
               services={config.services}
+              showAppBar
             />
           }
         />

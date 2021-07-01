@@ -100,7 +100,6 @@ export const ProjectsView = (props: Props): JSX.Element => {
     <>
       <ListItem key={name} divider>
         <ListItemText key={name} primary={name} />
-        {/* <ListItemText key={name+"_members"} primary={} /> */}
         <ListItemSecondaryAction>
           <InvitePopover
             projectInvitee={projectInvitee}

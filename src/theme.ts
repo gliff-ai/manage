@@ -24,6 +24,7 @@ const theme: Theme = createMuiTheme({
         },
         body: {
           height: "100%",
+          backgroundColor: "#F2F2F2",
         },
         "#react-container": {
           overflow: "hidden",
