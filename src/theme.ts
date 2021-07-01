@@ -82,6 +82,9 @@ const theme: Theme = createMuiTheme({
         "&:hover": {
           backgroundColor: "#02FFAD",
         },
+        "&:hover svg": {
+          fill: "#000000",
+        },
       },
     },
     MuiContainer: {

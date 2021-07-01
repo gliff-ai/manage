@@ -67,8 +67,6 @@ interface Props {
 export const BaseIconButton = (props: Props): ReactElement => {
   const classes = useStyles(props)();
 
-  const [hover, setHover] = useState(false);
-
   return (
     <Tooltip
       key={props.tooltip.name}
@@ -96,12 +94,6 @@ export const BaseIconButton = (props: Props): ReactElement => {
         }
         onMouseUp={props.onMouseUp}
         onMouseDown={props.onMouseDown}
-        onMouseOver={() => {
-          setHover(true);
-        }}
-        onMouseLeave={() => {
-          setHover(false);
-        }}
         onClick={props.onClick}
         size={props.buttonSize}
         edge={props.buttonEdge}
@@ -110,7 +102,7 @@ export const BaseIconButton = (props: Props): ReactElement => {
           <SVG
             src={props.tooltip.icon}
             className={classes.svgLarge}
-            fill={props.active && !hover ? theme.palette.primary.main : null}
+            fill={props.active ? theme.palette.primary.main : null}
           />
         </Avatar>
       </IconButton>
