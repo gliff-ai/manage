@@ -3,7 +3,6 @@ import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { BaseIconButton } from "./BaseIconButton";
 
-/* eslint-disable global-require */
 const tooltips = {
   users: {
     name: "Users",
@@ -14,7 +13,6 @@ const tooltips = {
     icon: require("../assets/Projects_Page.svg") as string,
   },
 };
-/* eslint-enable global-require */
 
 interface Props {
   page: "users" | "projects";
