@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "inline",
     fontSize: "21px",
     marginRight: "125px",
+    paddingLeft: "8px",
   },
   paperHeader: {
     padding: "10px",
@@ -36,14 +37,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   paperBody: {
     margin: "15px",
     width: "400px",
-    // height: "auto",
     fontSize: "17px",
+    paddingLeft: "6px",
   },
   usersCard: {
     marginRight: "20px",
   },
   tableText: {
     fontSize: "16px",
+    paddingLeft: "20px",
   },
 }));
 
