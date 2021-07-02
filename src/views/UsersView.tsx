@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   usersCard: {
     marginRight: "20px",
   },
+  tableText: {
+    fontSize: "16px",
+  },
 }));
 
 interface Props {
@@ -155,15 +158,15 @@ export const UsersView = (props: Props): JSX.Element => {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Email</TableCell>
+                <TableCell className={classes.tableText}>Name</TableCell>
+                <TableCell className={classes.tableText}>Email</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {team?.profiles.map(({ email, name }) => (
                 <TableRow key={email}>
-                  <TableCell>{name}</TableCell>
-                  <TableCell>{email}</TableCell>
+                  <TableCell className={classes.tableText}>{name}</TableCell>
+                  <TableCell className={classes.tableText}>{email}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
