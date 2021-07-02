@@ -216,8 +216,12 @@ export const ProjectsView = (props: Props): JSX.Element => {
                 <Autocomplete
                   options={projectInvitees}
                   getOptionLabel={(option) => option.name}
-                  renderInput={() => (
-                    <TextField label="Add Team Members" variant="outlined" />
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Add Team Members"
+                      variant="outlined"
+                    />
                   )}
                   style={{ marginTop: "26px" }}
                   onChange={(event, value) => {

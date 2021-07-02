@@ -54,8 +54,8 @@ export function InviteDialog(props: Props): React.ReactElement {
         options={props.projectInvitees}
         getOptionLabel={(option) => option.name}
         onChange={() => props.handleSelectChange}
-        renderInput={() => (
-          <TextField label="Add Team Member" variant="outlined" />
+        renderInput={(params) => (
+          <TextField {...params} label="Add Team Member" variant="outlined" />
         )}
         autoSelect
       />
