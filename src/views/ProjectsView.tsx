@@ -135,7 +135,10 @@ export const ProjectsView = (props: Props): JSX.Element => {
           square
           className={classes.paperHeader}
         >
-          <Typography className={classes.projectsTopography}>
+          <Typography
+            className={classes.projectsTopography}
+            style={{ marginLeft: "14px" }}
+          >
             Projects
           </Typography>
         </Paper>
