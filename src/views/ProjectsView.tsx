@@ -155,7 +155,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
           <List style={{ paddingBottom: "0px" }}>
             <ListItem
               divider
-              style={{ padding: "0px 0px 0px 10px" }}
+              style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
               onClick={() => {
                 setDialogOpen(!dialogOpen);
               }}
