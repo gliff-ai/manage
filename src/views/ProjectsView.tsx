@@ -10,8 +10,11 @@ import {
   InputBase,
   List,
   ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { useAuth } from "@/hooks/use-auth";
@@ -31,6 +34,7 @@ const useStyles = (props: Props) =>
       fontSize: "21px",
       marginRight: "125px",
     },
+    tableCell: { padding: "0px 16px 0px 25px", fontSize: "16px" },
   }));
 
 interface Props {
@@ -97,23 +101,17 @@ export const ProjectsView = (props: Props): JSX.Element => {
   };
 
   const project = ({ name, uid }: Project) => (
-    <>
-      <ListItem key={name} divider>
-        <ListItemText
-          key={name}
-          primary={name}
-          style={{ marginLeft: "10px" }}
+    <TableRow key={uid}>
+      <TableCell className={classes.tableCell}>{name}</TableCell>
+      <TableCell className={classes.tableCell} align="right">
+        <InvitePopover
+          projectInvitee={projectInvitee}
+          projectInvitees={projectInvitees}
+          handleSelectChange={handleSelectChange}
+          inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-        <ListItemSecondaryAction>
-          <InvitePopover
-            projectInvitee={projectInvitee}
-            projectInvitees={projectInvitees}
-            handleSelectChange={handleSelectChange}
-            inviteToProject={() => inviteToProject(uid, projectInvitee)}
-          />
-        </ListItemSecondaryAction>
-      </ListItem>
-    </>
+      </TableCell>
+    </TableRow>
   );
 
   return (
@@ -143,7 +141,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
           </Typography>
         </Paper>
         <Paper elevation={0} square>
-          <List>
+          <List style={{ paddingBottom: "0px" }}>
             <ListItem divider style={{ padding: "0px 0px 0px 10px" }}>
               <IconButton
                 onClick={(e) => {
@@ -172,8 +170,13 @@ export const ProjectsView = (props: Props): JSX.Element => {
                 }}
               />
             </ListItem>
-            {projects.map(project)}
+            {/* {projects.map(project)} */}
           </List>
+          <TableContainer>
+            <Table aria-label="simple table">
+              <TableBody>{projects.map(project)}</TableBody>
+            </Table>
+          </TableContainer>
         </Paper>
       </Card>
     </div>

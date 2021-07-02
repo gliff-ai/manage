@@ -27,8 +27,8 @@ const config = {
     getUsers: "GET /users",
     getProjects: () =>
       Promise.resolve([
-        { name: "Project 1", id: "1" },
-        { name: "Project 2", id: "2" },
+        { name: "Project 1", uid: "1" },
+        { name: "Project 2", uid: "2" },
       ]),
     createProject: (data) => {
       return Promise.resolve([]);
