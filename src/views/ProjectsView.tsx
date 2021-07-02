@@ -7,7 +7,6 @@ import {
   Card,
   makeStyles,
   Theme,
-  InputBase,
   List,
   ListItem,
   ListItemText,
@@ -93,13 +92,12 @@ export const ProjectsView = (props: Props): JSX.Element => {
     }
   }, [auth]);
 
-  const inviteToProject = (projectId: string, inviteeEmail: string) => {
-    return props.services
+  const inviteToProject = (projectId: string, inviteeEmail: string) =>
+    props.services
       .inviteToProject({ projectId, email: inviteeEmail })
       .then(() => {
         console.log("invite complete!");
       });
-  };
 
   const createProject = async (): Promise<string> => {
     await props.services.createProject({ name: newProjectName });
@@ -115,7 +113,6 @@ export const ProjectsView = (props: Props): JSX.Element => {
       <TableCell className={classes.tableCell}>{name}</TableCell>
       <TableCell className={classes.tableCell} align="right">
         <InviteDialog
-          projectInvitee={projectInvitee}
           projectInvitees={projectInvitees}
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
@@ -136,7 +133,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
       >
         <PageSelector page="projects" />
       </div>
-      <Card style={{ width: "100%", height: "90vh", marginRight: "20px" }}>
+      <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
         <Paper
           elevation={0}
           variant="outlined"
@@ -219,12 +216,8 @@ export const ProjectsView = (props: Props): JSX.Element => {
                 <Autocomplete
                   options={projectInvitees}
                   getOptionLabel={(option) => option.name}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Add Team Members"
-                      variant="outlined"
-                    />
+                  renderInput={() => (
+                    <TextField label="Add Team Members" variant="outlined" />
                   )}
                   style={{ marginTop: "26px" }}
                   onChange={(event, value) => {
@@ -274,11 +267,20 @@ export const ProjectsView = (props: Props): JSX.Element => {
                       projects.map((p) => p.name).includes(newProjectName)
                     }
                     onClick={() => {
-                      createProject().then((newProjectUid) => {
-                        for (const profile of dialogInvitees) {
-                          inviteToProject(newProjectUid, profile.email);
+                      createProject().then(
+                        (newProjectUid) => {
+                          for (const profile of dialogInvitees) {
+                            inviteToProject(newProjectUid, profile.email).catch(
+                              (err) => {
+                                console.log(err);
+                              }
+                            );
+                          }
+                        },
+                        (err) => {
+                          console.log(err);
                         }
-                      });
+                      );
                       setDialogOpen(false);
                     }}
                     color="primary"

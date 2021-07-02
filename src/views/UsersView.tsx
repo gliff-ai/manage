@@ -146,7 +146,7 @@ export const UsersView = (props: Props): JSX.Element => {
       </div>
       <Card
         className={classes.usersCard}
-        style={{ width: "70%", height: "90vh" }}
+        style={{ width: "70%", height: "85vh" }}
       >
         <Paper
           elevation={0}

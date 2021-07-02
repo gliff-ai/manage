@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 interface Props {
-  projectInvitee: string;
   projectInvitees: Profile[];
   handleSelectChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   inviteToProject: () => void;
@@ -51,24 +50,12 @@ export function InviteDialog(props: Props): React.ReactElement {
 
   const inviteSelect = (
     <form noValidate autoComplete="off">
-      {/* <TextField
-        select
-        value={props.projectInvitee}
-        onChange={() => props.handleSelectChange}
-        autoFocus
-      >
-        {props.projectInvitees.map((el: Profile) => (
-          <MenuItem key={el.email} value={el.email}>
-            {el.name}
-          </MenuItem>
-        ))}
-      </TextField> */}
       <Autocomplete
         options={props.projectInvitees}
         getOptionLabel={(option) => option.name}
         onChange={() => props.handleSelectChange}
-        renderInput={(params) => (
-          <TextField {...params} label="Add Team Member" variant="outlined" />
+        renderInput={() => (
+          <TextField label="Add Team Member" variant="outlined" />
         )}
         autoSelect
       />
