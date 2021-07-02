@@ -2,26 +2,33 @@ import { ChangeEvent, useEffect, useState } from "react";
 import {
   Paper,
   IconButton,
-  Grid,
   Typography,
   Card,
   makeStyles,
   Theme,
   List,
   ListItem,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
   TextField,
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
+import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = makeStyles((theme: Theme) => ({
   topography: {
-    color: "#ffffff",
+    color: "#000000",
     display: "inline",
     fontSize: "21px",
     marginRight: "125px",
+    paddingLeft: "8px",
   },
   paperHeader: {
     padding: "10px",
@@ -30,11 +37,15 @@ const useStyles = makeStyles((theme: Theme) => ({
   paperBody: {
     margin: "15px",
     width: "400px",
-    height: "auto",
     fontSize: "17px",
+    paddingLeft: "6px",
   },
-  pendingInvitesCard: {
-    marginTop: "20px",
+  usersCard: {
+    marginRight: "20px",
+  },
+  tableText: {
+    fontSize: "16px",
+    paddingLeft: "20px",
   },
 }));
 
@@ -95,66 +106,95 @@ export const UsersView = (props: Props): JSX.Element => {
       </List>
     );
   } else {
-    pendingInvites = <>No pending invites</>;
+    pendingInvites = (
+      <Typography style={{ marginTop: "10px", marginBottom: "15px" }}>
+        No pending invites
+      </Typography>
+    );
   }
 
   const inviteForm = (
-    <form autoComplete="off" onSubmit={() => inviteNewUser}>
-      <div>{inviteMessage}</div>
-      <TextField
-        id="invite-email"
-        type="email"
-        required
-        onChange={handleChange}
-        value={inviteEmail}
-      />
-      <IconButton type="submit" onSubmit={(e) => e.preventDefault()}>
-        <Send />
-      </IconButton>
-    </form>
+    <>
+      <Typography>Why not invite someone else to collaborate?</Typography>
+      <form autoComplete="off" onSubmit={() => inviteNewUser}>
+        <div>{inviteMessage}</div>
+        <TextField
+          id="invite-email"
+          type="email"
+          required
+          onChange={handleChange}
+          value={inviteEmail}
+        />
+        <IconButton type="submit" onSubmit={(e) => e.preventDefault()}>
+          <Send />
+        </IconButton>
+      </form>
+    </>
   );
 
   return (
-    <>
-      <Grid container direction="row">
-        <Card>
-          <Paper
-            elevation={0}
-            variant="outlined"
-            square
-            className={classes.paperHeader}
-          >
-            <Typography className={classes.topography}>
-              Current Users
-            </Typography>
-          </Paper>
-          <Paper elevation={0} square className={classes.paperBody}>
-            <List>
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          flexGrow: 0,
+          flexShrink: 0,
+          marginLeft: "20px",
+          marginRight: "20px",
+        }}
+      >
+        <PageSelector page="users" />
+      </div>
+      <Card
+        className={classes.usersCard}
+        style={{ width: "70%", height: "90vh" }}
+      >
+        <Paper
+          elevation={0}
+          variant="outlined"
+          square
+          className={classes.paperHeader}
+        >
+          <Typography className={classes.topography}>Current Users</Typography>
+        </Paper>
+        <TableContainer>
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.tableText}>Name</TableCell>
+                <TableCell className={classes.tableText}>Email</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {team?.profiles.map(({ email, name }) => (
-                <ListItem key={email}>{name}</ListItem>
+                <TableRow key={email}>
+                  <TableCell className={classes.tableText}>{name}</TableCell>
+                  <TableCell className={classes.tableText}>{email}</TableCell>
+                </TableRow>
               ))}
-            </List>
-          </Paper>
-        </Card>
-      </Grid>
-      <Grid container direction="row">
-        <Card className={classes.pendingInvitesCard}>
-          <Paper
-            elevation={0}
-            variant="outlined"
-            square
-            className={classes.paperHeader}
-          >
-            <Typography className={classes.topography}>
-              Pending Invites
-            </Typography>
-          </Paper>
-          <Paper elevation={0} square className={classes.paperBody}>
-            {pendingInvites}
-            {inviteForm}
-          </Paper>
-        </Card>
-      </Grid>
-    </>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Card>
+
+      <Card
+        className={classes.usersCard}
+        style={{ width: "30%", height: "100%" }}
+      >
+        <Paper
+          elevation={0}
+          variant="outlined"
+          square
+          className={classes.paperHeader}
+        >
+          <Typography className={classes.topography}>
+            Pending Invites
+          </Typography>
+        </Paper>
+        <Paper elevation={0} square className={classes.paperBody}>
+          {pendingInvites}
+          {inviteForm}
+        </Paper>
+      </Card>
+    </div>
   );
 };

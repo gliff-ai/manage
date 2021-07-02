@@ -11,17 +11,19 @@ module.exports = {
     "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "prettier"
+    "prettier",
   ],
   overrides: [
     {
       files: ["*.ts", "*.tsx"],
       rules: {
-        "no-void": ["error", { "allowAsStatement": true }],
+        "no-void": ["error", { allowAsStatement: true }],
         "react/react-in-jsx-scope": "off", // This isn't true as of React 17
         "react/static-property-placement": "off",
         "react/destructuring-assignment": "off", // This would be nice, but we call a lot of methods on props we pass down which rules it out
         "import/prefer-default-export": "off", // Most of the internet agrees this should be off
+        "@typescript-eslint/no-var-requires": "off", // If anyone knows a better way to import SVG files please tell me
+        "global-require": "off",
         "no-restricted-syntax": [
           // AirBnb don't allow for...of loops. We do, but still want to restrict the rest. Huge argument here: https://github.com/airbnb/javascript/issues/1271
           "error",

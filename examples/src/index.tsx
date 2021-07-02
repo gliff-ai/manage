@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { UserInterface } from "@/index";
 import { Services } from "@/api";
@@ -17,7 +17,7 @@ const config = {
       Promise.resolve({
         profiles: [
           { email: "user1@gliff.app", name: "Mike Jones" },
-          { email: "user2@gliff.app", name: "John Smith"},
+          { email: "user2@gliff.app", name: "John Smith" },
           { email: "user3@gliff.app", name: "Jane James" },
         ],
         pending_invites: [],
@@ -25,7 +25,11 @@ const config = {
     loginUser: "GET /login",
     getProject: "GET /project",
     getUsers: "GET /users",
-    getProjects: () => Promise.resolve([{ name: "Project 1", id: "1" }, { name: "Project 2", id: "2" }]),
+    getProjects: () =>
+      Promise.resolve([
+        { name: "Project 1", uid: "1" },
+        { name: "Project 2", uid: "2" },
+      ]),
     createProject: (data) => {
       return Promise.resolve([]);
     },
@@ -42,13 +46,8 @@ const config = {
 ReactDOM.render(
   <ProvideAuth>
     <BrowserRouter>
-      <nav>
-        <Link to="/">Home</Link>
-        <Link to="/manage">MANAGE</Link>
-      </nav>
-      <br />
       <Routes>
-        <Route path="/" element={<h1>HOME</h1>} />
+        <Route path="/" element={<Navigate to="/manage/users" />} />
         <Route
           path="manage/*"
           element={
@@ -56,6 +55,7 @@ ReactDOM.render(
               apiUrl="http://localhost:8000/django/api"
               user={user}
               services={config.services}
+              showAppBar
             />
           }
         />

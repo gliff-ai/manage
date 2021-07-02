@@ -3,7 +3,6 @@ import { ServiceFunctions } from "@/api";
 import {
   Paper,
   IconButton,
-  Grid,
   Typography,
   Card,
   makeStyles,
@@ -11,13 +10,17 @@ import {
   InputBase,
   List,
   ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Team } from "@/interfaces";
 import { InvitePopover } from "@/components/InvitePopover";
+import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = (props: Props) =>
   makeStyles((theme: Theme) => ({
@@ -26,14 +29,12 @@ const useStyles = (props: Props) =>
       backgroundColor: theme.palette.primary.main,
     },
     projectsTopography: {
-      color: "#ffffff",
+      color: "#000000",
       display: "inline",
       fontSize: "21px",
       marginRight: "125px",
     },
-    projectAddIconBtn: {
-      right: "16px",
-    },
+    tableCell: { padding: "0px 16px 0px 25px", fontSize: "16px" },
   }));
 
 interface Props {
@@ -100,50 +101,84 @@ export const ProjectsView = (props: Props): JSX.Element => {
   };
 
   const project = ({ name, uid }: Project) => (
-    <ListItem key={name}>
-      <ListItemText key={name} primary={name} />
-      <ListItemSecondaryAction>
+    <TableRow key={uid}>
+      <TableCell className={classes.tableCell}>{name}</TableCell>
+      <TableCell className={classes.tableCell} align="right">
         <InvitePopover
           projectInvitee={projectInvitee}
           projectInvitees={projectInvitees}
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-      </ListItemSecondaryAction>
-    </ListItem>
+      </TableCell>
+    </TableRow>
   );
 
   return (
-    <Grid container direction="row">
-      <Card>
+    <div style={{ display: "flex" }}>
+      <div
+        style={{
+          flexGrow: 0,
+          flexShrink: 0,
+          marginLeft: "20px",
+          marginRight: "20px",
+        }}
+      >
+        <PageSelector page="projects" />
+      </div>
+      <Card style={{ width: "100%", height: "90vh", marginRight: "20px" }}>
         <Paper
           elevation={0}
           variant="outlined"
           square
           className={classes.paperHeader}
         >
-          <Typography className={classes.projectsTopography}>
+          <Typography
+            className={classes.projectsTopography}
+            style={{ marginLeft: "14px" }}
+          >
             Projects
           </Typography>
         </Paper>
         <Paper elevation={0} square>
-          <InputBase
-            placeholder="New project"
-            value={projectName}
-            onChange={handleChange}
-            inputProps={{
-              style: { fontSize: 18, marginLeft: 15, marginRight: 50 },
-            }}
-          />
-          <IconButton
-            onClick={createProject}
-            className={classes.projectAddIconBtn}
-          >
-            <Add />
-          </IconButton>
-          <List>{projects.map(project)}</List>
+          <List style={{ paddingBottom: "0px" }}>
+            <ListItem divider style={{ padding: "0px 0px 0px 10px" }}>
+              <IconButton
+                onClick={(e) => {
+                  console.log(e);
+                  createProject().catch((err) => {
+                    console.log(err);
+                  });
+                }}
+                style={{ marginBottom: "5px" }}
+              >
+                <Add />
+              </IconButton>
+              <InputBase
+                placeholder="Create New Project"
+                value={projectName}
+                onChange={handleChange}
+                onKeyPress={(e) => {
+                  if (e.code === "Enter") {
+                    createProject().catch((err) => {
+                      console.log(err);
+                    });
+                  }
+                }}
+                inputProps={{
+                  style: { fontSize: 18 },
+                }}
+              />
+            </ListItem>
+            {/* {projects.map(project)} */}
+          </List>
+          <TableContainer>
+            <Table aria-label="simple table">
+              <TableBody>{projects.map(project)}</TableBody>
+            </Table>
+          </TableContainer>
         </Paper>
       </Card>
-    </Grid>
+    </div>
   );
 };
