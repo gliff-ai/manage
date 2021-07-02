@@ -14,7 +14,7 @@ import { theme } from "@/theme";
 const useStyles = (props: Props) =>
   makeStyles({
     iconButton: { margin: "6px", padding: "0px" },
-    svgLarge: { width: "55%", height: "auto" },
+    svgLarge: { width: "50%", height: "auto" },
     popoverAvatar: {
       backgroundColor: theme.palette.primary.main,
       color: "#2B2F3A",
