@@ -11,8 +11,10 @@ import {
   TextField,
   MenuItem,
 } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import SVG from "react-inlinesvg";
 import { Profile } from "@/interfaces";
+
+const EditIcon = require("../assets/Edit_Details.svg") as string;
 
 const useStyles = makeStyles((theme: Theme) => ({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
@@ -77,7 +79,7 @@ export function InvitePopover(props: Props): React.ReactElement {
   return (
     <>
       <IconButton onClick={handleClick}>
-        <Edit />
+        <SVG src={EditIcon} style={{ width: "22px", height: "auto" }} />
       </IconButton>
       <Popover
         open={Boolean(anchorEl)}
