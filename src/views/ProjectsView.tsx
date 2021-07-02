@@ -13,9 +13,6 @@ import {
   ListItemText,
   ListItemSecondaryAction,
   Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
   TextField,
   DialogActions,
   Button,
@@ -25,7 +22,7 @@ import { Clear } from "@material-ui/icons";
 import AddIcon from "@material-ui/icons/Add";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
-import { InvitePopover } from "@/components/InvitePopover";
+import { InviteDialog } from "@/components/InviteDialog";
 import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = (props: Props) =>
@@ -111,7 +108,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
     <ListItem key={name} divider>
       <ListItemText key={name} primary={name} />
       <ListItemSecondaryAction>
-        <InvitePopover
+        <InviteDialog
           projectInvitee={projectInvitee}
           projectInvitees={projectInvitees}
           handleSelectChange={handleSelectChange}

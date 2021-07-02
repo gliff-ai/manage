@@ -3,7 +3,7 @@ import {
   Paper,
   Button,
   Card,
-  Popover,
+  Dialog,
   IconButton,
   Typography,
   makeStyles,
@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { Edit } from "@material-ui/icons";
 import { Profile } from "@/interfaces";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
@@ -23,10 +24,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     hegith: "400px",
   },
   inviteBtn: {
-    marginLeft: "15px",
+    marginTop: "15px",
   },
   userInviteTopography: {
-    color: "#ffffff",
+    color: "#000000",
     display: "inline",
     fontSize: "21px",
     marginRight: "125px",
@@ -43,32 +44,40 @@ interface Props {
   inviteToProject: () => void;
 }
 
-export function InvitePopover(props: Props): React.ReactElement {
+export function InviteDialog(props: Props): React.ReactElement {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const [open, setOpen] = useState<boolean>(false);
 
   const inviteSelect = (
     <form noValidate autoComplete="off">
-      <TextField
+      {/* <TextField
         select
         value={props.projectInvitee}
         onChange={() => props.handleSelectChange}
+        autoFocus
       >
         {props.projectInvitees.map((el: Profile) => (
           <MenuItem key={el.email} value={el.email}>
             {el.name}
           </MenuItem>
         ))}
-      </TextField>
-      <Button className={classes.inviteBtn} onClick={props.inviteToProject}>
+      </TextField> */}
+      <Autocomplete
+        options={props.projectInvitees}
+        getOptionLabel={(option) => option.name}
+        onChange={() => props.handleSelectChange}
+        renderInput={(params) => (
+          <TextField {...params} label="Add Team Member" variant="outlined" />
+        )}
+        autoSelect
+      />
+      <Button
+        className={classes.inviteBtn}
+        onClick={() => {
+          props.inviteToProject();
+          setOpen(false);
+        }}
+      >
         Invite
       </Button>
     </form>
@@ -76,14 +85,19 @@ export function InvitePopover(props: Props): React.ReactElement {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
+      <IconButton
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
         <Edit />
       </IconButton>
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+
+      <Dialog
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
       >
         <Card className={classes.card}>
           <Paper
@@ -100,7 +114,7 @@ export function InvitePopover(props: Props): React.ReactElement {
             {inviteSelect}
           </Paper>
         </Card>
-      </Popover>
+      </Dialog>
     </>
   );
 }
