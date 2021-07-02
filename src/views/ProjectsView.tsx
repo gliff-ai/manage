@@ -213,6 +213,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
                   }}
                 />
 
+                {/* eslint-disable react/jsx-props-no-spreading */}
                 <Autocomplete
                   options={projectInvitees}
                   getOptionLabel={(option) => option.name}
@@ -233,6 +234,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
                     );
                   }}
                 />
+                {/* eslint-enable react/jsx-props-no-spreading */}
 
                 <List>
                   {dialogInvitees.map((profile) => (

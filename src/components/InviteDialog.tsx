@@ -50,6 +50,7 @@ export function InviteDialog(props: Props): React.ReactElement {
 
   const inviteSelect = (
     <form noValidate autoComplete="off">
+      {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
         options={props.projectInvitees}
         getOptionLabel={(option) => option.name}
@@ -59,6 +60,7 @@ export function InviteDialog(props: Props): React.ReactElement {
         )}
         autoSelect
       />
+      {/* eslint-enable react/jsx-props-no-spreading */}
       <Button
         className={classes.inviteBtn}
         onClick={() => {
