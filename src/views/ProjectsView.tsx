@@ -16,6 +16,11 @@ import {
   TextField,
   DialogActions,
   Button,
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Clear } from "@material-ui/icons";
@@ -42,6 +47,7 @@ const useStyles = (props: Props) =>
         background: "#01dbff",
       },
     },
+    tableCell: { padding: "0px 16px 0px 25px", fontSize: "16px" },
   }));
 
 interface Props {
@@ -105,17 +111,17 @@ export const ProjectsView = (props: Props): JSX.Element => {
   };
 
   const project = ({ name, uid }: Project) => (
-    <ListItem key={name} divider>
-      <ListItemText key={name} primary={name} />
-      <ListItemSecondaryAction>
+    <TableRow key={uid}>
+      <TableCell className={classes.tableCell}>{name}</TableCell>
+      <TableCell className={classes.tableCell} align="right">
         <InviteDialog
           projectInvitee={projectInvitee}
           projectInvitees={projectInvitees}
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-      </ListItemSecondaryAction>
-    </ListItem>
+      </TableCell>
+    </TableRow>
   );
 
   return (
@@ -137,12 +143,16 @@ export const ProjectsView = (props: Props): JSX.Element => {
           square
           className={classes.paperHeader}
         >
-          <Typography className={classes.projectsTopography}>
+          <Typography
+            className={classes.projectsTopography}
+            style={{ marginLeft: "14px" }}
+          >
             Projects
           </Typography>
         </Paper>
+
         <Paper elevation={0} square>
-          <List>
+          <List style={{ paddingBottom: "0px" }}>
             <ListItem
               divider
               style={{ padding: "0px 0px 0px 10px" }}
@@ -166,8 +176,13 @@ export const ProjectsView = (props: Props): JSX.Element => {
                 </Typography>
               </div>
             </ListItem>
-            {projects.map(project)}
           </List>
+
+          <TableContainer>
+            <Table aria-label="simple table">
+              <TableBody>{projects.map(project)}</TableBody>
+            </Table>
+          </TableContainer>
 
           <Dialog
             open={dialogOpen}

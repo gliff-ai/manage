@@ -9,11 +9,12 @@ import {
   makeStyles,
   Theme,
   TextField,
-  MenuItem,
 } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
+import SVG from "react-inlinesvg";
 import { Profile } from "@/interfaces";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+
+const EditIcon = require("../assets/Edit_Details.svg") as string;
 
 const useStyles = makeStyles((theme: Theme) => ({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
@@ -90,7 +91,7 @@ export function InviteDialog(props: Props): React.ReactElement {
           setOpen(!open);
         }}
       >
-        <Edit />
+        <SVG src={EditIcon} style={{ width: "22px", height: "auto" }} />
       </IconButton>
 
       <Dialog
