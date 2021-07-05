@@ -7,19 +7,26 @@ import {
   Card,
   makeStyles,
   Theme,
-  InputBase,
   List,
   ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Dialog,
+  TextField,
+  DialogActions,
+  Button,
   TableContainer,
   Table,
   TableBody,
   TableRow,
   TableCell,
 } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { Clear } from "@material-ui/icons";
+import AddIcon from "@material-ui/icons/Add";
 import { useAuth } from "@/hooks/use-auth";
-import { Project, Team } from "@/interfaces";
-import { InvitePopover } from "@/components/InvitePopover";
+import { Project, Profile, Team } from "@/interfaces";
+import { InviteDialog } from "@/components/InviteDialog";
 import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = (props: Props) =>
@@ -34,6 +41,11 @@ const useStyles = (props: Props) =>
       fontSize: "21px",
       marginRight: "125px",
     },
+    "@global": {
+      '.MuiAutocomplete-option[data-focus="true"]': {
+        background: "#01dbff",
+      },
+    },
     tableCell: { padding: "0px 16px 0px 25px", fontSize: "16px" },
   }));
 
@@ -43,18 +55,15 @@ interface Props {
 
 export const ProjectsView = (props: Props): JSX.Element => {
   const auth = useAuth();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [projectName, setProjectName] = useState("");
-  const [projectInvitee, setInvitee] = useState("");
-  const [projectInvitees, setInvitees] = useState([]);
+  const [newProjectName, setNewProjectName] = useState<string>(); // string entered in text field in New Project dialog
+  const [projects, setProjects] = useState<Project[]>([]); // all projects
+  const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
+  const [projectInvitees, setInvitees] = useState<Profile[]>([]); // all team members except the logged in user
+  const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
+  const [dialogInvitees, setDialogInvitees] = useState<Profile[]>([]); // team members selected in the New Project dialog
 
   if (!auth) return null;
   const classes = useStyles(props)();
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    const { value } = event.target;
-    setProjectName(value);
-  };
 
   const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     const { value } = event.target;
@@ -83,29 +92,27 @@ export const ProjectsView = (props: Props): JSX.Element => {
     }
   }, [auth]);
 
-  const inviteToProject = (projectId: string, inviteeEmail: string) => {
-    if (!projectInvitee) return false;
-
-    return props.services
+  const inviteToProject = (projectId: string, inviteeEmail: string) =>
+    props.services
       .inviteToProject({ projectId, email: inviteeEmail })
       .then(() => {
         console.log("invite complete!");
       });
-  };
 
-  const createProject = async (): Promise<void> => {
-    await props.services.createProject({ name: projectName });
+  const createProject = async (): Promise<string> => {
+    await props.services.createProject({ name: newProjectName });
     const p = (await props.services.getProjects()) as Project[];
     setProjects(p);
-    setProjectName("");
+    // TODO: would be nice if services.createProject could return the uid of the new project
+    console.log(p);
+    return p.find((project) => project.name === newProjectName).uid;
   };
 
   const project = ({ name, uid }: Project) => (
     <TableRow key={uid}>
       <TableCell className={classes.tableCell}>{name}</TableCell>
       <TableCell className={classes.tableCell} align="right">
-        <InvitePopover
-          projectInvitee={projectInvitee}
+        <InviteDialog
           projectInvitees={projectInvitees}
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
@@ -126,7 +133,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
       >
         <PageSelector page="projects" />
       </div>
-      <Card style={{ width: "100%", height: "90vh", marginRight: "20px" }}>
+      <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
         <Paper
           elevation={0}
           variant="outlined"
@@ -140,43 +147,156 @@ export const ProjectsView = (props: Props): JSX.Element => {
             Projects
           </Typography>
         </Paper>
+
         <Paper elevation={0} square>
           <List style={{ paddingBottom: "0px" }}>
-            <ListItem divider style={{ padding: "0px 0px 0px 10px" }}>
-              <IconButton
-                onClick={(e) => {
-                  console.log(e);
-                  createProject().catch((err) => {
-                    console.log(err);
-                  });
+            <ListItem
+              divider
+              style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
+              onClick={() => {
+                setDialogOpen(!dialogOpen);
+              }}
+            >
+              <div
+                style={{
+                  margin: "10px",
+                  display: "flex",
+                  alignItems: "center",
                 }}
-                style={{ marginBottom: "5px" }}
               >
-                <Add />
-              </IconButton>
-              <InputBase
-                placeholder="Create New Project"
-                value={projectName}
-                onChange={handleChange}
-                onKeyPress={(e) => {
-                  if (e.code === "Enter") {
-                    createProject().catch((err) => {
-                      console.log(err);
-                    });
-                  }
-                }}
-                inputProps={{
-                  style: { fontSize: 18 },
-                }}
-              />
+                <AddIcon
+                  fontSize="large"
+                  style={{ marginRight: "10px", color: "grey" }}
+                />
+                <Typography style={{ color: "grey" }}>
+                  Create New Project
+                </Typography>
+              </div>
             </ListItem>
-            {/* {projects.map(project)} */}
           </List>
+
           <TableContainer>
             <Table aria-label="simple table">
               <TableBody>{projects.map(project)}</TableBody>
             </Table>
           </TableContainer>
+
+          <Dialog
+            open={dialogOpen}
+            onClose={() => {
+              setDialogOpen(false);
+            }}
+          >
+            <Card>
+              <Paper
+                elevation={0}
+                variant="outlined"
+                square
+                className={classes.paperHeader}
+              >
+                <Typography className={classes.projectsTopography}>
+                  New Project
+                </Typography>
+              </Paper>
+
+              <Paper
+                elevation={0}
+                square
+                style={{ width: "20vw", margin: "20px" }}
+              >
+                <TextField
+                  autoFocus
+                  label="Project Name"
+                  style={{ width: "100%" }}
+                  onChange={(event) => {
+                    setNewProjectName(event.target.value);
+                  }}
+                />
+
+                {/* eslint-disable react/jsx-props-no-spreading */}
+                <Autocomplete
+                  options={projectInvitees}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Add Team Members"
+                      variant="outlined"
+                    />
+                  )}
+                  style={{ marginTop: "26px" }}
+                  onChange={(event, value) => {
+                    // add the selected user profile to dialogInvitees if it's not already there:
+                    setDialogInvitees(
+                      dialogInvitees.includes(value as Profile)
+                        ? dialogInvitees
+                        : dialogInvitees.concat(value as Profile)
+                    );
+                  }}
+                />
+                {/* eslint-enable react/jsx-props-no-spreading */}
+
+                <List>
+                  {dialogInvitees.map((profile) => (
+                    <ListItem key={profile.email}>
+                      <ListItemText>{profile.name}</ListItemText>
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          onClick={() => {
+                            // remove `email` from dialogInvitees:
+                            setDialogInvitees(
+                              dialogInvitees.filter(
+                                (_profile) => _profile.email !== profile.email
+                              )
+                            );
+                          }}
+                        >
+                          <Clear />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))}
+                </List>
+
+                <DialogActions>
+                  <Button
+                    onClick={() => {
+                      setDialogOpen(false);
+                    }}
+                    color="primary"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    disabled={
+                      newProjectName === "" ||
+                      projects.map((p) => p.name).includes(newProjectName)
+                    }
+                    onClick={() => {
+                      createProject().then(
+                        (newProjectUid) => {
+                          for (const profile of dialogInvitees) {
+                            inviteToProject(newProjectUid, profile.email).catch(
+                              (err) => {
+                                console.log(err);
+                              }
+                            );
+                          }
+                        },
+                        (err) => {
+                          console.log(err);
+                        }
+                      );
+                      setDialogOpen(false);
+                    }}
+                    color="primary"
+                  >
+                    OK
+                  </Button>
+                </DialogActions>
+              </Paper>
+            </Card>
+          </Dialog>
         </Paper>
       </Card>
     </div>
