@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import { initApiRequest, Services } from "@/api";
 import { UsersView } from "@/views/UsersView";
@@ -90,6 +90,9 @@ export function UserInterface(props: Props): JSX.Element {
       <div style={{ marginTop: props.showAppBar ? "108px" : "0px" }}>
         <Routes>
           <Route path="//*">
+            <Route path="/">
+              <Navigate to="projects" />
+            </Route>
             <Route path="users" element={<UsersView services={services} />} />
             <Route
               path="projects"
