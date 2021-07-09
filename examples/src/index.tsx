@@ -55,7 +55,7 @@ ReactDOM.render(
               apiUrl="http://localhost:8000/django/api"
               user={user}
               services={config.services}
-              showAppBar
+              showAppBar={true}
             />
           }
         />

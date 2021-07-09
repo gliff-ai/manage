@@ -87,7 +87,7 @@ export function UserInterface(props: Props): JSX.Element {
     <ThemeProvider theme={theme}>
       {appbar}
       <CssBaseline />
-      <div style={{ marginTop: props.showAppBar ? "108px" : "0px" }}>
+      <div style={{ marginTop: props.showAppBar ? "108px" : "20px" }}>
         <Routes>
           <Route path="//*">
             <Route path="/">
