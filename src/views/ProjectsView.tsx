@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent } from "react";
+import { useEffect, useState, ChangeEvent, ReactElement } from "react";
 import { ServiceFunctions } from "@/api";
 import {
   Paper,
@@ -20,10 +20,10 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Tooltip,
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear } from "@material-ui/icons";
-import AddIcon from "@material-ui/icons/Add";
+import { Clear, Launch, Add } from "@material-ui/icons";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog } from "@/components/InviteDialog";
@@ -51,9 +51,10 @@ const useStyles = (props: Props) =>
 
 interface Props {
   services: ServiceFunctions;
+  launchCurateCallback?: (projectUid: string) => void | null;
 }
 
-export const ProjectsView = (props: Props): JSX.Element => {
+export const ProjectsView = (props: Props): ReactElement => {
   const auth = useAuth();
   const [newProjectName, setNewProjectName] = useState<string>(); // string entered in text field in New Project dialog
   const [projects, setProjects] = useState<Project[]>([]); // all projects
@@ -117,6 +118,20 @@ export const ProjectsView = (props: Props): JSX.Element => {
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
+        <Tooltip
+          key={`tooltip-${name}`}
+          title={`Open ${name} in CURATE`}
+          placement="bottom"
+        >
+          <Button
+            onClick={() => {
+              if (!props.launchCurateCallback) return;
+              props.launchCurateCallback(uid);
+            }}
+          >
+            <Launch />
+          </Button>
+        </Tooltip>
       </TableCell>
     </TableRow>
   );
@@ -164,7 +179,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
                   alignItems: "center",
                 }}
               >
-                <AddIcon
+                <Add
                   fontSize="large"
                   style={{ marginRight: "10px", color: "grey" }}
                 />
@@ -181,12 +196,7 @@ export const ProjectsView = (props: Props): JSX.Element => {
             </Table>
           </TableContainer>
 
-          <Dialog
-            open={dialogOpen}
-            onClose={() => {
-              setDialogOpen(false);
-            }}
-          >
+          <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
             <Card>
               <Paper
                 elevation={0}
@@ -301,4 +311,8 @@ export const ProjectsView = (props: Props): JSX.Element => {
       </Card>
     </div>
   );
+};
+
+ProjectsView.defaultProps = {
+  launchCurateCallback: undefined,
 };

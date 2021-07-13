@@ -31,12 +31,8 @@ interface Props {
   services?: Readonly<typeof defaultServices>;
   user?: User; // Optional mock user
   showAppBar: boolean;
+  launchCurateCallback?: (projectUid: string) => void;
 }
-
-const defaultProps = {
-  services: defaultServices,
-  user: undefined as User,
-};
 
 const useStyles = makeStyles(() => ({
   appBar: {
@@ -96,7 +92,12 @@ export function UserInterface(props: Props): JSX.Element {
             <Route path="users" element={<UsersView services={services} />} />
             <Route
               path="projects"
-              element={<ProjectsView services={services} />}
+              element={
+                <ProjectsView
+                  services={services}
+                  launchCurateCallback={props.launchCurateCallback}
+                />
+              }
             />
           </Route>
         </Routes>
@@ -105,6 +106,10 @@ export function UserInterface(props: Props): JSX.Element {
   );
 }
 
-UserInterface.defaultProps = defaultProps;
+UserInterface.defaultProps = {
+  services: defaultServices,
+  user: undefined as User,
+  launchCurateCallback: undefined,
+};
 
 export { Services };
