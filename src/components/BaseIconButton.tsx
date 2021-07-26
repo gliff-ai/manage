@@ -9,7 +9,7 @@ import {
   TooltipProps,
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
-import { theme } from "@/theme";
+import { theme } from "@gliff-ai/style";
 
 const useStyles = (props: Props) =>
   makeStyles({
