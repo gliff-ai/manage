@@ -14,6 +14,7 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { imgSrc } from "@/imgSrc";
 
 export { ProvideAuth } from "@/hooks/use-auth";
 
@@ -74,7 +75,7 @@ export function UserInterface(props: Props): JSX.Element {
         <Grid container direction="row">
           <Grid item className={classes.logo}>
             <img
-              src={require(`./assets/gliff-master-black.svg`) as string}
+              src={imgSrc("gliff-master-black")}
               width="79px"
               height="60px"
               alt="gliff logo"

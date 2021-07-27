@@ -13,8 +13,7 @@ import {
 import SVG from "react-inlinesvg";
 import { Profile } from "@/interfaces";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-
-const EditIcon = require("../assets/Edit_Details.svg") as string;
+import { imgSrc } from "@/imgSrc";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
@@ -80,7 +79,10 @@ export function InviteDialog(props: Props): React.ReactElement {
           setOpen(!open);
         }}
       >
-        <SVG src={EditIcon} style={{ width: "22px", height: "auto" }} />
+        <SVG
+          src={imgSrc("Edit_Details")}
+          style={{ width: "22px", height: "auto" }}
+        />
       </IconButton>
 
       <Dialog

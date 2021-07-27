@@ -30,7 +30,7 @@ const useStyles = (props: Props) =>
       backgroundColor: "#FFFFFF",
       fontSize: theme.typography.pxToRem(12),
       border: "1px solid #dadde9",
-      color: "#2B2F3A",
+      color: theme.palette.text.primary,
     },
     avatarFontSize: {
       fontSize: "11px",
