@@ -1,16 +1,17 @@
 import { ButtonGroup } from "@material-ui/core";
 import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
+import { imgSrc } from "@/imgSrc";
 import { BaseIconButton } from "./BaseIconButton";
 
 const tooltips = {
   users: {
     name: "Users",
-    icon: require("../assets/Users_Page.svg") as string,
+    icon: imgSrc("Users_Page"),
   },
   projects: {
     name: "Projects",
-    icon: require("../assets/Projects_Page.svg") as string,
+    icon: imgSrc("Projects_Page"),
   },
 };
 
