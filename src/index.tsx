@@ -5,8 +5,14 @@ import { initApiRequest, Services } from "@/api";
 import { UsersView } from "@/views/UsersView";
 import { ProjectsView } from "@/views/ProjectsView";
 import { useAuth } from "@/hooks/use-auth";
-import { ThemeProvider, theme } from "@/theme";
-import { AppBar, CssBaseline, Grid, Toolbar } from "@material-ui/core";
+import { theme } from "@gliff-ai/style";
+import {
+  AppBar,
+  CssBaseline,
+  Grid,
+  Toolbar,
+  ThemeProvider,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 export { ProvideAuth } from "@/hooks/use-auth";
