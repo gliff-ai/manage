@@ -13,7 +13,11 @@ import {
   Toolbar,
   ThemeProvider,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import {
+  createGenerateClassName,
+  makeStyles,
+  StylesProvider,
+} from "@material-ui/core/styles";
 
 export { ProvideAuth } from "@/hooks/use-auth";
 
@@ -84,31 +88,37 @@ export function UserInterface(props: Props): JSX.Element {
       </Toolbar>
     </AppBar>
   );
+  const generateClassName = createGenerateClassName({
+    seed: "manage",
+    disableGlobal: true,
+  });
 
   return (
-    <ThemeProvider theme={theme}>
-      {appbar}
-      <CssBaseline />
-      <div style={{ marginTop: props.showAppBar ? "108px" : "20px" }}>
-        <Routes>
-          <Route path="//*">
-            <Route path="/">
-              <Navigate to="projects" />
+    <StylesProvider generateClassName={generateClassName}>
+      <ThemeProvider theme={theme}>
+        {appbar}
+        <CssBaseline />
+        <div style={{ marginTop: props.showAppBar ? "108px" : "20px" }}>
+          <Routes>
+            <Route path="//*">
+              <Route path="/">
+                <Navigate to="projects" />
+              </Route>
+              <Route path="users" element={<UsersView services={services} />} />
+              <Route
+                path="projects"
+                element={
+                  <ProjectsView
+                    services={services}
+                    launchCurateCallback={props.launchCurateCallback}
+                  />
+                }
+              />
             </Route>
-            <Route path="users" element={<UsersView services={services} />} />
-            <Route
-              path="projects"
-              element={
-                <ProjectsView
-                  services={services}
-                  launchCurateCallback={props.launchCurateCallback}
-                />
-              }
-            />
-          </Route>
-        </Routes>
-      </div>
-    </ThemeProvider>
+          </Routes>
+        </div>
+      </ThemeProvider>
+    </StylesProvider>
   );
 }
 

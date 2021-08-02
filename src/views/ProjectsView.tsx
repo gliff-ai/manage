@@ -28,9 +28,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog } from "@/components/InviteDialog";
 import { PageSelector } from "@/components/PageSelector";
+import { theme } from "@gliff-ai/style";
 
 const useStyles = (props: Props) =>
-  makeStyles((theme: Theme) => ({
+  makeStyles(() => ({
     paperHeader: {
       padding: "10px",
       backgroundColor: theme.palette.primary.main,

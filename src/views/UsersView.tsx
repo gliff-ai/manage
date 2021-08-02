@@ -5,7 +5,6 @@ import {
   Typography,
   Card,
   makeStyles,
-  Theme,
   List,
   ListItem,
   TableContainer,
@@ -21,8 +20,9 @@ import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { PageSelector } from "@/components/PageSelector";
+import { theme } from "@gliff-ai/style";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   topography: {
     color: "#000000",
     display: "inline",

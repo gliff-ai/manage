@@ -7,16 +7,16 @@ import {
   IconButton,
   Typography,
   makeStyles,
-  Theme,
   TextField,
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import { Profile } from "@/interfaces";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { theme } from "@gliff-ai/style";
 
 const EditIcon = require("../assets/Edit_Details.svg") as string;
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
   card: {
     display: "flex",
