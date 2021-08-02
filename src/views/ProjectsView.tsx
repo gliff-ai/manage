@@ -6,7 +6,6 @@ import {
   Typography,
   Card,
   makeStyles,
-  Theme,
   List,
   ListItem,
   ListItemText,
