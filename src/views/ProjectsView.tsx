@@ -42,6 +42,7 @@ const useStyles = (props: Props) =>
       fontSize: "21px",
       marginRight: "125px",
     },
+    // eslint-disable-next-line mui-unused-classes/unused-classes
     "@global": {
       '.MuiAutocomplete-option[data-focus="true"]': {
         background: "#01dbff",
