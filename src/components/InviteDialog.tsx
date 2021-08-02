@@ -26,7 +26,11 @@ const useStyles = makeStyles(() => ({
   },
   inviteBtn: {
     marginTop: "15px",
+    backgroundColor: theme.palette.primary.main,
+    position: "relative",
+    left: "68px",
   },
+
   userInviteTopography: {
     color: "#000000",
     display: "inline",
@@ -67,6 +71,7 @@ export function InviteDialog(props: Props): React.ReactElement {
           props.inviteToProject();
           setOpen(false);
         }}
+        variant="outlined"
       >
         Invite
       </Button>

@@ -19,7 +19,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Tooltip,
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Clear, Launch, Add } from "@material-ui/icons";
@@ -27,7 +26,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog } from "@/components/InviteDialog";
 import { PageSelector } from "@/components/PageSelector";
-import { theme } from "@gliff-ai/style";
+import { theme, HtmlTooltip } from "@gliff-ai/style";
 
 const useStyles = (props: Props) =>
   makeStyles(() => ({
@@ -119,7 +118,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-        <Tooltip
+        <HtmlTooltip
           key={`tooltip-${name}`}
           title={`Open ${name} in CURATE`}
           placement="bottom"
@@ -132,7 +131,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           >
             <Launch />
           </Button>
-        </Tooltip>
+        </HtmlTooltip>
       </TableCell>
     </TableRow>
   );
