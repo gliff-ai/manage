@@ -47,6 +47,12 @@ const useStyles = makeStyles(() => ({
     fontSize: "16px",
     paddingLeft: "20px",
   },
+  form: {
+    display: "inline-flex",
+  },
+  textField: {
+    width: "200px",
+  },
 }));
 
 interface Props {
@@ -116,7 +122,11 @@ export const UsersView = (props: Props): JSX.Element => {
   const inviteForm = (
     <>
       <Typography>Why not invite someone else to collaborate?</Typography>
-      <form autoComplete="off" onSubmit={() => inviteNewUser}>
+      <form
+        autoComplete="off"
+        onSubmit={() => inviteNewUser}
+        className={classes.form}
+      >
         <div>{inviteMessage}</div>
         <TextField
           id="invite-email"
@@ -124,6 +134,7 @@ export const UsersView = (props: Props): JSX.Element => {
           required
           onChange={handleChange}
           value={inviteEmail}
+          className={classes.textField}
         />
         <IconButton type="submit" onSubmit={(e) => e.preventDefault()}>
           <Send />
