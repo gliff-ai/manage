@@ -6,7 +6,6 @@ import {
   Typography,
   Card,
   makeStyles,
-  Theme,
   List,
   ListItem,
   ListItemText,
@@ -20,7 +19,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Tooltip,
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Clear, Launch, Add } from "@material-ui/icons";
@@ -28,9 +26,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog } from "@/components/InviteDialog";
 import { PageSelector } from "@/components/PageSelector";
+import { theme, HtmlTooltip } from "@gliff-ai/style";
 
 const useStyles = (props: Props) =>
-  makeStyles((theme: Theme) => ({
+  makeStyles(() => ({
     paperHeader: {
       padding: "10px",
       backgroundColor: theme.palette.primary.main,
@@ -41,6 +40,7 @@ const useStyles = (props: Props) =>
       fontSize: "21px",
       marginRight: "125px",
     },
+    // eslint-disable-next-line mui-unused-classes/unused-classes
     "@global": {
       '.MuiAutocomplete-option[data-focus="true"]': {
         background: "#01dbff",
@@ -118,7 +118,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-        <Tooltip
+        <HtmlTooltip
           key={`tooltip-${name}`}
           title={`Open ${name} in CURATE`}
           placement="bottom"
@@ -131,7 +131,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           >
             <Launch />
           </Button>
-        </Tooltip>
+        </HtmlTooltip>
       </TableCell>
     </TableRow>
   );

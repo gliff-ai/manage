@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: ["./tsconfig.json"],
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "mui-unused-classes"],
   extends: [
     "eslint:recommended",
     "airbnb-typescript",
@@ -20,6 +20,7 @@ module.exports = {
         "no-void": ["error", { allowAsStatement: true }],
         "react/react-in-jsx-scope": "off", // This isn't true as of React 17
         "react/static-property-placement": "off",
+        "mui-unused-classes/unused-classes": 2,
         "react/destructuring-assignment": "off", // This would be nice, but we call a lot of methods on props we pass down which rules it out
         "import/prefer-default-export": "off", // Most of the internet agrees this should be off
         "@typescript-eslint/no-var-requires": "off", // If anyone knows a better way to import SVG files please tell me

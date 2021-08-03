@@ -5,7 +5,6 @@ import {
   Typography,
   Card,
   makeStyles,
-  Theme,
   List,
   ListItem,
   TableContainer,
@@ -21,8 +20,9 @@ import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { PageSelector } from "@/components/PageSelector";
+import { theme } from "@gliff-ai/style";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   topography: {
     color: "#000000",
     display: "inline",
@@ -46,6 +46,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   tableText: {
     fontSize: "16px",
     paddingLeft: "20px",
+  },
+  form: {
+    display: "inline-flex",
+  },
+  textField: {
+    width: "200px",
   },
 }));
 
@@ -116,7 +122,11 @@ export const UsersView = (props: Props): JSX.Element => {
   const inviteForm = (
     <>
       <Typography>Why not invite someone else to collaborate?</Typography>
-      <form autoComplete="off" onSubmit={() => inviteNewUser}>
+      <form
+        autoComplete="off"
+        onSubmit={() => inviteNewUser}
+        className={classes.form}
+      >
         <div>{inviteMessage}</div>
         <TextField
           id="invite-email"
@@ -124,6 +134,7 @@ export const UsersView = (props: Props): JSX.Element => {
           required
           onChange={handleChange}
           value={inviteEmail}
+          className={classes.textField}
         />
         <IconButton type="submit" onSubmit={(e) => e.preventDefault()}>
           <Send />

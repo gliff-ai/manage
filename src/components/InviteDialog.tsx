@@ -7,15 +7,16 @@ import {
   IconButton,
   Typography,
   makeStyles,
-  Theme,
   TextField,
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import { Profile } from "@/interfaces";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { theme } from "@gliff-ai/style";
+
 import { imgSrc } from "@/imgSrc";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles(() => ({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
   card: {
     display: "flex",
@@ -25,7 +26,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   inviteBtn: {
     marginTop: "15px",
+    backgroundColor: theme.palette.primary.main,
+    position: "relative",
+    left: "68px",
   },
+
   userInviteTopography: {
     color: "#000000",
     display: "inline",
@@ -66,6 +71,7 @@ export function InviteDialog(props: Props): React.ReactElement {
           props.inviteToProject();
           setOpen(false);
         }}
+        variant="outlined"
       >
         Invite
       </Button>
