@@ -47,9 +47,6 @@ const useStyles = makeStyles(() => ({
     fontSize: "16px",
     paddingLeft: "20px",
   },
-  form: {
-    display: "inline-flex",
-  },
   textField: {
     width: "200px",
   },
