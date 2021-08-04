@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { initApiRequest, Services } from "@/api";
-import { UsersView } from "@/views/UsersView";
+import { TeamView } from "@/views/TeamView";
 import { ProjectsView } from "@/views/ProjectsView";
 import { useAuth } from "@/hooks/use-auth";
 import { theme } from "@gliff-ai/style";
@@ -105,7 +105,7 @@ export function UserInterface(props: Props): JSX.Element {
               <Route path="/">
                 <Navigate to="projects" />
               </Route>
-              <Route path="users" element={<UsersView services={services} />} />
+              <Route path="team" element={<TeamView services={services} />} />
               <Route
                 path="projects"
                 element={

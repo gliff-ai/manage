@@ -5,18 +5,18 @@ import { BaseIconButton } from "@gliff-ai/style";
 import { imgSrc } from "@/imgSrc";
 
 const tooltips = {
-  users: {
-    name: "Users",
-    icon: imgSrc("Users_Page"),
-  },
   projects: {
     name: "Projects",
-    icon: imgSrc("Projects_Page"),
+    icon: imgSrc("projects"),
+  },
+  team: {
+    name: "Team members",
+    icon: imgSrc("team"),
   },
 };
 
 interface Props {
-  page: "users" | "projects";
+  page: "team" | "projects" | "collaborators";
 }
 
 export function PageSelector(props: Props): ReactElement {
@@ -25,17 +25,17 @@ export function PageSelector(props: Props): ReactElement {
   return (
     <ButtonGroup>
       <BaseIconButton
-        tooltip={tooltips.users}
-        active={props.page === "users"}
-        onClick={() => {
-          navigate("/manage/users");
-        }}
-      />
-      <BaseIconButton
         tooltip={tooltips.projects}
         active={props.page === "projects"}
         onClick={() => {
           navigate("/manage/projects");
+        }}
+      />
+      <BaseIconButton
+        tooltip={tooltips.team}
+        active={props.page === "team"}
+        onClick={() => {
+          navigate("/manage/team");
         }}
       />
     </ButtonGroup>

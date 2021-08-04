@@ -24,7 +24,7 @@ const config = {
       }),
     loginUser: "GET /login",
     getProject: "GET /project",
-    getUsers: "GET /users",
+    getTeam: "GET /team",
     getProjects: () =>
       Promise.resolve([
         { name: "Project 1", uid: "1" },
@@ -47,7 +47,7 @@ ReactDOM.render(
   <ProvideAuth>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/manage/users" />} />
+        <Route path="/" element={<Navigate to="/manage/team" />} />
         <Route
           path="manage/*"
           element={
