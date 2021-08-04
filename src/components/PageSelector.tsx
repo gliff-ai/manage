@@ -13,6 +13,10 @@ const tooltips = {
     name: "Team members",
     icon: imgSrc("team"),
   },
+  collaborators: {
+    name: "External collaborators",
+    icon: imgSrc("team"),
+  },
 };
 
 interface Props {
@@ -36,6 +40,13 @@ export function PageSelector(props: Props): ReactElement {
         active={props.page === "team"}
         onClick={() => {
           navigate("/manage/team");
+        }}
+      />
+      <BaseIconButton
+        tooltip={tooltips.collaborators}
+        active={props.page === "collaborators"}
+        onClick={() => {
+          navigate("/manage/collaborators");
         }}
       />
     </ButtonGroup>

@@ -16,11 +16,34 @@ const config = {
     queryTeam: () =>
       Promise.resolve({
         profiles: [
-          { email: "user1@gliff.app", name: "Mike Jones" },
-          { email: "user2@gliff.app", name: "John Smith" },
-          { email: "user3@gliff.app", name: "Jane James" },
+          {
+            email: "user1@gliff.app",
+            name: "Mike Jones",
+            is_collaborator: false,
+          },
+          {
+            email: "user2@gliff.app",
+            name: "John Smith",
+            is_collaborator: false,
+          },
+          {
+            email: "user3@gliff.app",
+            name: "Jane James",
+            is_collaborator: true,
+          },
         ],
-        pending_invites: [],
+        pending_invites: [
+          {
+            email: "newuser@gliff.app",
+            name: "Joan Wise",
+            is_collaborator: false,
+          },
+          {
+            email: "newcollaborator@gliff.app",
+            name: "John Walker",
+            is_collaborator: true,
+          },
+        ],
       }),
     loginUser: "GET /login",
     getProject: "GET /project",
@@ -30,10 +53,15 @@ const config = {
         { name: "Project 1", uid: "1" },
         { name: "Project 2", uid: "2" },
       ]),
+    getCollaboratorProject: (data) =>
+      Promise.resolve([{ name: "Project 1", uid: "1" }]),
     createProject: (data) => {
       return Promise.resolve([]);
     },
     inviteUser: (data): Promise<boolean> => {
+      return Promise.resolve(true);
+    },
+    inviteCollaborator: (data): Promise<boolean> => {
       return Promise.resolve(true);
     },
     inviteToProject: (data): Promise<boolean> => {

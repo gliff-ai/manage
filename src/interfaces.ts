@@ -11,6 +11,7 @@ export type Project = {
 export interface Profile {
   email: string;
   name: string;
+  is_collaborator: boolean;
 }
 
 export interface Team {
@@ -18,5 +19,6 @@ export interface Team {
   pending_invites: Array<{
     email: string;
     sent_date: string;
+    is_collaborator: boolean;
   }>;
 }
