@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   Paper,
   IconButton,
@@ -47,9 +47,6 @@ const useStyles = makeStyles(() => ({
     fontSize: "16px",
     paddingLeft: "20px",
   },
-  form: {
-    display: "inline-flex",
-  },
   textField: {
     width: "200px",
   },
@@ -76,7 +73,7 @@ export const UsersView = (props: Props): JSX.Element => {
     setInviteEmail(value);
   };
 
-  const inviteNewUser = async (event: ChangeEvent): Promise<void> => {
+  const inviteNewUser = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setInviteMessage("");
 
@@ -122,11 +119,7 @@ export const UsersView = (props: Props): JSX.Element => {
   const inviteForm = (
     <>
       <Typography>Why not invite someone else to collaborate?</Typography>
-      <form
-        autoComplete="off"
-        onSubmit={() => inviteNewUser}
-        className={classes.form}
-      >
+      <form autoComplete="off" onSubmit={inviteNewUser}>
         <div>{inviteMessage}</div>
         <TextField
           id="invite-email"
@@ -136,7 +129,7 @@ export const UsersView = (props: Props): JSX.Element => {
           value={inviteEmail}
           className={classes.textField}
         />
-        <IconButton type="submit" onSubmit={(e) => e.preventDefault()}>
+        <IconButton type="submit">
           <Send />
         </IconButton>
       </form>
