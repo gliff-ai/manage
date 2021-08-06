@@ -85,10 +85,7 @@ export function InviteDialog(props: Props): React.ReactElement {
           setOpen(!open);
         }}
       >
-        <SVG
-          src={imgSrc("Edit_Details")}
-          style={{ width: "22px", height: "auto" }}
-        />
+        <SVG src={imgSrc("edit")} style={{ width: "22px", height: "auto" }} />
       </IconButton>
 
       <Dialog

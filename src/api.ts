@@ -15,8 +15,10 @@ interface Services {
   queryTeam: APIRoute | ServiceFunction;
   loginUser: APIRoute | ServiceFunction;
   inviteUser: APIRoute | ServiceFunction;
+  inviteCollaborator: APIRoute | ServiceFunction;
   getProjects: APIRoute | ServiceFunction;
   getProject: APIRoute | ServiceFunction;
+  getCollaboratorProject: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
   inviteToProject: APIRoute | ServiceFunction;
 }

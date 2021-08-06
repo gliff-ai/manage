@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { initApiRequest, Services } from "@/api";
-import { UsersView } from "@/views/UsersView";
+import { TeamView } from "@/views/TeamView";
 import { ProjectsView } from "@/views/ProjectsView";
 import { useAuth } from "@/hooks/use-auth";
 import { theme } from "@gliff-ai/style";
@@ -19,6 +19,7 @@ import {
   StylesProvider,
 } from "@material-ui/core/styles";
 import { imgSrc } from "@/imgSrc";
+import { CollaboratorsView } from "./views/CollaboratorsView";
 
 export { ProvideAuth } from "@/hooks/use-auth";
 
@@ -31,8 +32,10 @@ const defaultServices = {
   queryTeam: "GET /team",
   loginUser: "POST /user/login",
   inviteUser: "POST /user/invite",
+  inviteCollaborator: "POST /user/invite/collaborator",
   getProjects: "GET /projects",
   getProject: "GET /project", // TODO: Support named params for GET? Body works tho...
+  getCollaboratorProject: "GET /team/collaboratorprojects",
   createProject: "POST /projects",
   inviteToProject: "POST /projects/invite",
 } as Services;
@@ -105,7 +108,11 @@ export function UserInterface(props: Props): JSX.Element {
               <Route path="/">
                 <Navigate to="projects" />
               </Route>
-              <Route path="users" element={<UsersView services={services} />} />
+              <Route path="team" element={<TeamView services={services} />} />
+              <Route
+                path="collaborators"
+                element={<CollaboratorsView services={services} />}
+              />
               <Route
                 path="projects"
                 element={
