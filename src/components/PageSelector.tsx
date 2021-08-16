@@ -30,21 +30,21 @@ export function PageSelector(props: Props): ReactElement {
     <ButtonGroup>
       <BaseIconButton
         tooltip={tooltips.projects}
-        active={props.page === "projects"}
+        fill={props.page === "projects"}
         onClick={() => {
           navigate("/manage/projects");
         }}
       />
       <BaseIconButton
         tooltip={tooltips.team}
-        active={props.page === "team"}
+        fill={props.page === "team"}
         onClick={() => {
           navigate("/manage/team");
         }}
       />
       <BaseIconButton
         tooltip={tooltips.collaborators}
-        active={props.page === "collaborators"}
+        fill={props.page === "collaborators"}
         onClick={() => {
           navigate("/manage/collaborators");
         }}
