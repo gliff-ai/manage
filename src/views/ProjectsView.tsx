@@ -40,6 +40,13 @@ const useStyles = (props: Props) =>
       fontSize: "21px",
       marginRight: "125px",
     },
+    cancelButton: {
+      textTransform: "none",
+    },
+    OKButton: {
+      backgroundColor: theme.palette.primary.main,
+    },
+
     // eslint-disable-next-line mui-unused-classes/unused-classes
     "@global": {
       '.MuiAutocomplete-option[data-focus="true"]': {
@@ -215,8 +222,7 @@ export const ProjectsView = (props: Props): ReactElement => {
                 style={{ width: "20vw", margin: "20px" }}
               >
                 <TextField
-                  autoFocus
-                  label="Project Name"
+                  placeholder="Project Name"
                   style={{ width: "100%" }}
                   onChange={(event) => {
                     setNewProjectName(event.target.value);
@@ -273,11 +279,13 @@ export const ProjectsView = (props: Props): ReactElement => {
                     onClick={() => {
                       setDialogOpen(false);
                     }}
-                    color="primary"
+                    className={classes.cancelButton}
                   >
                     Cancel
                   </Button>
                   <Button
+                    className={classes.OKButton}
+                    variant="outlined"
                     disabled={
                       newProjectName === "" ||
                       projects.map((p) => p.name).includes(newProjectName)
@@ -299,7 +307,6 @@ export const ProjectsView = (props: Props): ReactElement => {
                       );
                       setDialogOpen(false);
                     }}
-                    color="primary"
                   >
                     OK
                   </Button>
