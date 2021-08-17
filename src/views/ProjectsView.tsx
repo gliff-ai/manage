@@ -44,7 +44,9 @@ const useStyles = (props: Props) =>
       textTransform: "none",
     },
     OKButton: {
-      backgroundColor: theme.palette.primary.main,
+      "&:hover": {
+        backgroundColor: theme.palette.info.main,
+      },
     },
 
     // eslint-disable-next-line mui-unused-classes/unused-classes
@@ -63,7 +65,7 @@ interface Props {
 
 export const ProjectsView = (props: Props): ReactElement => {
   const auth = useAuth();
-  const [newProjectName, setNewProjectName] = useState<string>(); // string entered in text field in New Project dialog
+  const [newProjectName, setNewProjectName] = useState<string>(""); // string entered in text field in New Project dialog
   const [projects, setProjects] = useState<Project[]>([]); // all projects
   const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
   const [projectInvitees, setInvitees] = useState<Profile[]>([]); // all team members except the logged in user
@@ -285,7 +287,8 @@ export const ProjectsView = (props: Props): ReactElement => {
                   </Button>
                   <Button
                     className={classes.OKButton}
-                    variant="outlined"
+                    variant="contained"
+                    color="primary"
                     disabled={
                       newProjectName === "" ||
                       projects.map((p) => p.name).includes(newProjectName)
