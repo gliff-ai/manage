@@ -17,11 +17,11 @@ import {
   ListSubheader,
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
+import { theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { PageSelector } from "@/components/PageSelector";
-import { theme } from "@gliff-ai/style";
 
 const useStyles = makeStyles(() => ({
   topography: {

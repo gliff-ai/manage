@@ -10,10 +10,9 @@ import {
   TextField,
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
-import { Profile } from "@/interfaces";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { theme } from "@gliff-ai/style";
-
+import { Profile } from "@/interfaces";
 import { imgSrc } from "@/imgSrc";
 
 const useStyles = makeStyles(() => ({
