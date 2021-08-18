@@ -40,6 +40,15 @@ const useStyles = (props: Props) =>
       fontSize: "21px",
       marginRight: "125px",
     },
+    cancelButton: {
+      textTransform: "none",
+    },
+    OKButton: {
+      "&:hover": {
+        backgroundColor: theme.palette.info.main,
+      },
+    },
+
     // eslint-disable-next-line mui-unused-classes/unused-classes
     "@global": {
       '.MuiAutocomplete-option[data-focus="true"]': {
@@ -56,7 +65,7 @@ interface Props {
 
 export const ProjectsView = (props: Props): ReactElement => {
   const auth = useAuth();
-  const [newProjectName, setNewProjectName] = useState<string>(); // string entered in text field in New Project dialog
+  const [newProjectName, setNewProjectName] = useState<string>(""); // string entered in text field in New Project dialog
   const [projects, setProjects] = useState<Project[]>([]); // all projects
   const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
   const [projectInvitees, setInvitees] = useState<Profile[]>([]); // all team members except the logged in user
@@ -215,8 +224,7 @@ export const ProjectsView = (props: Props): ReactElement => {
                 style={{ width: "20vw", margin: "20px" }}
               >
                 <TextField
-                  autoFocus
-                  label="Project Name"
+                  placeholder="Project Name"
                   style={{ width: "100%" }}
                   onChange={(event) => {
                     setNewProjectName(event.target.value);
@@ -273,11 +281,14 @@ export const ProjectsView = (props: Props): ReactElement => {
                     onClick={() => {
                       setDialogOpen(false);
                     }}
-                    color="primary"
+                    className={classes.cancelButton}
                   >
                     Cancel
                   </Button>
                   <Button
+                    className={classes.OKButton}
+                    variant="contained"
+                    color="primary"
                     disabled={
                       newProjectName === "" ||
                       projects.map((p) => p.name).includes(newProjectName)
@@ -299,7 +310,6 @@ export const ProjectsView = (props: Props): ReactElement => {
                       );
                       setDialogOpen(false);
                     }}
-                    color="primary"
                   >
                     OK
                   </Button>

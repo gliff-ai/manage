@@ -22,7 +22,6 @@ import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { PageSelector } from "@/components/PageSelector";
 import { theme } from "@gliff-ai/style";
-import { Link } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   topography: {
