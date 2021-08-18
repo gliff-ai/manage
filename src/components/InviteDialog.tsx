@@ -1,7 +1,6 @@
 import { useState, ChangeEvent } from "react";
 import {
   Paper,
-  Button,
   Card,
   Dialog,
   IconButton,
@@ -12,7 +11,7 @@ import {
 import SVG from "react-inlinesvg";
 import { Profile } from "@/interfaces";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { theme } from "@gliff-ai/style";
+import { theme, BaseTextButton } from "@gliff-ai/style";
 
 import { imgSrc } from "@/imgSrc";
 
@@ -26,7 +25,6 @@ const useStyles = makeStyles(() => ({
   },
   inviteBtn: {
     marginTop: "15px",
-    backgroundColor: theme.palette.primary.main,
     position: "relative",
     left: "68px",
   },
@@ -65,16 +63,15 @@ export function InviteDialog(props: Props): React.ReactElement {
         autoSelect
       />
       {/* eslint-enable react/jsx-props-no-spreading */}
-      <Button
-        className={classes.inviteBtn}
-        onClick={() => {
-          props.inviteToProject();
-          setOpen(false);
-        }}
-        variant="outlined"
-      >
-        Invite
-      </Button>
+      <div className={classes.inviteBtn}>
+        <BaseTextButton
+          text="Invite"
+          onClick={() => {
+            props.inviteToProject();
+            setOpen(false);
+          }}
+        />
+      </div>
     </form>
   );
 
