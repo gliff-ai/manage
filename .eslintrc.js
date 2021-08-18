@@ -23,8 +23,9 @@ module.exports = {
         "mui-unused-classes/unused-classes": 2,
         "react/destructuring-assignment": "off", // This would be nice, but we call a lot of methods on props we pass down which rules it out
         "import/prefer-default-export": "off", // Most of the internet agrees this should be off
-        "@typescript-eslint/no-var-requires": "off", // If anyone knows a better way to import SVG files please tell me
-        "global-require": "off",
+        "@typescript-eslint/no-var-requires": 0, // If anyone knows a better way to import SVG files please tell me
+        "global-require": 0,
+        "import/extensions": 0,
         "no-restricted-syntax": [
           // AirBnb don't allow for...of loops. We do, but still want to restrict the rest. Huge argument here: https://github.com/airbnb/javascript/issues/1271
           "error",

@@ -1,5 +1,4 @@
 import { useEffect, useState, ChangeEvent, ReactElement } from "react";
-import { ServiceFunctions } from "@/api";
 import {
   Paper,
   IconButton,
@@ -22,11 +21,12 @@ import {
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Clear, Launch, Add } from "@material-ui/icons";
+import { theme, HtmlTooltip } from "@gliff-ai/style";
+import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog } from "@/components/InviteDialog";
 import { PageSelector } from "@/components/PageSelector";
-import { theme, HtmlTooltip } from "@gliff-ai/style";
 
 const useStyles = (props: Props) =>
   makeStyles(() => ({

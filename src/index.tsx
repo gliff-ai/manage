@@ -1,11 +1,5 @@
 import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-
-import { initApiRequest, Services } from "@/api";
-import { TeamView } from "@/views/TeamView";
-import { ProjectsView } from "@/views/ProjectsView";
-import { useAuth } from "@/hooks/use-auth";
-import { theme } from "@gliff-ai/style";
 import {
   AppBar,
   CssBaseline,
@@ -18,8 +12,13 @@ import {
   makeStyles,
   StylesProvider,
 } from "@material-ui/core/styles";
+import { theme } from "@gliff-ai/style";
+import { initApiRequest, Services } from "@/api";
+import { TeamView } from "@/views/TeamView";
+import { ProjectsView } from "@/views/ProjectsView";
+import { useAuth } from "@/hooks/use-auth";
 import { imgSrc } from "@/imgSrc";
-import { CollaboratorsView } from "./views/CollaboratorsView";
+import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 export { ProvideAuth } from "@/hooks/use-auth";
 
