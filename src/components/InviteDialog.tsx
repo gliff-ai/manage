@@ -23,10 +23,12 @@ const useStyles = makeStyles(() => ({
     width: "auto",
     hegith: "400px",
   },
-  inviteBtn: {
-    marginTop: "15px",
-    position: "relative",
-    left: "68px",
+  form: {
+    "& button": {
+      marginTop: "15px",
+      position: "relative",
+      left: "68px",
+    },
   },
 
   userInviteTopography: {
@@ -51,7 +53,7 @@ export function InviteDialog(props: Props): React.ReactElement {
   const [open, setOpen] = useState<boolean>(false);
 
   const inviteSelect = (
-    <form noValidate autoComplete="off">
+    <form noValidate autoComplete="off" className={classes.form}>
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
         options={props.projectInvitees}
@@ -63,15 +65,14 @@ export function InviteDialog(props: Props): React.ReactElement {
         autoSelect
       />
       {/* eslint-enable react/jsx-props-no-spreading */}
-      <div className={classes.inviteBtn}>
-        <BaseTextButton
-          text="Invite"
-          onClick={() => {
-            props.inviteToProject();
-            setOpen(false);
-          }}
-        />
-      </div>
+
+      <BaseTextButton
+        text="Invite"
+        onClick={() => {
+          props.inviteToProject();
+          setOpen(false);
+        }}
+      />
     </form>
   );
 
