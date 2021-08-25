@@ -128,34 +128,38 @@ export const ProjectsView = (props: Props): ReactElement => {
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-        <HtmlTooltip
-          key={`tooltip-${name}`}
-          title={`Open ${name} in CURATE`}
-          placement="bottom"
-        >
-          <Button
-            onClick={() => {
-              if (!props.launchCurateCallback) return;
-              props.launchCurateCallback(uid);
-            }}
+        {props.launchCurateCallback && (
+          <HtmlTooltip
+            key={`tooltip-${name}`}
+            title={`Open ${name} in CURATE`}
+            placement="bottom"
           >
-            <Launch />
-          </Button>
-        </HtmlTooltip>
-        <HtmlTooltip
-          key={`tooltipAudit-${name}`}
-          title={`Open ${name} in AUDIT`}
-          placement="bottom"
-        >
-          <Button
-            onClick={() => {
-              if (!props.launchAuditCallback) return;
-              props.launchAuditCallback(uid);
-            }}
+            <Button
+              onClick={() => {
+                if (!props.launchCurateCallback) return;
+                props.launchCurateCallback(uid);
+              }}
+            >
+              <Launch />
+            </Button>
+          </HtmlTooltip>
+        )}
+        {props.launchAuditCallback && (
+          <HtmlTooltip
+            key={`tooltipAudit-${name}`}
+            title={`Open ${name} in AUDIT`}
+            placement="bottom"
           >
-            <Launch />
-          </Button>
-        </HtmlTooltip>
+            <Button
+              onClick={() => {
+                if (!props.launchAuditCallback) return;
+                props.launchAuditCallback(uid);
+              }}
+            >
+              <Launch />
+            </Button>
+          </HtmlTooltip>
+        )}
       </TableCell>
     </TableRow>
   );
