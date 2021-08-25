@@ -344,4 +344,5 @@ export const ProjectsView = (props: Props): ReactElement => {
 
 ProjectsView.defaultProps = {
   launchCurateCallback: undefined,
+  launchAuditCallback: undefined,
 };

@@ -135,6 +135,7 @@ UserInterface.defaultProps = {
   services: defaultServices,
   user: undefined as User,
   launchCurateCallback: undefined,
+  launchAuditCallback: undefined,
 };
 
 export { Services };
