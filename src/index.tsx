@@ -45,6 +45,7 @@ interface Props {
   user?: User; // Optional mock user
   showAppBar: boolean;
   launchCurateCallback?: (projectUid: string) => void;
+  launchAuditCallback?: (projectUid: string) => void;
 }
 
 const useStyles = makeStyles(() => ({
@@ -118,6 +119,7 @@ export function UserInterface(props: Props): JSX.Element {
                   <ProjectsView
                     services={services}
                     launchCurateCallback={props.launchCurateCallback}
+                    launchAuditCallback={props.launchAuditCallback}
                   />
                 }
               />

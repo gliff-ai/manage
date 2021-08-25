@@ -61,6 +61,7 @@ const useStyles = (props: Props) =>
 interface Props {
   services: ServiceFunctions;
   launchCurateCallback?: (projectUid: string) => void | null;
+  launchAuditCallback?: (projectUid: string) => void | null;
 }
 
 export const ProjectsView = (props: Props): ReactElement => {
@@ -136,6 +137,20 @@ export const ProjectsView = (props: Props): ReactElement => {
             onClick={() => {
               if (!props.launchCurateCallback) return;
               props.launchCurateCallback(uid);
+            }}
+          >
+            <Launch />
+          </Button>
+        </HtmlTooltip>
+        <HtmlTooltip
+          key={`tooltipAudit-${name}`}
+          title={`Open ${name} in AUDIT`}
+          placement="bottom"
+        >
+          <Button
+            onClick={() => {
+              if (!props.launchAuditCallback) return;
+              props.launchAuditCallback(uid);
             }}
           >
             <Launch />
