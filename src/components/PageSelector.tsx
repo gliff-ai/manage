@@ -39,14 +39,14 @@ export function PageSelector(props: Props): ReactElement {
         tooltip={tooltips.team}
         fill={props.page === "team"}
         onClick={() => {
-          navigate("/team");
+          navigate("team");
         }}
       />
       <BaseIconButton
         tooltip={tooltips.collaborators}
         fill={props.page === "collaborators"}
         onClick={() => {
-          navigate("/collaborators");
+          navigate("collaborators");
         }}
       />
     </ButtonGroup>
