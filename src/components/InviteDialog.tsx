@@ -12,7 +12,7 @@ import {
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { theme }  from "@gliff-ai/style";
-import { imgSrc } from "@/index";
+import { imgSrc } from "@/helpers";
 import { Profile } from "@/interfaces";
 
 const useStyles = makeStyles(() => ({

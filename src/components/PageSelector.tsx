@@ -2,7 +2,7 @@ import { ButtonGroup } from "@material-ui/core";
 import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { BaseIconButton } from "@gliff-ai/style";
-import {imgSrc} from "@/index"
+import { imgSrc } from "@/helpers"
 
 const tooltips = {
   projects: {

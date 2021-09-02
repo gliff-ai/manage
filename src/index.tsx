@@ -17,14 +17,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 import type { Services } from "@/api";
+import { imgSrc } from "./helpers";
 
 type User = {
   email: string;
   authToken: string;
 };
-
-export const imgSrc = (src: string, type = "svg"): string =>
-  new URL(`/src/assets/${src}.${type}`, import.meta.url).href;
 
 const defaultServices = {
   queryTeam: "GET /team",
