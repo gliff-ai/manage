@@ -15,6 +15,7 @@ export default defineConfig({
     rollupOptions: {
       external: [
         "react",
+        "react-dom",
         "react-router-dom",
         "@material-ui/core",
         "@material-ui/icons",
