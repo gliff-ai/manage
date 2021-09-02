@@ -1,8 +1,7 @@
 import { ButtonGroup } from "@material-ui/core";
 import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
-import { BaseIconButton } from "@gliff-ai/style";
-import { imgSrc } from "@/imgSrc";
+import { BaseIconButton, imgSrc } from "@gliff-ai/style";
 
 const tooltips = {
   projects: {

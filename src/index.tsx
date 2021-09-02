@@ -7,18 +7,13 @@ import {
   Toolbar,
   ThemeProvider,
 } from "@material-ui/core";
-import {
-  createGenerateClassName,
-  makeStyles,
-  StylesProvider,
-} from "@material-ui/core/styles";
-import { theme } from "@gliff-ai/style";
+import { makeStyles, StylesProvider } from "@material-ui/core/styles";
+import { theme, generateClassName, imgSrc } from "@gliff-ai/style";
 
 import { initApiRequest } from "@/api";
 import { TeamView } from "@/views/TeamView";
 import { ProjectsView } from "@/views/ProjectsView";
 import { useAuth } from "@/hooks/use-auth";
-import { imgSrc } from "@/imgSrc";
 import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 import type { Services } from "@/api";
@@ -93,13 +88,9 @@ export function UserInterface(props: Props): JSX.Element {
       </Toolbar>
     </AppBar>
   );
-  const generateClassName = createGenerateClassName({
-    seed: "manage",
-    disableGlobal: true,
-  });
 
   return (
-    <StylesProvider generateClassName={generateClassName}>
+    <StylesProvider generateClassName={generateClassName("manage")}>
       <ThemeProvider theme={theme}>
         {appbar}
         <CssBaseline />
