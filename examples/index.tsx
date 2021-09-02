@@ -1,9 +1,8 @@
 import ReactDOM from "react-dom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import { UserInterface } from "@/index";
-import { Services } from "@/api";
-import { ProvideAuth } from "@/hooks/use-auth";
+import { UserInterface, ProvideAuth } from "../src";
+import type { Services } from "../src";
 
 const user = {
   email: "a@b.com",
@@ -55,18 +54,10 @@ const config = {
       ]),
     getCollaboratorProject: (data) =>
       Promise.resolve([{ name: "Project 1", uid: "1" }]),
-    createProject: (data) => {
-      return Promise.resolve([]);
-    },
-    inviteUser: (data): Promise<boolean> => {
-      return Promise.resolve(true);
-    },
-    inviteCollaborator: (data): Promise<boolean> => {
-      return Promise.resolve(true);
-    },
-    inviteToProject: (data): Promise<boolean> => {
-      return Promise.resolve(true);
-    },
+    createProject: (data) => Promise.resolve([]),
+    inviteUser: (data): Promise<boolean> => Promise.resolve(true),
+    inviteCollaborator: (data): Promise<boolean> => Promise.resolve(true),
+    inviteToProject: (data): Promise<boolean> => Promise.resolve(true),
   } as Services,
 };
 

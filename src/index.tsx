@@ -13,14 +13,15 @@ import {
   StylesProvider,
 } from "@material-ui/core/styles";
 import { theme } from "@gliff-ai/style";
-import { initApiRequest, Services } from "@/api";
+
+import { initApiRequest } from "@/api";
 import { TeamView } from "@/views/TeamView";
 import { ProjectsView } from "@/views/ProjectsView";
 import { useAuth } from "@/hooks/use-auth";
 import { imgSrc } from "@/imgSrc";
 import { CollaboratorsView } from "@/views/CollaboratorsView";
 
-export { ProvideAuth } from "@/hooks/use-auth";
+import type { Services} from "@/api";
 
 type User = {
   email: string;
@@ -138,4 +139,5 @@ UserInterface.defaultProps = {
   launchAuditCallback: undefined,
 };
 
-export { Services };
+export type { Services };
+export { ProvideAuth } from "@/hooks/use-auth";

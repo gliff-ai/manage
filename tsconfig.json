@@ -18,7 +18,7 @@
   },
   "include": [
     "typings/**/*",
-    "examples/src/**/*.tsx",
+    "examples/**/*.ts*",
     "src/**/*.tsx",
     "src/**/*.ts",
     "test/**/*.ts",
