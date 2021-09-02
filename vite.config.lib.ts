@@ -19,7 +19,7 @@ export default defineConfig({
         "@material-ui/core",
         "@material-ui/icons",
         "@material-ui/lab",
-        "@gliff-ai/style",
+        "@gliff-ai/style"
       ],
       output: {
         globals: {},

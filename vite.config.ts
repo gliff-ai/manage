@@ -5,6 +5,7 @@ const path = require("path");
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    minify: false, // TODO maybe?
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "index.html"),
