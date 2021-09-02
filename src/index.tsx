@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import { makeStyles, StylesProvider } from "@material-ui/core/styles";
-import { theme, generateClassName, imgSrc } from "@gliff-ai/style";
+import { theme, generateClassName } from "@gliff-ai/style";
 
 import { initApiRequest } from "@/api";
 import { TeamView } from "@/views/TeamView";
@@ -22,6 +22,9 @@ type User = {
   email: string;
   authToken: string;
 };
+
+export const imgSrc = (src: string, type = "svg"): string =>
+  new URL(`/src/assets/${src}.${type}`, import.meta.url).href;
 
 const defaultServices = {
   queryTeam: "GET /team",

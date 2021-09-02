@@ -11,7 +11,8 @@ import {
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { theme, imgSrc } from "@gliff-ai/style";
+import { theme }  from "@gliff-ai/style";
+import { imgSrc } from "@/index;
 import { Profile } from "@/interfaces";
 
 const useStyles = makeStyles(() => ({
