@@ -21,7 +21,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { imgSrc } from "@/imgSrc";
 import { CollaboratorsView } from "@/views/CollaboratorsView";
 
-import type { Services} from "@/api";
+import type { Services } from "@/api";
 
 type User = {
   email: string;

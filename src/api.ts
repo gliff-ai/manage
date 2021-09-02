@@ -74,4 +74,4 @@ const initApiRequest = (
   ) as ServiceFunctions;
 
 export { initApiRequest };
-export type { Services, ServiceFunctions }; 
+export type { Services, ServiceFunctions };
