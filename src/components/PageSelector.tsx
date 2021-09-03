@@ -2,7 +2,7 @@ import { ButtonGroup } from "@material-ui/core";
 import { ReactElement } from "react";
 import { useNavigate } from "react-router-dom";
 import { BaseIconButton } from "@gliff-ai/style";
-import { imgSrc } from "@/imgSrc";
+import { imgSrc } from "@/helpers"
 
 const tooltips = {
   projects: {
@@ -25,28 +25,28 @@ interface Props {
 
 export function PageSelector(props: Props): ReactElement {
   const navigate = useNavigate();
-
+  // TODO use Link here to wrap the buttons
   return (
     <ButtonGroup>
       <BaseIconButton
         tooltip={tooltips.projects}
         fill={props.page === "projects"}
         onClick={() => {
-          navigate("/projects");
+          navigate("../projects");
         }}
       />
       <BaseIconButton
         tooltip={tooltips.team}
         fill={props.page === "team"}
         onClick={() => {
-          navigate("team");
+          navigate("../team");
         }}
       />
       <BaseIconButton
         tooltip={tooltips.collaborators}
         fill={props.page === "collaborators"}
         onClick={() => {
-          navigate("collaborators");
+          navigate("../collaborators");
         }}
       />
     </ButtonGroup>

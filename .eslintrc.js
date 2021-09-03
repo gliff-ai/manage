@@ -8,6 +8,7 @@ module.exports = {
   plugins: ["@typescript-eslint", "mui-unused-classes"],
   extends: [
     "eslint:recommended",
+    "airbnb",
     "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
