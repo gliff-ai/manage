@@ -27,7 +27,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog } from "@/components/InviteDialog";
 
-const useStyles = (props: Props) =>
+const useStyles = () =>
   makeStyles(() => ({
     paperHeader: {
       padding: "10px",
@@ -73,7 +73,7 @@ export const ProjectsView = (props: Props): ReactElement => {
   const [dialogInvitees, setDialogInvitees] = useState<Profile[]>([]); // team members selected in the New Project dialog
 
   if (!auth) return null;
-  const classes = useStyles(props)();
+  const classes = useStyles()();
 
   const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     const { value } = event.target;
