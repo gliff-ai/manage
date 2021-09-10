@@ -16,6 +16,9 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: ["@gliff-ai/style"]
+  },
   esbuild: {
     jsxInject: `import React from 'react'`,
   },
