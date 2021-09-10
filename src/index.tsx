@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import {
   AppBar,
   CssBaseline,
@@ -18,6 +18,7 @@ import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 import type { Services } from "@/api";
 import { imgSrc } from "./helpers";
+import { PageSelector } from "./components/PageSelector";
 
 type User = {
   email: string;
@@ -59,7 +60,7 @@ const useStyles = makeStyles(() => ({
 
 export function UserInterface(props: Props): JSX.Element {
   const classes = useStyles();
-
+  const location = useLocation();
   const auth = useAuth();
 
   // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
@@ -95,7 +96,21 @@ export function UserInterface(props: Props): JSX.Element {
       <ThemeProvider theme={theme}>
         {appbar}
         <CssBaseline />
-        <div style={{ marginTop: props.showAppBar ? "108px" : "20px" }}>
+        <div
+          style={{
+            marginTop: props.showAppBar ? "108px" : "20px",
+            display: "flex",
+          }}
+        >
+          <PageSelector
+            page={
+              location.pathname.split("/").pop() as
+                | "projects"
+                | "team"
+                | "collaborators"
+            }
+          />
+
           <Routes>
             <Route path="//*">
               <Route path="/">

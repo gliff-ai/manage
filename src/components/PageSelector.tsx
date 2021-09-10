@@ -12,20 +12,30 @@ interface Props {
 
 export function PageSelector({ page }: Props): ReactElement {
   return (
-    <ButtonGroup orientation="vertical">
-      {links.map((name) => {
-        const link = name.toLowerCase();
+    <div
+      style={{
+        flexGrow: 0,
+        flexShrink: 0,
+        marginLeft: "20px",
+        marginRight: "20px",
+      }}
+    >
+      <ButtonGroup orientation="vertical">
+        {links.map((name) => {
+          const link = name.toLowerCase();
 
-        return (
-          <IconButton
-            component={Link}
-            to={link}
-            tooltip={{ name }}
-            icon={imgSrc(link)}
-            fill={page === link}
-          />
-        );
-      })}
-    </ButtonGroup>
+          return (
+            <IconButton
+              key={name}
+              component={Link}
+              to={`../${link}`}
+              tooltip={{ name }}
+              icon={imgSrc(link)}
+              fill={page === link}
+            />
+          );
+        })}
+      </ButtonGroup>
+    </div>
   );
 }

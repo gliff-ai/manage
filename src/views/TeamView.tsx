@@ -163,17 +163,7 @@ export const TeamView = (props: Props): JSX.Element => {
   );
 
   return (
-    <div style={{ display: "flex" }}>
-      <div
-        style={{
-          flexGrow: 0,
-          flexShrink: 0,
-          marginLeft: "20px",
-          marginRight: "20px",
-        }}
-      >
-        <PageSelector page="team" />
-      </div>
+    <>
       <Card
         className={classes.teamCard}
         style={{ width: "70%", height: "85vh" }}
@@ -288,6 +278,6 @@ export const TeamView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </div>
-    </div>
+    </>
   );
 };
