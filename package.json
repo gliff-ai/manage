@@ -22,12 +22,12 @@
   },
   "license": "AGPL-3.0-only",
   "devDependencies": {
-    "@gliff-ai/style": "0.8.3",
+    "@gliff-ai/style": "0.8.6",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@types/jest": "^27.0.1",
-    "@types/react": "^17.0.4",
+    "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.1",
     "@typescript-eslint/eslint-plugin": "^4.30.0",
     "@typescript-eslint/parser": "^4.30.0",
@@ -46,24 +46,24 @@
     "prettier": "==2.3.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.1",
-    "react-router-dom": "^6.0.0-beta.2",
+    "react-router-dom": "^6.0.0-beta.3",
     "tsc-alias": "^1.3.9",
     "typescript": "^4.2.5",
     "vite": "^2.5.3",
     "vite-aliases": "^0.8.6"
   },
   "peerDependencies": {
-    "@gliff-ai/style": "^0.8.3",
+    "@gliff-ai/style": "^0.8.6",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "history": "^5.0.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.1",
-    "react-router-dom": "^6.0.0-beta.2"
+    "react-router-dom": "^6.0.0-beta.3"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.3",
     "react-inlinesvg": "^2.3.0"
   }
 }
