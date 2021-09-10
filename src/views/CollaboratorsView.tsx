@@ -21,7 +21,6 @@ import { theme } from "@gliff-ai/style";
 import { Project, Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = makeStyles(() => ({
   topography: {

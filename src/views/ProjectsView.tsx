@@ -26,7 +26,6 @@ import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog } from "@/components/InviteDialog";
-import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = (props: Props) =>
   makeStyles(() => ({
