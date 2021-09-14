@@ -27,7 +27,7 @@ export function PageSelector({ page }: Props): ReactElement {
           return (
             <IconButton
               key={name}
-              component={() => <Link />}
+              component={Link}
               to={`../${link}`}
               tooltip={{ name }}
               icon={imgSrc(link)}
