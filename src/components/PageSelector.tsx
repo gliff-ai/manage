@@ -1,16 +1,31 @@
 import { ButtonGroup } from "@material-ui/core";
 import { ReactElement } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useResolvedPath } from "react-router-dom";
 import { IconButton } from "@gliff-ai/style";
 import { imgSrc } from "@/helpers";
 
 const links = ["Projects", "Team", "Collaborators"] as const;
 
-interface Props {
-  page: Lowercase<typeof links[number]>;
+function NavLink({ name }: { name: string }): ReactElement {
+  const link = name.toLowerCase();
+
+  const location = useLocation();
+  const path = useResolvedPath(link);
+  const isActive = location.pathname.toLowerCase() === path.pathname.toLowerCase()
+
+
+  return (
+    <IconButton
+      component={Link}
+      to={`${link}`}
+      tooltip={{ name }}
+      icon={imgSrc(link)}
+      fill={isActive}
+    />
+  );
 }
 
-export function PageSelector({ page }: Props): ReactElement {
+export function PageSelector(): ReactElement {
   return (
     <div
       style={{
@@ -21,20 +36,9 @@ export function PageSelector({ page }: Props): ReactElement {
       }}
     >
       <ButtonGroup orientation="vertical">
-        {links.map((name) => {
-          const link = name.toLowerCase();
-
-          return (
-            <IconButton
-              key={name}
-              component={Link}
-              to={`../${link}`}
-              tooltip={{ name }}
-              icon={imgSrc(link)}
-              fill={page === link}
-            />
-          );
-        })}
+        {links.map((name) => (
+          <NavLink name={name} key={name}/>
+        ))}
       </ButtonGroup>
     </div>
   );

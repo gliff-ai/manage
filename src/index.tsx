@@ -112,7 +112,7 @@ export function UserInterface(props: Props): JSX.Element {
           />
 
           <Routes>
-            <Route path="//*">
+            
               <Route path="/">
                 <Navigate to="projects" />
               </Route>
@@ -131,7 +131,7 @@ export function UserInterface(props: Props): JSX.Element {
                   />
                 }
               />
-            </Route>
+            
           </Routes>
         </div>
       </ThemeProvider>
