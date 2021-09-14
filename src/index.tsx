@@ -60,7 +60,6 @@ const useStyles = makeStyles(() => ({
 
 export function UserInterface(props: Props): JSX.Element {
   const classes = useStyles();
-  const location = useLocation();
   const auth = useAuth();
 
   // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
@@ -102,36 +101,27 @@ export function UserInterface(props: Props): JSX.Element {
             display: "flex",
           }}
         >
-          <PageSelector
-            page={
-              location.pathname.split("/").pop() as
-                | "projects"
-                | "team"
-                | "collaborators"
-            }
-          />
+          <PageSelector />
 
           <Routes>
-            
-              <Route path="/">
-                <Navigate to="projects" />
-              </Route>
-              <Route path="team" element={<TeamView services={services} />} />
-              <Route
-                path="collaborators"
-                element={<CollaboratorsView services={services} />}
-              />
-              <Route
-                path="projects"
-                element={
-                  <ProjectsView
-                    services={services}
-                    launchCurateCallback={props.launchCurateCallback}
-                    launchAuditCallback={props.launchAuditCallback}
-                  />
-                }
-              />
-            
+            <Route path="/">
+              <Navigate to="projects" />
+            </Route>
+            <Route path="team" element={<TeamView services={services} />} />
+            <Route
+              path="collaborators"
+              element={<CollaboratorsView services={services} />}
+            />
+            <Route
+              path="projects"
+              element={
+                <ProjectsView
+                  services={services}
+                  launchCurateCallback={props.launchCurateCallback}
+                  launchAuditCallback={props.launchAuditCallback}
+                />
+              }
+            />
           </Routes>
         </div>
       </ThemeProvider>

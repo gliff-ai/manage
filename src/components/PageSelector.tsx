@@ -11,8 +11,8 @@ function NavLink({ name }: { name: string }): ReactElement {
 
   const location = useLocation();
   const path = useResolvedPath(link);
-  const isActive = location.pathname.toLowerCase() === path.pathname.toLowerCase()
-
+  const isActive =
+    location.pathname.toLowerCase() === path.pathname.toLowerCase();
 
   return (
     <IconButton
@@ -37,7 +37,7 @@ export function PageSelector(): ReactElement {
     >
       <ButtonGroup orientation="vertical">
         {links.map((name) => (
-          <NavLink name={name} key={name}/>
+          <NavLink name={name} key={name} />
         ))}
       </ButtonGroup>
     </div>
