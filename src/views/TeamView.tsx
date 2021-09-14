@@ -21,7 +21,6 @@ import { theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { PageSelector } from "@/components/PageSelector";
 
 const useStyles = makeStyles(() => ({
   topography: {
@@ -163,17 +162,7 @@ export const TeamView = (props: Props): JSX.Element => {
   );
 
   return (
-    <div style={{ display: "flex" }}>
-      <div
-        style={{
-          flexGrow: 0,
-          flexShrink: 0,
-          marginLeft: "20px",
-          marginRight: "20px",
-        }}
-      >
-        <PageSelector page="team" />
-      </div>
+    <>
       <Card
         className={classes.teamCard}
         style={{ width: "70%", height: "85vh" }}
@@ -288,6 +277,6 @@ export const TeamView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </div>
-    </div>
+    </>
   );
 };

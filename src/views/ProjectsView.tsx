@@ -26,9 +26,8 @@ import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog } from "@/components/InviteDialog";
-import { PageSelector } from "@/components/PageSelector";
 
-const useStyles = (props: Props) =>
+const useStyles = () =>
   makeStyles(() => ({
     paperHeader: {
       padding: "10px",
@@ -74,7 +73,7 @@ export const ProjectsView = (props: Props): ReactElement => {
   const [dialogInvitees, setDialogInvitees] = useState<Profile[]>([]); // team members selected in the New Project dialog
 
   if (!auth) return null;
-  const classes = useStyles(props)();
+  const classes = useStyles()();
 
   const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>): void => {
     const { value } = event.target;
@@ -165,17 +164,7 @@ export const ProjectsView = (props: Props): ReactElement => {
   );
 
   return (
-    <div style={{ display: "flex" }}>
-      <div
-        style={{
-          flexGrow: 0,
-          flexShrink: 0,
-          marginLeft: "20px",
-          marginRight: "20px",
-        }}
-      >
-        <PageSelector page="projects" />
-      </div>
+    <>
       <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
         <Paper
           elevation={0}
@@ -338,7 +327,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           </Dialog>
         </Paper>
       </Card>
-    </div>
+    </>
   );
 };
 

@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { theme }  from "@gliff-ai/style";
+import { theme } from "@gliff-ai/style";
 import { imgSrc } from "@/helpers";
 import { Profile } from "@/interfaces";
 
