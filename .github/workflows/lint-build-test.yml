@@ -59,9 +59,9 @@ jobs:
       with:
         node-version: 15
     - name: Setup dependencies
-      run: npm i
-    - name: Prepare
-      run: npm run prepublishOnly # mikeal/merge-release doesn't currently run this correctly
+      run: npm i --omit=peer
+    - name: Build
+      run: npm run build
     - name: Publish
       uses: mikeal/merge-release@master
       env:
