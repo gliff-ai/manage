@@ -18,6 +18,7 @@ import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 import type { Services } from "@/api";
 import { imgSrc } from "./helpers";
+import { PageSelector } from "./components/PageSelector";
 
 type User = {
   email: string;
@@ -59,7 +60,6 @@ const useStyles = makeStyles(() => ({
 
 export function UserInterface(props: Props): JSX.Element {
   const classes = useStyles();
-
   const auth = useAuth();
 
   // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
@@ -95,28 +95,33 @@ export function UserInterface(props: Props): JSX.Element {
       <ThemeProvider theme={theme}>
         {appbar}
         <CssBaseline />
-        <div style={{ marginTop: props.showAppBar ? "108px" : "20px" }}>
+        <div
+          style={{
+            marginTop: props.showAppBar ? "108px" : "20px",
+            display: "flex",
+          }}
+        >
+          <PageSelector />
+
           <Routes>
-            <Route path="//*">
-              <Route path="/">
-                <Navigate to="projects" />
-              </Route>
-              <Route path="team" element={<TeamView services={services} />} />
-              <Route
-                path="collaborators"
-                element={<CollaboratorsView services={services} />}
-              />
-              <Route
-                path="projects"
-                element={
-                  <ProjectsView
-                    services={services}
-                    launchCurateCallback={props.launchCurateCallback}
-                    launchAuditCallback={props.launchAuditCallback}
-                  />
-                }
-              />
+            <Route path="/">
+              <Navigate to="projects" />
             </Route>
+            <Route path="team" element={<TeamView services={services} />} />
+            <Route
+              path="collaborators"
+              element={<CollaboratorsView services={services} />}
+            />
+            <Route
+              path="projects"
+              element={
+                <ProjectsView
+                  services={services}
+                  launchCurateCallback={props.launchCurateCallback}
+                  launchAuditCallback={props.launchAuditCallback}
+                />
+              }
+            />
           </Routes>
         </div>
       </ThemeProvider>
