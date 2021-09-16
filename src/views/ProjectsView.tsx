@@ -71,8 +71,6 @@ export const ProjectsView = (props: Props): ReactElement => {
   const [projectInvitees, setInvitees] = useState<Profile[]>([]); // all team members except the logged in user
   const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
   const [dialogInvitees, setDialogInvitees] = useState<Profile[]>([]); // team members selected in the New Project dialog
-
-  if (!auth) return null;
   const classes = useStyles()();
 
   const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>): void => {
@@ -163,6 +161,8 @@ export const ProjectsView = (props: Props): ReactElement => {
     </TableRow>
   );
 
+  if (!auth) return null;
+  
   return (
     <>
       <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>

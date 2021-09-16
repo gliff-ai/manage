@@ -18,6 +18,7 @@ import {
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
 import { theme } from "@gliff-ai/style";
+
 import { Project, Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
@@ -76,8 +77,6 @@ interface Props {
 
 export const CollaboratorsView = (props: Props): JSX.Element => {
   const auth = useAuth();
-
-  if (!auth) return null;
   const [team, setTeam] = useState<Team>({
     profiles: [],
     pending_invites: [],
@@ -198,6 +197,8 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
       </form>
     </>
   );
+
+  if (!auth) return null;
 
   return (
     <>
