@@ -111,7 +111,7 @@ export const TeamView = (props: Props): JSX.Element => {
         .queryTeam(null, auth.user.authToken)
         .then((t: Team) => setTeam(t));
     }
-  }, [auth]);
+  }, [auth, props.services]);
 
   let pendingInvites;
   if (team?.pending_invites?.length > 0) {

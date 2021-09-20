@@ -25,7 +25,7 @@ import { theme, HtmlTooltip } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
-import { InviteDialog } from "@/components/InviteDialog";
+import { InviteDialog, LaunchIcon } from "@/components";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -98,7 +98,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           }
         });
     }
-  }, [auth]);
+  }, [auth, props.services]);
 
   const inviteToProject = (projectId: string, inviteeEmail: string) =>
     props.services
@@ -125,44 +125,14 @@ export const ProjectsView = (props: Props): ReactElement => {
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-        {props.launchCurateCallback && (
-          <HtmlTooltip
-            key={`tooltip-${name}`}
-            title={`Open ${name} in CURATE`}
-            placement="bottom"
-          >
-            <Button
-              onClick={() => {
-                if (!props.launchCurateCallback) return;
-                props.launchCurateCallback(uid);
-              }}
-            >
-              <Launch />
-            </Button>
-          </HtmlTooltip>
-        )}
-        {props.launchAuditCallback && (
-          <HtmlTooltip
-            key={`tooltipAudit-${name}`}
-            title={`Open ${name} in AUDIT`}
-            placement="bottom"
-          >
-            <Button
-              onClick={() => {
-                if (!props.launchAuditCallback) return;
-                props.launchAuditCallback(uid);
-              }}
-            >
-              <Launch />
-            </Button>
-          </HtmlTooltip>
-        )}
+        <LaunchIcon launchCallback={() => props.launchCurateCallback(uid)} tooltip={`Open ${name} in CURATE`} />      
+        <LaunchIcon launchCallback={() => props.launchAuditCallback(uid)} tooltip={`Open ${name} in AUDIT`} />
       </TableCell>
     </TableRow>
   );
 
   if (!auth) return null;
-  
+
   return (
     <>
       <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
