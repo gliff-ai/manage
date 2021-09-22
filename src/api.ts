@@ -21,6 +21,8 @@ interface Services {
   getCollaboratorProject: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
   inviteToProject: APIRoute | ServiceFunction;
+  createTrustedService: APIRoute | ServiceFunction;
+  getTrustedServices: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {
