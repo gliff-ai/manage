@@ -20,8 +20,8 @@ import {
   TableCell,
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear, Launch, Add } from "@material-ui/icons";
-import { theme, HtmlTooltip } from "@gliff-ai/style";
+import { Clear, Add } from "@material-ui/icons";
+import { theme } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
