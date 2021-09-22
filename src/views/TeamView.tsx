@@ -76,8 +76,6 @@ interface Props {
 
 export const TeamView = (props: Props): JSX.Element => {
   const auth = useAuth();
-
-  if (!auth) return null;
   const [team, setTeam] = useState<Team>({
     profiles: [],
     pending_invites: [],
@@ -113,7 +111,7 @@ export const TeamView = (props: Props): JSX.Element => {
         .queryTeam(null, auth.user.authToken)
         .then((t: Team) => setTeam(t));
     }
-  }, [auth]);
+  }, [auth, props.services]);
 
   let pendingInvites;
   if (team?.pending_invites?.length > 0) {
@@ -160,6 +158,8 @@ export const TeamView = (props: Props): JSX.Element => {
       </form>
     </>
   );
+
+  if (!auth) return null;
 
   return (
     <>

@@ -18,6 +18,7 @@ import {
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
 import { theme } from "@gliff-ai/style";
+
 import { Project, Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
@@ -76,8 +77,6 @@ interface Props {
 
 export const CollaboratorsView = (props: Props): JSX.Element => {
   const auth = useAuth();
-
-  if (!auth) return null;
   const [team, setTeam] = useState<Team>({
     profiles: [],
     pending_invites: [],
@@ -108,38 +107,38 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
     }
   };
 
-  const getCollaboratingProject = async (
-    collaboratorEmail: string
-  ): Promise<string> => {
-    const result: string = await props.services
-      .getCollaboratorProject(
-        {
-          email: collaboratorEmail,
-        },
-        auth.user.authToken
-      )
-      .then((p: Project[]): string => {
-        if (p.length > 1) {
-          return "Error!";
-        }
-        return p[0].name;
-      });
-
-    if (result) {
-      return result;
-    }
-    return "";
-  };
-
   useEffect(() => {
     if (auth?.user?.email) {
       void props.services
         .queryTeam(null, auth.user.authToken)
         .then((t: Team) => setTeam(t));
     }
-  }, [auth]);
+  }, [auth, props.services]);
 
   useEffect(() => {
+    const getCollaboratingProject = async (
+      collaboratorEmail: string
+    ): Promise<string> => {
+      const result: string = await props.services
+        .getCollaboratorProject(
+          {
+            email: collaboratorEmail,
+          },
+          auth.user.authToken
+        )
+        .then((p: Project[]): string => {
+          if (p.length > 1) {
+            return "Error!";
+          }
+          return p[0].name;
+        });
+
+      if (result) {
+        return result;
+      }
+      return "";
+    };
+
     const collaboratorProjectsPromises = [];
     for (let i = 0; i < team.profiles.length; i += 1) {
       collaboratorProjectsPromises[i] = getCollaboratingProject(
@@ -149,7 +148,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
     void Promise.all(collaboratorProjectsPromises).then((result) =>
       setCollaboratorProjects(result)
     );
-  }, [team]);
+  }, [team, props.services, auth]);
 
   let pendingInvites;
   if (team?.pending_invites?.length > 0) {
@@ -198,6 +197,8 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
       </form>
     </>
   );
+
+  if (!auth) return null;
 
   return (
     <>

@@ -20,12 +20,12 @@ import {
   TableCell,
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear, Launch, Add } from "@material-ui/icons";
-import { theme, HtmlTooltip } from "@gliff-ai/style";
+import { Clear, Add } from "@material-ui/icons";
+import { theme } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
-import { InviteDialog } from "@/components/InviteDialog";
+import { InviteDialog, LaunchIcon } from "@/components";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -71,8 +71,6 @@ export const ProjectsView = (props: Props): ReactElement => {
   const [projectInvitees, setInvitees] = useState<Profile[]>([]); // all team members except the logged in user
   const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
   const [dialogInvitees, setDialogInvitees] = useState<Profile[]>([]); // team members selected in the New Project dialog
-
-  if (!auth) return null;
   const classes = useStyles()();
 
   const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>): void => {
@@ -100,7 +98,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           }
         });
     }
-  }, [auth]);
+  }, [auth, props.services]);
 
   const inviteToProject = (projectId: string, inviteeEmail: string) =>
     props.services
@@ -127,41 +125,19 @@ export const ProjectsView = (props: Props): ReactElement => {
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-        {props.launchCurateCallback && (
-          <HtmlTooltip
-            key={`tooltip-${name}`}
-            title={`Open ${name} in CURATE`}
-            placement="bottom"
-          >
-            <Button
-              onClick={() => {
-                if (!props.launchCurateCallback) return;
-                props.launchCurateCallback(uid);
-              }}
-            >
-              <Launch />
-            </Button>
-          </HtmlTooltip>
-        )}
-        {props.launchAuditCallback && (
-          <HtmlTooltip
-            key={`tooltipAudit-${name}`}
-            title={`Open ${name} in AUDIT`}
-            placement="bottom"
-          >
-            <Button
-              onClick={() => {
-                if (!props.launchAuditCallback) return;
-                props.launchAuditCallback(uid);
-              }}
-            >
-              <Launch />
-            </Button>
-          </HtmlTooltip>
-        )}
+        <LaunchIcon
+          launchCallback={() => props.launchCurateCallback(uid)}
+          tooltip={`Open ${name} in CURATE`}
+        />
+        <LaunchIcon
+          launchCallback={() => props.launchAuditCallback(uid)}
+          tooltip={`Open ${name} in AUDIT`}
+        />
       </TableCell>
     </TableRow>
   );
+
+  if (!auth) return null;
 
   return (
     <>

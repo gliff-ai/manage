@@ -8,6 +8,11 @@ export type Project = {
   name: string;
 };
 
+export type TrustedService = {
+  name: string;
+  base_url: string;
+};
+
 export interface Profile {
   email: string;
   name: string;

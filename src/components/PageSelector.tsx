@@ -4,7 +4,7 @@ import { Link, useLocation, useResolvedPath } from "react-router-dom";
 import { IconButton } from "@gliff-ai/style";
 import { imgSrc } from "@/helpers";
 
-const links = ["Projects", "Team", "Collaborators"] as const;
+const links = ["Projects", "Team", "Collaborators", "Services"] as const;
 
 function NavLink({ name }: { name: string }): ReactElement {
   const link = name.toLowerCase();

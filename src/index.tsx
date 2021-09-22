@@ -13,6 +13,8 @@ import { theme, generateClassName } from "@gliff-ai/style";
 import { initApiRequest } from "@/api";
 import { TeamView } from "@/views/TeamView";
 import { ProjectsView } from "@/views/ProjectsView";
+import { TrustedServiceView } from "./views/TrustedServiceView";
+
 import { useAuth } from "@/hooks/use-auth";
 import { CollaboratorsView } from "@/views/CollaboratorsView";
 
@@ -35,6 +37,8 @@ const defaultServices = {
   getCollaboratorProject: "GET /team/collaboratorprojects",
   createProject: "POST /projects",
   inviteToProject: "POST /projects/invite",
+  createTrustedService: "POST /trusted_service",
+  getTrustedServices: "GET /trusted_service",
 } as Services;
 
 interface Props {
@@ -108,6 +112,10 @@ export function UserInterface(props: Props): JSX.Element {
               <Navigate to="projects" />
             </Route>
             <Route path="team" element={<TeamView services={services} />} />
+            <Route
+              path="services"
+              element={<TrustedServiceView services={services} />}
+            />
             <Route
               path="collaborators"
               element={<CollaboratorsView services={services} />}
