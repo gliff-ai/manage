@@ -58,6 +58,10 @@ const config = {
     inviteUser: (data): Promise<boolean> => Promise.resolve(true),
     inviteCollaborator: (data): Promise<boolean> => Promise.resolve(true),
     inviteToProject: (data): Promise<boolean> => Promise.resolve(true),
+    createTrustedService: (data): Promise<string> =>
+      Promise.resolve("key key key"),
+    getTrustedServices: (data): Promise<any> =>
+      Promise.resolve([{ name: "TS", url: "https://ts.gliff.app" }]),
   } as Services,
 };
 

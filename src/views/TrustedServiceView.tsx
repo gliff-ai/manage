@@ -1,14 +1,11 @@
-import { useEffect, useState, ChangeEvent, ReactElement } from "react";
+import { useEffect, useState, ReactElement } from "react";
 import {
   Paper,
-  IconButton,
   Typography,
   Card,
   makeStyles,
   List,
   ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
   Dialog,
   TextField,
   DialogActions,
@@ -19,13 +16,13 @@ import {
   TableRow,
   TableCell,
 } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear, Add } from "@material-ui/icons";
+
+import { Add } from "@material-ui/icons";
 import { theme } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { Project, Profile, Team, TrustedService } from "@/interfaces";
-import { InviteDialog, LaunchIcon } from "@/components";
+import { TrustedService } from "@/interfaces";
+
 import { MessageAlert } from "@/components/MessageAlert";
 
 const useStyles = () =>
@@ -286,7 +283,7 @@ export const TrustedServiceView = (props: Props): ReactElement => {
 
       {keyDialog}
 
-      {error ? <MessageAlert message={error} severity={"error"} /> : null}
+      {error ? <MessageAlert message={error} severity="error" /> : null}
     </>
   );
 };
