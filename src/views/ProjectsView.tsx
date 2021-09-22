@@ -125,8 +125,14 @@ export const ProjectsView = (props: Props): ReactElement => {
           handleSelectChange={handleSelectChange}
           inviteToProject={() => inviteToProject(uid, projectInvitee)}
         />
-        <LaunchIcon launchCallback={() => props.launchCurateCallback(uid)} tooltip={`Open ${name} in CURATE`} />      
-        <LaunchIcon launchCallback={() => props.launchAuditCallback(uid)} tooltip={`Open ${name} in AUDIT`} />
+        <LaunchIcon
+          launchCallback={() => props.launchCurateCallback(uid)}
+          tooltip={`Open ${name} in CURATE`}
+        />
+        <LaunchIcon
+          launchCallback={() => props.launchAuditCallback(uid)}
+          tooltip={`Open ${name} in AUDIT`}
+        />
       </TableCell>
     </TableRow>
   );

@@ -10,16 +10,18 @@ interface Props {
 
 const LaunchIcon = (props: Props): ReactElement | null => {
   const { launchCallback, tooltip } = props;
-  return (launchCallback &&
-    <HtmlTooltip
-      key={`tooltip-${tooltip.split(" ").join("-")}`}
-      title={tooltip}
-      placement="bottom"
-    >
-      <Button onClick={launchCallback}>
-        <Launch />
-      </Button>
-    </HtmlTooltip>
+  return (
+    launchCallback && (
+      <HtmlTooltip
+        key={`tooltip-${tooltip.split(" ").join("-")}`}
+        title={tooltip}
+        placement="bottom"
+      >
+        <Button onClick={launchCallback}>
+          <Launch />
+        </Button>
+      </HtmlTooltip>
+    )
   );
 };
 
