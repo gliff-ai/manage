@@ -37,9 +37,8 @@ export type ProjectUser = {
 export interface Profile {
   email: string;
   name: string;
-  is_collaborator?: boolean;
-  is_trusted_service?: boolean;
-  is_owner?: boolean;
+  is_collaborator: boolean;
+  is_trusted_service: boolean;
 }
 
 export interface Team {

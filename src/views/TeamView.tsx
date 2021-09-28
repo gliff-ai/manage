@@ -114,7 +114,7 @@ export const TeamView = (props: Props): JSX.Element => {
           t.profiles = t.profiles.filter(
             ({ is_trusted_service }) => !is_trusted_service
           );
-          setStateIfMounted(t, setTeam, isMounted.current);
+          setTeam(t);
         });
     }
   }, [auth, props.services, isMounted]);
