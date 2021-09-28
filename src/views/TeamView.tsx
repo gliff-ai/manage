@@ -109,7 +109,12 @@ export const TeamView = (props: Props): JSX.Element => {
     if (auth?.user?.email) {
       void props.services
         .queryTeam(null, auth.user.authToken)
-        .then((t: Team) => setTeam(t));
+        .then((t: Team) => {
+          t.profiles = t.profiles.filter(
+            ({ is_trusted_service }) => !is_trusted_service
+          );
+          setTeam(t);
+        });
     }
   }, [auth, props.services]);
 

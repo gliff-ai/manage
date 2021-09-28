@@ -30,6 +30,12 @@ const config = {
             name: "Jane James",
             is_collaborator: true,
           },
+          {
+            email: "trustedservice@gliff.app",
+            name: "trusted service 1",
+            is_collaborator: false,
+            is_trusted_service: true,
+          },
         ],
         pending_invites: [
           {
