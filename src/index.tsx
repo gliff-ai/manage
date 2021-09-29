@@ -21,11 +21,7 @@ import { CollaboratorsView } from "@/views/CollaboratorsView";
 import type { Services } from "@/api";
 import { imgSrc } from "./helpers";
 import { PageSelector } from "./components/PageSelector";
-
-type User = {
-  email: string;
-  authToken: string;
-};
+import { User } from "./interfaces";
 
 const defaultServices = {
   queryTeam: "GET /team",
@@ -72,8 +68,8 @@ export function UserInterface(props: Props): JSX.Element {
   useEffect(() => {
     if (!auth?.user && props.user) {
       // Autologin if we've been passed a login
-      const { email, authToken } = props.user;
-      auth.saveUser(email, authToken);
+      const { email, authToken, isCollaborator } = props.user;
+      auth.saveUser({ email, authToken, isCollaborator });
     }
   });
 
@@ -94,6 +90,8 @@ export function UserInterface(props: Props): JSX.Element {
     </AppBar>
   );
 
+  if (!auth?.user) return null;
+
   return (
     <StylesProvider generateClassName={generateClassName("manage")}>
       <ThemeProvider theme={theme}>
@@ -105,7 +103,7 @@ export function UserInterface(props: Props): JSX.Element {
             display: "flex",
           }}
         >
-          <PageSelector />
+          <PageSelector user={auth.user} />
 
           <Routes>
             <Route path="/">

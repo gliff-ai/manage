@@ -1,6 +1,7 @@
 export interface User {
   email: string;
   authToken: string;
+  isCollaborator: boolean;
 }
 
 export type Project = {
