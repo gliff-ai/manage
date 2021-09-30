@@ -73,9 +73,11 @@ export const ProjectsView = (props: Props): ReactElement => {
   const [dialogInvitees, setDialogInvitees] = useState<Profile[]>([]); // team members selected in the New Project dialog
   const classes = useStyles()();
 
-  const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>): void => {
-    const { value } = event.target;
-    setInvitee(value);
+  const handleSelectChange = (
+    event: ChangeEvent<HTMLSelectElement>,
+    value: Profile
+  ): void => {
+    setInvitee(value.email);
   };
 
   useEffect(() => {
@@ -106,7 +108,7 @@ export const ProjectsView = (props: Props): ReactElement => {
     props.services
       .inviteToProject({ projectId, email: inviteeEmail })
       .then(() => {
-        console.log("invite complete!");
+        console.log(`invite complete!: ${inviteeEmail}`);
       });
 
   const createProject = async (): Promise<string> => {
