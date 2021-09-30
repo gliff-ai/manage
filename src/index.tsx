@@ -68,8 +68,8 @@ export function UserInterface(props: Props): JSX.Element {
   useEffect(() => {
     if (!auth?.user && props.user) {
       // Autologin if we've been passed a login
-      const { email, authToken, isCollaborator } = props.user;
-      auth.saveUser({ email, authToken, isCollaborator });
+      const { email, authToken, isOwner } = props.user;
+      auth.saveUser({ email, authToken, isOwner });
     }
   });
 
