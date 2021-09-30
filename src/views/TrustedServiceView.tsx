@@ -152,7 +152,7 @@ export const TrustedServiceView = (props: Props): ReactElement => {
     </Dialog>
   );
 
-  if (!auth) return null;
+  if (!auth || !auth?.user?.isOwner) return null;
 
   return (
     <>

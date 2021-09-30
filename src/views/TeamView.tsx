@@ -159,7 +159,7 @@ export const TeamView = (props: Props): JSX.Element => {
     </>
   );
 
-  if (!auth) return null;
+  if (!auth || !auth?.user?.isOwner) return null;
 
   return (
     <>
