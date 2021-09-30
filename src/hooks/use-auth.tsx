@@ -20,7 +20,7 @@ export const useAuth = (): Context => useContext(authContext);
 function useProvideAuth() {
   const [user, setUser] = useState<User>(null);
 
-  const saveUser = (user: User) => setUser(user);
+  const saveUser = (newUser: User) => setUser(newUser);
   // Return the user object and auth methods
   return {
     user,
