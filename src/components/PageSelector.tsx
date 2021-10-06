@@ -3,8 +3,7 @@ import { ReactElement } from "react";
 import { Link, useLocation, useResolvedPath } from "react-router-dom";
 import { IconButton } from "@gliff-ai/style";
 import { imgSrc } from "@/helpers";
-
-const links = ["Projects", "Team", "Collaborators", "Services"] as const;
+import { User } from "@/interfaces";
 
 function NavLink({ name }: { name: string }): ReactElement {
   const link = name.toLowerCase();
@@ -25,7 +24,11 @@ function NavLink({ name }: { name: string }): ReactElement {
   );
 }
 
-export function PageSelector(): ReactElement {
+export function PageSelector({ user }: { user: User }): ReactElement {
+  const links = user.isOwner
+    ? (["Projects", "Team", "Collaborators", "Services"] as const)
+    : (["Projects"] as const);
+
   return (
     <div
       style={{

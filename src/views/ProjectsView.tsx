@@ -88,17 +88,19 @@ export const ProjectsView = (props: Props): ReactElement => {
           setProjects(p);
         });
 
-      void props.services
-        .queryTeam(null, auth.user.authToken)
-        .then((team: Team) => {
-          const invitees = team.profiles.filter(
-            ({ email }) => email !== auth?.user?.email
-          );
-          setInvitees(invitees);
-          if (invitees.length > 0) {
-            setInvitee(invitees[0].email);
-          }
-        });
+      if (auth.user.isOwner) {
+        void props.services
+          .queryTeam(null, auth.user.authToken)
+          .then((team: Team) => {
+            const invitees = team.profiles.filter(
+              ({ email }) => email !== auth?.user?.email
+            );
+            setInvitees(invitees);
+            if (invitees.length > 0) {
+              setInvitee(invitees[0].email);
+            }
+          });
+      }
     }
   }, [auth, props.services]);
 
@@ -122,24 +124,28 @@ export const ProjectsView = (props: Props): ReactElement => {
     <TableRow key={uid}>
       <TableCell className={classes.tableCell}>{name}</TableCell>
       <TableCell className={classes.tableCell} align="right">
-        <InviteDialog
-          projectInvitees={projectInvitees}
-          handleSelectChange={handleSelectChange}
-          inviteToProject={() => inviteToProject(uid, projectInvitee)}
-        />
+        {auth.user.isOwner && (
+          <InviteDialog
+            projectInvitees={projectInvitees}
+            handleSelectChange={handleSelectChange}
+            inviteToProject={() => inviteToProject(uid, projectInvitee)}
+          />
+        )}
         <LaunchIcon
           launchCallback={() => props.launchCurateCallback(uid)}
           tooltip={`Open ${name} in CURATE`}
         />
-        <LaunchIcon
-          launchCallback={() => props.launchAuditCallback(uid)}
-          tooltip={`Open ${name} in AUDIT`}
-        />
+        {auth.user.isOwner && (
+          <LaunchIcon
+            launchCallback={() => props.launchAuditCallback(uid)}
+            tooltip={`Open ${name} in AUDIT`}
+          />
+        )}
       </TableCell>
     </TableRow>
   );
 
-  if (!auth) return null;
+  if (!auth?.user) return null;
 
   return (
     <>
@@ -159,31 +165,33 @@ export const ProjectsView = (props: Props): ReactElement => {
         </Paper>
 
         <Paper elevation={0} square>
-          <List style={{ paddingBottom: "0px" }}>
-            <ListItem
-              divider
-              style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
-              onClick={() => {
-                setDialogOpen(!dialogOpen);
-              }}
-            >
-              <div
-                style={{
-                  margin: "10px",
-                  display: "flex",
-                  alignItems: "center",
+          {auth.user.isOwner && (
+            <List style={{ paddingBottom: "0px" }}>
+              <ListItem
+                divider
+                style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
+                onClick={() => {
+                  setDialogOpen(!dialogOpen);
                 }}
               >
-                <Add
-                  fontSize="large"
-                  style={{ marginRight: "10px", color: "grey" }}
-                />
-                <Typography style={{ color: "grey" }}>
-                  Create New Project
-                </Typography>
-              </div>
-            </ListItem>
-          </List>
+                <div
+                  style={{
+                    margin: "10px",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <Add
+                    fontSize="large"
+                    style={{ marginRight: "10px", color: "grey" }}
+                  />
+                  <Typography style={{ color: "grey" }}>
+                    Create New Project
+                  </Typography>
+                </div>
+              </ListItem>
+            </List>
+          )}
 
           <TableContainer>
             <Table aria-label="simple table">
