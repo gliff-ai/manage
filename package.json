@@ -1,6 +1,6 @@
 {
   "name": "@gliff-ai/manage",
-  "version": "0.3.11",
+  "version": "1.0.0",
   "description": "gliff.ai MANAGE",
   "repository": "git://github.com/gliff-ai/manage.git",
   "main": "dist/index.es.js",
