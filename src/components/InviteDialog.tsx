@@ -43,7 +43,10 @@ const useStyles = makeStyles(() => ({
 
 interface Props {
   projectInvitees: Profile[];
-  handleSelectChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+  handleSelectChange: (
+    event: ChangeEvent<HTMLSelectElement>,
+    value: Profile
+  ) => void;
   inviteToProject: () => void;
 }
 
@@ -56,8 +59,8 @@ export function InviteDialog(props: Props): React.ReactElement {
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
         options={props.projectInvitees}
-        getOptionLabel={(option) => option.name}
-        onChange={() => props.handleSelectChange}
+        getOptionLabel={(option: Profile) => option.name}
+        onChange={props.handleSelectChange}
         renderInput={(params) => (
           <TextField {...params} label="Add Team Member" variant="outlined" />
         )}
