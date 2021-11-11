@@ -2,6 +2,7 @@ export interface User {
   email: string;
   authToken: string;
   isOwner: boolean;
+  tierID: number;
 }
 
 export type Project = {
