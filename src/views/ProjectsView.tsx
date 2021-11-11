@@ -1,4 +1,4 @@
-import { useEffect, useState, ChangeEvent, ReactElement } from "react";
+import { useEffect, useState, ChangeEvent, ReactElement, useRef } from "react";
 import {
   Paper,
   IconButton,
@@ -26,6 +26,7 @@ import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
 import { InviteDialog, LaunchIcon } from "@/components";
+import { setStateIfMounted } from "@/helpers";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -72,6 +73,7 @@ export const ProjectsView = (props: Props): ReactElement => {
   const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
   const [dialogInvitees, setDialogInvitees] = useState<Profile[]>([]); // team members selected in the New Project dialog
   const classes = useStyles()();
+  const isMounted = useRef(false);
 
   const handleSelectChange = (
     event: ChangeEvent<HTMLSelectElement>,
@@ -81,11 +83,20 @@ export const ProjectsView = (props: Props): ReactElement => {
   };
 
   useEffect(() => {
+    // runs at mount
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (auth?.user?.email) {
       void props.services
         .getProjects(null, auth.user.authToken)
         .then((p: Project[]) => {
-          setProjects(p);
+          setStateIfMounted(p, setProjects, isMounted.current);
         });
 
       if (auth.user.isOwner) {
@@ -95,14 +106,18 @@ export const ProjectsView = (props: Props): ReactElement => {
             const invitees = team.profiles.filter(
               ({ email }) => email !== auth?.user?.email
             );
-            setInvitees(invitees);
+            setStateIfMounted(invitees, setInvitees, isMounted.current);
             if (invitees.length > 0) {
-              setInvitee(invitees[0].email);
+              setStateIfMounted(
+                invitees[0].email,
+                setInvitee,
+                isMounted.current
+              );
             }
           });
       }
     }
-  }, [auth, props.services]);
+  }, [auth, props.services, isMounted]);
 
   const inviteToProject = (projectId: string, inviteeEmail: string) =>
     props.services
