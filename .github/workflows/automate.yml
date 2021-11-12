@@ -32,4 +32,4 @@ jobs:
         run: npx http-server -p 3000 &
 
       - name: 'Running test on BrowserStack'  # Invokes the actual test script that would run on BrowserStack browsers
-        run: npm test:e2e
+        run: npm run test:e2e
