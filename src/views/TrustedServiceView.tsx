@@ -1,4 +1,4 @@
-import { useEffect, useState, ReactElement } from "react";
+import { useEffect, useState, ReactElement, useRef } from "react";
 import {
   Paper,
   Typography,
@@ -22,8 +22,8 @@ import { theme } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { TrustedService } from "@/interfaces";
-
 import { MessageAlert } from "@/components/MessageAlert";
+import { setStateIfMounted } from "@/helpers";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -83,14 +83,26 @@ export const TrustedServiceView = (props: Props): ReactElement => {
   const [error, setError] = useState("");
   const [key, setKey] = useState<string | null>(null);
   const classes = useStyles()();
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    // runs at mount
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (auth?.user?.email) {
       void props.services
         .getTrustedServices(null, auth.user.authToken)
-        .then(setTrustedServices);
+        .then((ts: TrustedService[]) => {
+          setStateIfMounted(ts, setTrustedServices, isMounted.current);
+        });
     }
-  }, [auth, props.services, key]);
+  }, [auth, props.services, key, isMounted]);
 
   const createTrustedService = async (): Promise<unknown> => {
     try {
