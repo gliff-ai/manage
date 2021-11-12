@@ -18,12 +18,13 @@
     "lint:ts": "npx --no-install eslint src",
     "serve": "vite",
     "build:example": "vite build",
-    "test": "jest --coverage --passWithNoTests"
+    "test": "jest --coverage --passWithNoTests",
+    "test:e2e": "jest -c jest.e2e.config.js --no-colors"
   },
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@gliff-ai/eslint-config": "^0.1.3",
-    "@gliff-ai/jest-browserstack-automate": "^3.0.2",
+    "@gliff-ai/jest-browserstack-automate": "^4.0.1",
     "@gliff-ai/style": "^2.7.0",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
