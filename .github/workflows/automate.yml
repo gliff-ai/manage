@@ -27,10 +27,9 @@ jobs:
         run: npm install
 
       - run: npm run build:example
-      - run: npm i -g http-server jest
 
       - name: 'Running application under test'
-        run: http-server -p 3000 &
+        run: npx http-server -p 3000 &
 
       - name: 'Running test on BrowserStack'  # Invokes the actual test script that would run on BrowserStack browsers
-        run: cd test/e2e jest
+        run: cd test/e2e npx jest
