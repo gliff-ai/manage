@@ -21,10 +21,12 @@
     "examples/**/*.ts*",
     "src/**/*.tsx",
     "src/**/*.ts",
-    "test/**/*.ts",
+    "__tests__/**/*.ts",
     "typings/**/*.ts",
     "./jest-setup.ts",
     "src/assets/*.svg"
   ],
-  "exclude": ["src/**/*_.tsx", "test/**/*.js"]
+  "exclude": ["src/**/*_.tsx",
+    "__tests__/**/*.js"
+  ]
 }
