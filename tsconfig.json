@@ -21,7 +21,7 @@
     "examples/**/*.ts*",
     "src/**/*.tsx",
     "src/**/*.ts",
-    "test/**/*.ts",
+    "__tests__/**/*.ts",
     "typings/**/*.ts",
     "./jest-setup.ts",
     "src/assets/*.svg"
