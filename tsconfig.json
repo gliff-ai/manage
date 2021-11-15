@@ -26,7 +26,6 @@
     "./jest-setup.ts",
     "src/assets/*.svg"
   ],
-  "exclude": ["src/**/*_.tsx",
-    "__tests__/**/*.js"
+  "exclude": ["src/**/*_.tsx"
   ]
 }
