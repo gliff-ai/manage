@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState, useRef } from "react";
 import {
   Paper,
   IconButton,
@@ -22,6 +22,7 @@ import { theme } from "@gliff-ai/style";
 import { Project, Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
+import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles(() => ({
   topography: {
@@ -85,6 +86,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
   const [inviteMessage, setInviteMessage] = useState("");
   const [collaboratorProjects, setCollaboratorProjects] = useState([]);
   const classes = useStyles();
+  const isMounted = useRef(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
@@ -108,12 +110,23 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
   };
 
   useEffect(() => {
+    // runs at mount
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (auth?.user?.email) {
       void props.services
         .queryTeam(null, auth.user.authToken)
-        .then((t: Team) => setTeam(t));
+        .then((t: Team) => {
+          setStateIfMounted(t, setTeam, isMounted.current);
+        });
     }
-  }, [auth, props.services]);
+  }, [auth, props.services, isMounted]);
 
   useEffect(() => {
     const getCollaboratingProject = async (
@@ -145,10 +158,10 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
         team.profiles[i].email
       );
     }
-    void Promise.all(collaboratorProjectsPromises).then((result) =>
-      setCollaboratorProjects(result)
-    );
-  }, [team, props.services, auth]);
+    void Promise.all(collaboratorProjectsPromises).then((result) => {
+      setStateIfMounted(result, setCollaboratorProjects, isMounted.current);
+    });
+  }, [team, props.services, auth, isMounted]);
 
   let pendingInvites;
   if (team?.pending_invites?.length > 0) {

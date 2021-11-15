@@ -8,6 +8,7 @@ const user = {
   email: "a@b.com",
   authToken: "22345",
   isOwner: false,
+  tierID: 2,
 };
 
 const config = {

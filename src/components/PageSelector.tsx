@@ -25,9 +25,14 @@ function NavLink({ name }: { name: string }): ReactElement {
 }
 
 export function PageSelector({ user }: { user: User }): ReactElement {
-  const links = user.isOwner
-    ? (["Projects", "Team", "Collaborators", "Services"] as const)
-    : (["Projects"] as const);
+  let links;
+  if (user.isOwner && user.tierID > 1) {
+    links = ["Projects", "Team", "Collaborators", "Services"] as const;
+  } else if (user.isOwner) {
+    links = ["Projects", "Team", "Collaborators"] as const;
+  } else {
+    links = ["Projects"] as const;
+  }
 
   return (
     <div

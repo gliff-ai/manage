@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState, useRef } from "react";
 import {
   Paper,
   IconButton,
@@ -21,6 +21,7 @@ import { theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
+import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles(() => ({
   topography: {
@@ -83,6 +84,7 @@ export const TeamView = (props: Props): JSX.Element => {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
   const classes = useStyles();
+  const isMounted = useRef(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
@@ -106,6 +108,15 @@ export const TeamView = (props: Props): JSX.Element => {
   };
 
   useEffect(() => {
+    // runs at mout
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     if (auth?.user?.email) {
       void props.services
         .queryTeam(null, auth.user.authToken)
@@ -113,10 +124,10 @@ export const TeamView = (props: Props): JSX.Element => {
           t.profiles = t.profiles.filter(
             ({ is_trusted_service }) => !is_trusted_service
           );
-          setTeam(t);
+          setStateIfMounted(t, setTeam, isMounted.current);
         });
     }
-  }, [auth, props.services]);
+  }, [auth, props.services, isMounted]);
 
   let pendingInvites;
   if (team?.pending_invites?.length > 0) {
