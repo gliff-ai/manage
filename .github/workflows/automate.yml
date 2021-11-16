@@ -31,5 +31,9 @@ jobs:
       - name: 'Running application under test'
         run: npx http-server -p 3000 dist &
 
+      - run: sleep 10
+
       - name: 'Running test on BrowserStack'  # Invokes the actual test script that would run on BrowserStack browsers
         run: npm run test:e2e
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
