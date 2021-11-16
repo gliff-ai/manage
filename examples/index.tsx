@@ -7,7 +7,7 @@ import type { Services } from "../src";
 const user = {
   email: "a@b.com",
   authToken: "22345",
-  isOwner: false,
+  isOwner: true,
   tierID: 2,
 };
 

@@ -15,9 +15,10 @@ import {
   TableCell,
   TextField,
   ListSubheader,
+  Box,
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
-import { theme } from "@gliff-ai/style";
+import { LoadingSpinner, theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
@@ -77,10 +78,7 @@ interface Props {
 
 export const TeamView = (props: Props): JSX.Element => {
   const auth = useAuth();
-  const [team, setTeam] = useState<Team>({
-    profiles: [],
-    pending_invites: [],
-  });
+  const [team, setTeam] = useState<Team | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
   const classes = useStyles();
@@ -108,7 +106,7 @@ export const TeamView = (props: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    // runs at mout
+    // runs at mount
     isMounted.current = true;
     return () => {
       // runs at dismount
@@ -143,12 +141,14 @@ export const TeamView = (props: Props): JSX.Element => {
         )}
       </List>
     );
-  } else {
+  } else if (team?.pending_invites?.length > 0) {
     pendingInvites = (
       <Typography style={{ marginTop: "10px", marginBottom: "15px" }}>
         No pending invites
       </Typography>
     );
+  } else {
+    pendingInvites = <LoadingSpinner />;
   }
 
   const inviteForm = (
@@ -193,31 +193,38 @@ export const TeamView = (props: Props): JSX.Element => {
             Current team members
           </Typography>
         </Paper>
-        <TableContainer>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell className={classes.tableText}>Name</TableCell>
-                <TableCell className={classes.tableText}>Email</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {team?.profiles.map(
-                ({ email, name, is_collaborator }) =>
-                  !is_collaborator && (
-                    <TableRow key={email}>
-                      <TableCell className={classes.tableText}>
-                        {name}
-                      </TableCell>
-                      <TableCell className={classes.tableText}>
-                        {email}
-                      </TableCell>
-                    </TableRow>
-                  )
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+
+        {team?.profiles ? (
+          <TableContainer>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell className={classes.tableText}>Name</TableCell>
+                  <TableCell className={classes.tableText}>Email</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {team?.profiles.map(
+                  ({ email, name, is_collaborator }) =>
+                    !is_collaborator && (
+                      <TableRow key={email}>
+                        <TableCell className={classes.tableText}>
+                          {name}
+                        </TableCell>
+                        <TableCell className={classes.tableText}>
+                          {email}
+                        </TableCell>
+                      </TableRow>
+                    )
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <Box display="flex" height="100%">
+            <LoadingSpinner />
+          </Box>
+        )}
       </Card>
 
       <div className={classes.cardsContainer}>
