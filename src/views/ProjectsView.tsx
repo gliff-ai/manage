@@ -308,13 +308,13 @@ export const ProjectsView = (props: Props): ReactElement => {
                           for (const profile of dialogInvitees) {
                             inviteToProject(newProjectUid, profile.email).catch(
                               (err) => {
-                                console.log(err);
+                                console.error(err);
                               }
                             );
                           }
                         },
                         (err) => {
-                          console.log(err);
+                          console.error(err);
                         }
                       );
                       setDialogOpen(false);
