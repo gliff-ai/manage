@@ -9,7 +9,6 @@ wrapper(() => {
   describe("Load page", () => {
     test("loads the page", async (driver, percySnapshot) => {
       await driver.get(TARGET_URL);
-      console.log(percySnapshot);
 
       await driver.wait(webdriver.until.titleMatches(/Manage/i), 60000);
       const title = await driver.getTitle();
