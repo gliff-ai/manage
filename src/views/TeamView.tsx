@@ -141,7 +141,7 @@ export const TeamView = (props: Props): JSX.Element => {
         )}
       </List>
     );
-  } else if (team?.pending_invites?.length > 0) {
+  } else if (team?.pending_invites?.length === 0) {
     pendingInvites = (
       <Typography style={{ marginTop: "10px", marginBottom: "15px" }}>
         No pending invites
