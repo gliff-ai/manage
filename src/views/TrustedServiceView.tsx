@@ -15,10 +15,11 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Box,
 } from "@material-ui/core";
 
 import { Add } from "@material-ui/icons";
-import { theme } from "@gliff-ai/style";
+import { LoadingSpinner, theme } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { TrustedService } from "@/interfaces";
@@ -77,7 +78,8 @@ export const TrustedServiceView = (props: Props): ReactElement => {
     name: string;
     url: string;
   }>({ name: "", url: "" });
-  const [trustedServices, setTrustedServices] = useState<TrustedService[]>([]); // all trustedServices
+  const [trustedServices, setTrustedServices] =
+    useState<TrustedService[] | null>(null); // all trustedServices
   const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState("");
@@ -182,115 +184,120 @@ export const TrustedServiceView = (props: Props): ReactElement => {
             Trusted Services
           </Typography>
         </Paper>
-
-        <Paper elevation={0} square>
-          <List style={{ paddingBottom: "0px" }}>
-            <ListItem
-              divider
-              style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
-              onClick={() => {
-                setDialogOpen(!dialogOpen);
-              }}
-            >
-              <div
-                style={{
-                  margin: "10px",
-                  display: "flex",
-                  alignItems: "center",
+        {trustedServices ? (
+          <Paper elevation={0} square>
+            <List style={{ paddingBottom: "0px" }}>
+              <ListItem
+                divider
+                style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
+                onClick={() => {
+                  setDialogOpen(!dialogOpen);
                 }}
               >
-                <Add
-                  fontSize="large"
-                  style={{ marginRight: "10px", color: "grey" }}
-                />
-                <Typography style={{ color: "grey" }}>
-                  Add New Trusted Service
-                </Typography>
-              </div>
-            </ListItem>
-          </List>
-
-          <TableContainer>
-            <Table aria-label="simple table">
-              <TableBody>{trustedServices.map(trustedService)}</TableBody>
-            </Table>
-          </TableContainer>
-
-          <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-            <Card>
-              <Paper
-                elevation={0}
-                variant="outlined"
-                square
-                className={classes.paperHeader}
-              >
-                <Typography className={classes.projectsTopography}>
-                  New Trusted Service
-                </Typography>
-              </Paper>
-              <Paper
-                elevation={0}
-                square
-                style={{ width: "20vw", margin: "20px" }}
-              >
-                <TextField
-                  placeholder="Trusted Service Name"
-                  style={{ width: "100%" }}
-                  onChange={(event) => {
-                    setNewTrustedService({
-                      name: event.target.value,
-                      url: newTrustedService.url,
-                    });
+                <div
+                  style={{
+                    margin: "10px",
+                    display: "flex",
+                    alignItems: "center",
                   }}
-                />
-                <TextField
-                  placeholder="Url"
-                  type="url"
-                  style={{ width: "100%" }}
-                  onChange={(event) => {
-                    setNewTrustedService({
-                      url: event.target.value,
-                      name: newTrustedService.name,
-                    });
-                  }}
-                />
+                >
+                  <Add
+                    fontSize="large"
+                    style={{ marginRight: "10px", color: "grey" }}
+                  />
+                  <Typography style={{ color: "grey" }}>
+                    Add New Trusted Service
+                  </Typography>
+                </div>
+              </ListItem>
+            </List>
 
-                <DialogActions>
-                  <Button
-                    onClick={() => {
-                      setDialogOpen(false);
-                    }}
-                    className={classes.cancelButton}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    className={classes.OKButton}
-                    variant="contained"
-                    color="primary"
-                    disabled={
-                      newTrustedService.url === "" ||
-                      newTrustedService.name === "" ||
-                      creating
-                    }
-                    onClick={() => {
-                      setCreating(true);
-                      void createTrustedService().then((res) => {
-                        if (res) {
-                          setKey(res as string);
-                        }
-                        setDialogOpen(false);
-                        setCreating(false);
+            <TableContainer>
+              <Table aria-label="simple table">
+                <TableBody>{trustedServices.map(trustedService)}</TableBody>
+              </Table>
+            </TableContainer>
+
+            <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+              <Card>
+                <Paper
+                  elevation={0}
+                  variant="outlined"
+                  square
+                  className={classes.paperHeader}
+                >
+                  <Typography className={classes.projectsTopography}>
+                    New Trusted Service
+                  </Typography>
+                </Paper>
+                <Paper
+                  elevation={0}
+                  square
+                  style={{ width: "20vw", margin: "20px" }}
+                >
+                  <TextField
+                    placeholder="Trusted Service Name"
+                    style={{ width: "100%" }}
+                    onChange={(event) => {
+                      setNewTrustedService({
+                        name: event.target.value,
+                        url: newTrustedService.url,
                       });
                     }}
-                  >
-                    {!creating ? "Create" : "Loading..."}
-                  </Button>
-                </DialogActions>
-              </Paper>
-            </Card>
-          </Dialog>
-        </Paper>
+                  />
+                  <TextField
+                    placeholder="Url"
+                    type="url"
+                    style={{ width: "100%" }}
+                    onChange={(event) => {
+                      setNewTrustedService({
+                        url: event.target.value,
+                        name: newTrustedService.name,
+                      });
+                    }}
+                  />
+
+                  <DialogActions>
+                    <Button
+                      onClick={() => {
+                        setDialogOpen(false);
+                      }}
+                      className={classes.cancelButton}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      className={classes.OKButton}
+                      variant="contained"
+                      color="primary"
+                      disabled={
+                        newTrustedService.url === "" ||
+                        newTrustedService.name === "" ||
+                        creating
+                      }
+                      onClick={() => {
+                        setCreating(true);
+                        void createTrustedService().then((res) => {
+                          if (res) {
+                            setKey(res as string);
+                          }
+                          setDialogOpen(false);
+                          setCreating(false);
+                        });
+                      }}
+                    >
+                      {!creating ? "Create" : "Loading..."}
+                    </Button>
+                  </DialogActions>
+                </Paper>
+              </Card>
+            </Dialog>
+          </Paper>
+        ) : (
+          <Box display="flex" height="100%">
+            <LoadingSpinner />
+          </Box>
+        )}
       </Card>
 
       {keyDialog}
