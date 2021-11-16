@@ -150,7 +150,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           launchCallback={() => props.launchCurateCallback(uid)}
           tooltip={`Open ${name} in CURATE`}
         />
-        {auth.user.isOwner && (
+        {auth.user.isOwner && props.launchAuditCallback !== null && (
           <LaunchIcon
             launchCallback={() => props.launchAuditCallback(uid)}
             tooltip={`Open ${name} in AUDIT`}
