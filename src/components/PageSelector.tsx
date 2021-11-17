@@ -1,9 +1,15 @@
 import { ButtonGroup } from "@material-ui/core";
 import { ReactElement } from "react";
 import { Link, useLocation, useResolvedPath } from "react-router-dom";
-import { IconButton } from "@gliff-ai/style";
-import { imgSrc } from "@/helpers";
+import { IconButton, icons } from "@gliff-ai/style";
 import { User } from "@/interfaces";
+
+const pageIcons: { [name: string]: string } = {
+  projects: icons.projectsPage,
+  team: icons.usersPage,
+  collaborators: icons.collaborators,
+  services: icons.trustedServices,
+};
 
 function NavLink({ name }: { name: string }): ReactElement {
   const link = name.toLowerCase();
@@ -18,7 +24,7 @@ function NavLink({ name }: { name: string }): ReactElement {
       component={Link}
       to={`${link}`}
       tooltip={{ name }}
-      icon={imgSrc(link)}
+      icon={pageIcons[link]}
       fill={isActive}
     />
   );
