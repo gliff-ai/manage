@@ -131,7 +131,6 @@ export const ProjectsView = (props: Props): ReactElement => {
     const p = (await props.services.getProjects()) as Project[];
     setProjects(p);
     // TODO: would be nice if services.createProject could return the uid of the new project
-    console.log(p);
     return p.find((project) => project.name === newProjectName).uid;
   };
 
