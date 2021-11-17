@@ -150,7 +150,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           launchCallback={() => props.launchCurateCallback(uid)}
           tooltip={`Open ${name} in CURATE`}
         />
-        {auth.user.isOwner && (
+        {auth.user.isOwner && props.launchAuditCallback !== null && (
           <LaunchIcon
             launchCallback={() => props.launchAuditCallback(uid)}
             tooltip={`Open ${name} in AUDIT`}
@@ -314,13 +314,13 @@ export const ProjectsView = (props: Props): ReactElement => {
                           for (const profile of dialogInvitees) {
                             inviteToProject(newProjectUid, profile.email).catch(
                               (err) => {
-                                console.log(err);
+                                console.error(err);
                               }
                             );
                           }
                         },
                         (err) => {
-                          console.log(err);
+                          console.error(err);
                         }
                       );
                       setDialogOpen(false);
