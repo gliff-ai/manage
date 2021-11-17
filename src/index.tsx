@@ -65,12 +65,12 @@ export function UserInterface(props: Props): JSX.Element {
   const services = initApiRequest(props.apiUrl, props.services);
 
   useEffect(() => {
-    if (!auth?.user && props.user) {
-      // Autologin if we've been passed a login
-      const { email, authToken, isOwner, tierID } = props.user;
-      auth.saveUser({ email, authToken, isOwner, tierID });
-    }
-  });
+    if (!auth || auth?.user) return;
+    // Autologin if we've been passed a login
+    props.user && auth?.saveUser(props.user);
+  }, [auth]);
+
+  if (!auth?.user) return null;
 
   const appbar = props.showAppBar && (
     <AppBar position="fixed" className={classes.appBar} elevation={0}>
@@ -83,8 +83,6 @@ export function UserInterface(props: Props): JSX.Element {
       </Toolbar>
     </AppBar>
   );
-
-  if (!auth?.user) return null;
 
   return (
     <StylesProvider generateClassName={generateClassName("manage")}>
