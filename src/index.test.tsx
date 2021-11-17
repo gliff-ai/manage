@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import ReactDOM from "react-dom";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { fireEvent, screen, act } from "@testing-library/react";
@@ -93,7 +94,7 @@ describe("collaborators access", () => {
     ["Team Members", "team"],
     ["Collaborators", "collaborators"],
     ["Trusted Services", "services"],
-  ])("cannot access '%s' page", async (_, testId: string) => {
+  ])("cannot access '%s' page", (_, testId: string) => {
     expect(screen.queryByTestId("projects")).toBeDefined();
     expect(screen.queryByTestId(testId)).toBeNull();
   });
