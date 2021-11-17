@@ -1,6 +1,7 @@
 import { useEffect, useState, ChangeEvent, ReactElement, useRef } from "react";
 import {
   Paper,
+  Box,
   IconButton,
   Typography,
   Card,
@@ -21,7 +22,7 @@ import {
 } from "@material-ui/core";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Clear, Add } from "@material-ui/icons";
-import { theme } from "@gliff-ai/style";
+import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team } from "@/interfaces";
@@ -55,7 +56,11 @@ const useStyles = () =>
         background: "#01dbff",
       },
     },
-    tableCell: { padding: "0px 16px 0px 25px", fontSize: "16px" },
+    tableCell: {
+      padding: "0px 16px 0px 25px",
+      fontSize: "16px",
+      maxHeight: "28px",
+    },
   }));
 
 interface Props {
@@ -67,11 +72,11 @@ interface Props {
 export const ProjectsView = (props: Props): ReactElement => {
   const auth = useAuth();
   const [newProjectName, setNewProjectName] = useState<string>(""); // string entered in text field in New Project dialog
-  const [projects, setProjects] = useState<Project[]>([]); // all projects
+  const [projects, setProjects] = useState<Project[] | null>(null); // all projects
   const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
-  const [projectInvitees, setInvitees] = useState<Profile[]>([]); // all team members except the logged in user
+  const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
   const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
-  const [dialogInvitees, setDialogInvitees] = useState<Profile[]>([]); // team members selected in the New Project dialog
+  const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>(null); // team members selected in the New Project dialog
   const classes = useStyles()();
   const isMounted = useRef(false);
 
@@ -92,30 +97,26 @@ export const ProjectsView = (props: Props): ReactElement => {
   }, []);
 
   useEffect(() => {
-    if (auth?.user?.email) {
-      void props.services
-        .getProjects(null, auth.user.authToken)
-        .then((p: Project[]) => {
-          setStateIfMounted(p, setProjects, isMounted.current);
-        });
+    if (!auth?.user?.email) return;
 
-      if (auth.user.isOwner) {
-        void props.services
-          .queryTeam(null, auth.user.authToken)
-          .then((team: Team) => {
-            const invitees = team.profiles.filter(
-              ({ email }) => email !== auth?.user?.email
-            );
-            setStateIfMounted(invitees, setInvitees, isMounted.current);
-            if (invitees.length > 0) {
-              setStateIfMounted(
-                invitees[0].email,
-                setInvitee,
-                isMounted.current
-              );
-            }
-          });
-      }
+    void props.services
+      .getProjects(null, auth.user.authToken)
+      .then((p: Project[]) =>
+        setStateIfMounted(p, setProjects, isMounted.current)
+      );
+
+    if (auth.user.isOwner) {
+      void props.services
+        .queryTeam(null, auth.user.authToken)
+        .then((team: Team) => {
+          const invitees = team.profiles.filter(
+            ({ email }) => email !== auth?.user?.email
+          );
+          setStateIfMounted(invitees, setInvitees, isMounted.current);
+          if (invitees.length > 0) {
+            setStateIfMounted(invitees[0].email, setInvitee, isMounted.current);
+          }
+        });
     }
   }, [auth, props.services, isMounted]);
 
@@ -150,7 +151,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           launchCallback={() => props.launchCurateCallback(uid)}
           tooltip={`Open ${name} in CURATE`}
         />
-        {auth.user.isOwner && (
+        {auth.user.isOwner && props.launchAuditCallback !== null && (
           <LaunchIcon
             data-testid={`audit-${uid}`}
             launchCallback={() => props.launchAuditCallback(uid)}
@@ -180,7 +181,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           </Typography>
         </Paper>
 
-        <Paper elevation={0} square>
+        <Paper elevation={0} square style={{ height: "100%" }}>
           {auth.user.isOwner && (
             <List style={{ paddingBottom: "0px" }}>
               <ListItem
@@ -209,11 +210,17 @@ export const ProjectsView = (props: Props): ReactElement => {
             </List>
           )}
 
-          <TableContainer>
-            <Table aria-label="simple table">
-              <TableBody>{projects.map(project)}</TableBody>
-            </Table>
-          </TableContainer>
+          {projects === null ? (
+            <Box display="flex" height="100%">
+              <LoadingSpinner />
+            </Box>
+          ) : (
+            <TableContainer>
+              <Table aria-label="simple table">
+                <TableBody>{projects.map(project)}</TableBody>
+              </Table>
+            </TableContainer>
+          )}
 
           <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
             <Card>
@@ -265,7 +272,7 @@ export const ProjectsView = (props: Props): ReactElement => {
                 {/* eslint-enable react/jsx-props-no-spreading */}
 
                 <List>
-                  {dialogInvitees.map((profile) => (
+                  {dialogInvitees?.map((profile) => (
                     <ListItem key={profile.email}>
                       <ListItemText>{profile.name}</ListItemText>
                       <ListItemSecondaryAction>
@@ -309,13 +316,13 @@ export const ProjectsView = (props: Props): ReactElement => {
                           for (const profile of dialogInvitees) {
                             inviteToProject(newProjectUid, profile.email).catch(
                               (err) => {
-                                console.log(err);
+                                console.error(err);
                               }
                             );
                           }
                         },
                         (err) => {
-                          console.log(err);
+                          console.error(err);
                         }
                       );
                       setDialogOpen(false);

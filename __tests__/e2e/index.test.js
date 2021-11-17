@@ -7,7 +7,7 @@ const { TARGET_URL = "http://127.0.0.1:3000/" } = process.env;
 
 wrapper(() => {
   describe("Load page", () => {
-    test("loads the page", async (driver) => {
+    test("loads the page", async (driver, percySnapshot) => {
       await driver.get(TARGET_URL);
 
       await driver.wait(webdriver.until.titleMatches(/Manage/i), 60000);
@@ -16,7 +16,7 @@ wrapper(() => {
       expect(title).toEqual("gliff.ai MANAGE");
     });
 
-    test("lists projects", async (driver) => {
+    test("lists projects", async (driver, percySnapshot) => {
       await driver.get(TARGET_URL);
 
       await driver.wait(webdriver.until.titleMatches(/Manage/i), 60000);
@@ -44,6 +44,8 @@ wrapper(() => {
         .getText();
 
       expect(text).toEqual("Project 1");
+
+      await percySnapshot(driver, "Projects Screenshot");
     });
   });
 });
