@@ -22,6 +22,7 @@ function NavLink({ name }: { name: string }): ReactElement {
   return (
     <IconButton
       component={Link}
+      data-testid={link}
       to={`${link}`}
       tooltip={{ name }}
       icon={pageIcons[link]}

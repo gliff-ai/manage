@@ -1,15 +1,18 @@
 import { HtmlTooltip } from "@gliff-ai/style";
-import Button from "@material-ui/core/Button";
+import Button, { ButtonProps } from "@material-ui/core/Button";
 import { Launch } from "@material-ui/icons";
 import { ReactElement } from "react";
 
-interface Props {
+interface Props extends ButtonProps {
   launchCallback: () => void | null;
   tooltip: string;
 }
 
-const LaunchIcon = (props: Props): ReactElement | null => {
-  const { launchCallback, tooltip } = props;
+const LaunchIcon = ({
+  launchCallback,
+  tooltip,
+  ...buttonProps
+}: Props): ReactElement | null => {
   return (
     launchCallback && (
       <HtmlTooltip
@@ -17,7 +20,7 @@ const LaunchIcon = (props: Props): ReactElement | null => {
         title={tooltip}
         placement="bottom"
       >
-        <Button onClick={launchCallback}>
+        <Button {...buttonProps} onClick={launchCallback}>
           <Launch />
         </Button>
       </HtmlTooltip>

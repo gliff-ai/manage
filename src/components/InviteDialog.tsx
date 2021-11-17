@@ -41,6 +41,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface Props {
+  projectUid: string;
   projectInvitees: Profile[];
   handleSelectChange: (
     event: ChangeEvent<HTMLSelectElement>,
@@ -82,13 +83,11 @@ export function InviteDialog(props: Props): React.ReactElement {
   return (
     <>
       <IconButton
-        onClick={() => {
-          setOpen(!open);
-        }}
+        data-testid={`edit-${props.projectUid}`}
+        onClick={() => setOpen(!open)}
       >
         <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />
       </IconButton>
-
       <Dialog
         open={open}
         onClose={() => {
