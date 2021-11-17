@@ -189,9 +189,7 @@ export const TeamView = (props: Props): JSX.Element => {
           square
           className={classes.paperHeader}
         >
-          <Typography className={classes.topography}>
-            Current team members
-          </Typography>
+          <Typography className={classes.topography}>Team Members</Typography>
         </Paper>
         <TableContainer>
           <Table aria-label="simple table">
