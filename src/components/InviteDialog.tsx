@@ -11,8 +11,7 @@ import {
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { theme } from "@gliff-ai/style";
-import { imgSrc } from "@/helpers";
+import { theme, icons } from "@gliff-ai/style";
 import { Profile } from "@/interfaces";
 
 const useStyles = makeStyles(() => ({
@@ -42,6 +41,7 @@ const useStyles = makeStyles(() => ({
 }));
 
 interface Props {
+  projectUid: string;
   projectInvitees: Profile[];
   handleSelectChange: (
     event: ChangeEvent<HTMLSelectElement>,
@@ -83,13 +83,11 @@ export function InviteDialog(props: Props): React.ReactElement {
   return (
     <>
       <IconButton
-        onClick={() => {
-          setOpen(!open);
-        }}
+        data-testid={`edit-${props.projectUid}`}
+        onClick={() => setOpen(!open)}
       >
-        <SVG src={imgSrc("edit")} style={{ width: "22px", height: "auto" }} />
+        <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />
       </IconButton>
-
       <Dialog
         open={open}
         onClose={() => {

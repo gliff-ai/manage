@@ -141,6 +141,7 @@ export const ProjectsView = (props: Props): ReactElement => {
       <TableCell className={classes.tableCell} align="right">
         {auth.user.isOwner && (
           <InviteDialog
+            projectUid={uid}
             projectInvitees={projectInvitees}
             handleSelectChange={handleSelectChange}
             inviteToProject={() => inviteToProject(uid, projectInvitee)}
@@ -152,6 +153,7 @@ export const ProjectsView = (props: Props): ReactElement => {
         />
         {auth.user.isOwner && props.launchAuditCallback !== null && (
           <LaunchIcon
+            data-testid={`audit-${uid}`}
             launchCallback={() => props.launchAuditCallback(uid)}
             tooltip={`Open ${name} in AUDIT`}
           />

@@ -227,9 +227,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
           square
           className={classes.paperHeader}
         >
-          <Typography className={classes.topography}>
-            Current collaborators
-          </Typography>
+          <Typography className={classes.topography}>Collaborators</Typography>
         </Paper>
 
         {team?.profiles ? (
