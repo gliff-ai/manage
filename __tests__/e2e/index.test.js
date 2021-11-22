@@ -3,7 +3,7 @@ const { By } = require("selenium-webdriver");
 const { wrapper, test, webdriver } =
   require("@gliff-ai/jest-browserstack-automate")("Manage");
 
-const { TARGET_URL = "http://127.0.0.1:3000/" } = process.env;
+const { TARGET_URL = "http://bs-local.com:8080/" } = process.env;
 
 wrapper(() => {
   describe("Load page", () => {
