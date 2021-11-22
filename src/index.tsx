@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import { makeStyles, StylesProvider } from "@material-ui/core/styles";
-import { theme, generateClassName } from "@gliff-ai/style";
+import { theme, generateClassName, Logo } from "@gliff-ai/style";
 
 import { initApiRequest } from "@/api";
 import { TeamView } from "@/views/TeamView";
@@ -19,7 +19,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 import type { Services } from "@/api";
-import { imgSrc } from "./helpers";
 import { PageSelector } from "./components/PageSelector";
 import { User } from "./interfaces";
 
@@ -66,31 +65,26 @@ export function UserInterface(props: Props): JSX.Element {
   const services = initApiRequest(props.apiUrl, props.services);
 
   useEffect(() => {
-    if (!auth?.user && props.user) {
-      // Autologin if we've been passed a login
-      const { email, authToken, isOwner, tierID } = props.user;
-      auth.saveUser({ email, authToken, isOwner, tierID });
+    if (!auth || auth?.user) return;
+    // Autologin if we've been passed a login
+    if (props.user) {
+      auth?.saveUser(props.user);
     }
-  });
+  }, [auth]);
+
+  if (!auth?.user) return null;
 
   const appbar = props.showAppBar && (
     <AppBar position="fixed" className={classes.appBar} elevation={0}>
       <Toolbar>
         <Grid container direction="row">
           <Grid item className={classes.logo}>
-            <img
-              src={imgSrc("gliff-master-black")}
-              width="79px"
-              height="60px"
-              alt="gliff logo"
-            />
+            <Logo />
           </Grid>
         </Grid>
       </Toolbar>
     </AppBar>
   );
-
-  if (!auth?.user) return null;
 
   return (
     <StylesProvider generateClassName={generateClassName("manage")}>
@@ -104,7 +98,6 @@ export function UserInterface(props: Props): JSX.Element {
           }}
         >
           <PageSelector user={auth.user} />
-
           <Routes>
             <Route path="/">
               <Navigate to="projects" />
