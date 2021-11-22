@@ -65,7 +65,7 @@ export function UserInterface(props: Props): JSX.Element {
   const services = initApiRequest(props.apiUrl, props.services);
 
   useEffect(() => {
-    if (!auth || auth?.user) return;
+    if (!auth) return;
     // Autologin if we've been passed a login
     if (props.user) {
       auth?.saveUser(props.user);
