@@ -93,15 +93,18 @@ export const TeamView = (props: Props): JSX.Element => {
     event.preventDefault();
     setInviteMessage("");
 
-    const result = await props.services.inviteUser({
-      email: inviteEmail,
-    });
-
-    if (result) {
-      setInviteEmail("");
-      setInviteMessage("Invite was sent");
-    } else {
-      setInviteMessage("An error happened with the invite");
+    try {
+      const result = await props.services.inviteUser({
+        email: inviteEmail,
+      });
+      if (result) {
+        setInviteEmail("");
+        setInviteMessage("Invite was sent");
+      } else {
+        setInviteMessage("An error happened with the invite");
+      }
+    } catch (error) {
+      console.error(error.message);
     }
   };
 
