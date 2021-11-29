@@ -2,7 +2,7 @@ import { ButtonGroup } from "@material-ui/core";
 import { ReactElement } from "react";
 import { Link, useLocation, useResolvedPath } from "react-router-dom";
 import { IconButton, icons } from "@gliff-ai/style";
-import { User } from "@/interfaces";
+import { User, UserAccess } from "@/interfaces";
 
 const pageIcons: { [name: string]: string } = {
   projects: icons.projectsPage,
@@ -33,9 +33,14 @@ function NavLink({ name }: { name: string }): ReactElement {
 
 export function PageSelector({ user }: { user: User }): ReactElement {
   let links;
-  if (user.isOwner && user.tierID > 1) {
+
+  const isOwnerOrMember =
+    user.userAccess === UserAccess.Owner ||
+    user.userAccess === UserAccess.Member;
+
+  if (isOwnerOrMember && user.tierID > 1) {
     links = ["Projects", "Team", "Collaborators", "Services"] as const;
-  } else if (user.isOwner) {
+  } else if (isOwnerOrMember) {
     links = ["Projects", "Team", "Collaborators"] as const;
   } else {
     links = ["Projects"] as const;

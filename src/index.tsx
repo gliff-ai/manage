@@ -70,7 +70,7 @@ export function UserInterface(props: Props): JSX.Element {
     if (props.user) {
       auth?.saveUser(props.user);
     }
-  }, [auth]);
+  }, [auth, props.user]);
 
   if (!auth?.user) return null;
 

@@ -1,4 +1,11 @@
-import { useEffect, useState, ChangeEvent, ReactElement, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  ChangeEvent,
+  ReactElement,
+  useRef,
+  useCallback,
+} from "react";
 import {
   Paper,
   Box,
@@ -25,7 +32,7 @@ import { Clear, Add } from "@material-ui/icons";
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { Project, Profile, Team } from "@/interfaces";
+import { Project, Profile, Team, UserAccess } from "@/interfaces";
 import { InviteDialog, LaunchIcon } from "@/components";
 import { setStateIfMounted } from "@/helpers";
 
@@ -87,6 +94,13 @@ export const ProjectsView = (props: Props): ReactElement => {
     setInvitee(value.email);
   };
 
+  const isOwnerOrMember = useCallback(
+    (): boolean =>
+      auth.user.userAccess === UserAccess.Owner ||
+      auth.user.userAccess === UserAccess.Member,
+    [auth.user.userAccess]
+  );
+
   useEffect(() => {
     // runs at mount
     isMounted.current = true;
@@ -105,7 +119,7 @@ export const ProjectsView = (props: Props): ReactElement => {
         setStateIfMounted(p, setProjects, isMounted.current)
       );
 
-    if (auth.user.isOwner) {
+    if (isOwnerOrMember()) {
       void props.services
         .queryTeam(null, auth.user.authToken)
         .then((team: Team) => {
@@ -118,7 +132,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           }
         });
     }
-  }, [auth, props.services, isMounted]);
+  }, [auth, props.services, isMounted, isOwnerOrMember]);
 
   const inviteToProject = (projectId: string, inviteeEmail: string) =>
     props.services
@@ -139,7 +153,7 @@ export const ProjectsView = (props: Props): ReactElement => {
     <TableRow key={uid}>
       <TableCell className={classes.tableCell}>{name}</TableCell>
       <TableCell className={classes.tableCell} align="right">
-        {auth.user.isOwner && (
+        {isOwnerOrMember() && (
           <InviteDialog
             projectUid={uid}
             projectInvitees={projectInvitees}
@@ -151,13 +165,15 @@ export const ProjectsView = (props: Props): ReactElement => {
           launchCallback={() => props.launchCurateCallback(uid)}
           tooltip={`Open ${name} in CURATE`}
         />
-        {auth.user.isOwner && props.launchAuditCallback !== null && (
-          <LaunchIcon
-            data-testid={`audit-${uid}`}
-            launchCallback={() => props.launchAuditCallback(uid)}
-            tooltip={`Open ${name} in AUDIT`}
-          />
-        )}
+        {isOwnerOrMember() &&
+          auth.user.tierID > 1 &&
+          props.launchAuditCallback !== null && (
+            <LaunchIcon
+              data-testid={`audit-${uid}`}
+              launchCallback={() => props.launchAuditCallback(uid)}
+              tooltip={`Open ${name} in AUDIT`}
+            />
+          )}
       </TableCell>
     </TableRow>
   );
@@ -182,7 +198,7 @@ export const ProjectsView = (props: Props): ReactElement => {
         </Paper>
 
         <Paper elevation={0} square style={{ height: "100%" }}>
-          {auth.user.isOwner && (
+          {isOwnerOrMember() && (
             <List style={{ paddingBottom: "0px" }}>
               <ListItem
                 divider
