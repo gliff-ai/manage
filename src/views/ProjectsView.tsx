@@ -198,7 +198,7 @@ export const ProjectsView = (props: Props): ReactElement => {
         </Paper>
 
         <Paper elevation={0} square style={{ height: "100%" }}>
-          {isOwnerOrMember() && (
+          {isOwnerOrMember() && projects !== null && (
             <List style={{ paddingBottom: "0px" }}>
               <ListItem
                 divider
