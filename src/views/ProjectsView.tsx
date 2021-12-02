@@ -83,7 +83,7 @@ export const ProjectsView = (props: Props): ReactElement => {
   const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
   const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
   const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
-  const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>(null); // team members selected in the New Project dialog
+  const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]); // team members selected in the New Project dialog
   const classes = useStyles()();
   const isMounted = useRef(false);
 
@@ -237,7 +237,6 @@ export const ProjectsView = (props: Props): ReactElement => {
               </Table>
             </TableContainer>
           )}
-
           <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
             <Card>
               <Paper
@@ -250,7 +249,6 @@ export const ProjectsView = (props: Props): ReactElement => {
                   New Project
                 </Typography>
               </Paper>
-
               <Paper
                 elevation={0}
                 square
@@ -278,6 +276,7 @@ export const ProjectsView = (props: Props): ReactElement => {
                   style={{ marginTop: "26px" }}
                   onChange={(event, value) => {
                     // add the selected user profile to dialogInvitees if it's not already there:
+                    if (!value) return;
                     setDialogInvitees(
                       dialogInvitees.includes(value as Profile)
                         ? dialogInvitees
