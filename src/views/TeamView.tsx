@@ -18,7 +18,7 @@ import {
   Box,
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
-import { LoadingSpinner, MessageSnackbar, theme } from "@gliff-ai/style";
+import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
@@ -112,9 +112,9 @@ export const TeamView = (props: Props): JSX.Element => {
       } else {
         setInviteMessage("An error happened with the invite");
       }
-    } catch (error) {
+    } catch (e: any) {
       handleSnackbar();
-      console.error("hello");
+      console.error(`${(e as Error).message}`);
     }
   };
 
@@ -311,11 +311,7 @@ export const TeamView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </div>
-      <MessageSnackbar
-        open={open}
-        handleClose={handleClose}
-        messageText="hello"
-      />
+      <WarningSnackbar open={open} onClose={handleClose} messageText="hello" />
     </>
   );
 };
