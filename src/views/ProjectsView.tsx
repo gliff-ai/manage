@@ -9,31 +9,20 @@ import {
 import {
   Paper,
   Box,
-  IconButton,
   Typography,
   Card,
   makeStyles,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Dialog,
-  TextField,
-  DialogActions,
-  Button,
   TableContainer,
   Table,
   TableBody,
   TableRow,
   TableCell,
 } from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear, Add } from "@material-ui/icons";
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team, UserAccess } from "@/interfaces";
-import { InviteDialog, LaunchIcon } from "@/components";
+import { InviteDialog, LaunchIcon, CreateProjectDialog } from "@/components";
 import { setStateIfMounted } from "@/helpers";
 
 const useStyles = () =>
@@ -48,15 +37,6 @@ const useStyles = () =>
       fontSize: "21px",
       marginRight: "125px",
     },
-    cancelButton: {
-      textTransform: "none",
-    },
-    OKButton: {
-      "&:hover": {
-        backgroundColor: theme.palette.info.main,
-      },
-    },
-
     // eslint-disable-next-line mui-unused-classes/unused-classes
     "@global": {
       '.MuiAutocomplete-option[data-focus="true"]': {
@@ -78,12 +58,10 @@ interface Props {
 
 export const ProjectsView = (props: Props): ReactElement => {
   const auth = useAuth();
-  const [newProjectName, setNewProjectName] = useState<string>(""); // string entered in text field in New Project dialog
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
   const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
   const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
-  const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
-  const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]); // team members selected in the New Project dialog
+
   const classes = useStyles()();
   const isMounted = useRef(false);
 
@@ -134,49 +112,22 @@ export const ProjectsView = (props: Props): ReactElement => {
     }
   }, [auth, props.services, isMounted, isOwnerOrMember]);
 
-  const inviteToProject = (projectId: string, inviteeEmail: string) =>
-    props.services
-      .inviteToProject({ projectId, email: inviteeEmail })
-      .then(() => {
-        console.log(`invite complete!: ${inviteeEmail}`);
-      });
+  const inviteToProject = async (
+    projectId: string,
+    inviteeEmail: string
+  ): Promise<void> => {
+    await props.services.inviteToProject({ projectId, email: inviteeEmail });
 
-  const createProject = async (): Promise<string> => {
-    await props.services.createProject({ name: newProjectName });
+    console.log(`invite complete!: ${inviteeEmail}`);
+  };
+
+  const createProject = async (name: string): Promise<string> => {
+    await props.services.createProject({ name });
     const p = (await props.services.getProjects()) as Project[];
     setProjects(p);
     // TODO: would be nice if services.createProject could return the uid of the new project
-    return p.find((project) => project.name === newProjectName).uid;
+    return p?.find((project) => project.name === name).uid;
   };
-
-  const project = ({ name, uid }: Project) => (
-    <TableRow key={uid}>
-      <TableCell className={classes.tableCell}>{name}</TableCell>
-      <TableCell className={classes.tableCell} align="right">
-        {isOwnerOrMember() && (
-          <InviteDialog
-            projectUid={uid}
-            projectInvitees={projectInvitees}
-            handleSelectChange={handleSelectChange}
-            inviteToProject={() => inviteToProject(uid, projectInvitee)}
-          />
-        )}
-        <LaunchIcon
-          launchCallback={() => props.launchCurateCallback(uid)}
-          tooltip={`Open ${name} in CURATE`}
-        />
-        {isOwnerOrMember() &&
-          auth.user.tierID > 1 &&
-          props.launchAuditCallback !== null && (
-            <LaunchIcon
-              data-testid={`audit-${uid}`}
-              launchCallback={() => props.launchAuditCallback(uid)}
-              tooltip={`Open ${name} in AUDIT`}
-            />
-          )}
-      </TableCell>
-    </TableRow>
-  );
 
   if (!auth?.user) return null;
 
@@ -196,36 +147,15 @@ export const ProjectsView = (props: Props): ReactElement => {
             Projects
           </Typography>
         </Paper>
-
         <Paper elevation={0} square style={{ height: "100%" }}>
           {isOwnerOrMember() && projects !== null && (
-            <List style={{ paddingBottom: "0px" }}>
-              <ListItem
-                divider
-                style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
-                onClick={() => {
-                  setDialogOpen(!dialogOpen);
-                }}
-              >
-                <div
-                  style={{
-                    margin: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <Add
-                    fontSize="large"
-                    style={{ marginRight: "10px", color: "grey" }}
-                  />
-                  <Typography style={{ color: "grey" }}>
-                    Create New Project
-                  </Typography>
-                </div>
-              </ListItem>
-            </List>
+            <CreateProjectDialog
+              projects={projects}
+              projectInvitees={projectInvitees}
+              createProject={createProject}
+              inviteToProject={inviteToProject}
+            />
           )}
-
           {projects === null ? (
             <Box display="flex" height="100%">
               <LoadingSpinner />
@@ -233,122 +163,45 @@ export const ProjectsView = (props: Props): ReactElement => {
           ) : (
             <TableContainer>
               <Table aria-label="simple table">
-                <TableBody>{projects.map(project)}</TableBody>
+                <TableBody>
+                  {projects.map(({ name, uid }: Project) => (
+                    <TableRow key={uid}>
+                      <TableCell className={classes.tableCell}>
+                        {name}
+                      </TableCell>
+                      <TableCell className={classes.tableCell} align="right">
+                        {isOwnerOrMember() && (
+                          <InviteDialog
+                            projectUid={uid}
+                            projectInvitees={projectInvitees}
+                            handleSelectChange={handleSelectChange}
+                            inviteToProject={() =>
+                              inviteToProject(uid, projectInvitee)
+                            }
+                          />
+                        )}
+                        <LaunchIcon
+                          launchCallback={() => props.launchCurateCallback(uid)}
+                          tooltip={`Open ${name} in CURATE`}
+                        />
+                        {isOwnerOrMember() &&
+                          auth.user.tierID > 1 &&
+                          props.launchAuditCallback !== null && (
+                            <LaunchIcon
+                              data-testid={`audit-${uid}`}
+                              launchCallback={() =>
+                                props.launchAuditCallback(uid)
+                              }
+                              tooltip={`Open ${name} in AUDIT`}
+                            />
+                          )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
               </Table>
             </TableContainer>
           )}
-          <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-            <Card>
-              <Paper
-                elevation={0}
-                variant="outlined"
-                square
-                className={classes.paperHeader}
-              >
-                <Typography className={classes.projectsTopography}>
-                  New Project
-                </Typography>
-              </Paper>
-              <Paper
-                elevation={0}
-                square
-                style={{ width: "20vw", margin: "20px" }}
-              >
-                <TextField
-                  placeholder="Project Name"
-                  style={{ width: "100%" }}
-                  onChange={(event) => {
-                    setNewProjectName(event.target.value);
-                  }}
-                />
-
-                {/* eslint-disable react/jsx-props-no-spreading */}
-                <Autocomplete
-                  options={projectInvitees}
-                  getOptionLabel={(option) => option.name}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Add Team Members"
-                      variant="outlined"
-                    />
-                  )}
-                  style={{ marginTop: "26px" }}
-                  onChange={(event, value) => {
-                    // add the selected user profile to dialogInvitees if it's not already there:
-                    if (!value) return;
-                    setDialogInvitees(
-                      dialogInvitees.includes(value as Profile)
-                        ? dialogInvitees
-                        : dialogInvitees.concat(value as Profile)
-                    );
-                  }}
-                />
-                {/* eslint-enable react/jsx-props-no-spreading */}
-
-                <List>
-                  {dialogInvitees?.map((profile) => (
-                    <ListItem key={profile.email}>
-                      <ListItemText>{profile.name}</ListItemText>
-                      <ListItemSecondaryAction>
-                        <IconButton
-                          onClick={() => {
-                            // remove `email` from dialogInvitees:
-                            setDialogInvitees(
-                              dialogInvitees.filter(
-                                (_profile) => _profile.email !== profile.email
-                              )
-                            );
-                          }}
-                        >
-                          <Clear />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  ))}
-                </List>
-
-                <DialogActions>
-                  <Button
-                    onClick={() => {
-                      setDialogOpen(false);
-                    }}
-                    className={classes.cancelButton}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    className={classes.OKButton}
-                    variant="contained"
-                    color="primary"
-                    disabled={
-                      newProjectName === "" ||
-                      projects.map((p) => p.name).includes(newProjectName)
-                    }
-                    onClick={() => {
-                      createProject().then(
-                        (newProjectUid) => {
-                          for (const profile of dialogInvitees) {
-                            inviteToProject(newProjectUid, profile.email).catch(
-                              (err) => {
-                                console.error(err);
-                              }
-                            );
-                          }
-                        },
-                        (err) => {
-                          console.error(err);
-                        }
-                      );
-                      setDialogOpen(false);
-                    }}
-                  >
-                    OK
-                  </Button>
-                </DialogActions>
-              </Paper>
-            </Card>
-          </Dialog>
         </Paper>
       </Card>
     </>
