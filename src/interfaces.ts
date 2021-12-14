@@ -5,6 +5,13 @@ export interface User {
   tierID: number;
 }
 
+export type Progress = {
+  [uid: string]: {
+    total: number; // number of assigned images
+    complete: number; // number of images with a complete annotation
+  };
+};
+
 export enum UserAccess {
   Owner = "owner",
   Member = "member",

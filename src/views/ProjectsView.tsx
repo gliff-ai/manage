@@ -21,48 +21,69 @@ import {
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { Project, Profile, Team, UserAccess } from "@/interfaces";
-import { InviteDialog, LaunchIcon, CreateProjectDialog } from "@/components";
+import { Project, Profile, Team, UserAccess, Progress } from "@/interfaces";
+import {
+  InviteDialog,
+  LaunchIcon,
+  CreateProjectDialog,
+  ProgressBar,
+} from "@/components";
 import { setStateIfMounted } from "@/helpers";
 
-const useStyles = () =>
-  makeStyles(() => ({
-    paperHeader: {
-      padding: "10px",
-      backgroundColor: theme.palette.primary.main,
+const useStyles = makeStyles({
+  paperHeader: {
+    padding: "10px",
+    backgroundColor: theme.palette.primary.main,
+  },
+  projectsTopography: {
+    color: "#000000",
+    display: "inline",
+    fontSize: "21px",
+    marginRight: "125px",
+  },
+  // eslint-disable-next-line mui-unused-classes/unused-classes
+  "@global": {
+    '.MuiAutocomplete-option[data-focus="true"]': {
+      background: "#01dbff",
     },
-    projectsTopography: {
-      color: "#000000",
-      display: "inline",
-      fontSize: "21px",
-      marginRight: "125px",
-    },
-    // eslint-disable-next-line mui-unused-classes/unused-classes
-    "@global": {
-      '.MuiAutocomplete-option[data-focus="true"]': {
-        background: "#01dbff",
-      },
-    },
-    tableCell: {
-      padding: "0px 16px 0px 25px",
-      fontSize: "16px",
-      maxHeight: "28px",
-    },
-  }));
+  },
+  tableCell: {
+    padding: "0px 16px 0px 25px",
+    fontSize: "16px",
+    maxHeight: "28px",
+  },
+  tableHeader: {
+    padding: "0px 16px 0px 25px",
+    fontSize: "16px",
+    maxHeight: "28px",
+    fontWeight: 700,
+    height: "40px",
+  },
+});
 
 interface Props {
   services: ServiceFunctions;
   launchCurateCallback?: (projectUid: string) => void | null;
   launchAuditCallback?: (projectUid: string) => void | null;
+  getAnnotationProgress: (
+    collectionUids: string[],
+    username: string
+  ) => Promise<Progress>;
 }
 
-export const ProjectsView = (props: Props): ReactElement => {
+export const ProjectsView = ({
+  services,
+  getAnnotationProgress,
+  launchCurateCallback,
+  launchAuditCallback,
+}: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
+  const [progress, setProgress] = useState<Progress | null>(null);
   const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
   const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
 
-  const classes = useStyles()();
+  const classes = useStyles();
   const isMounted = useRef(false);
 
   const handleSelectChange = (
@@ -91,39 +112,52 @@ export const ProjectsView = (props: Props): ReactElement => {
   useEffect(() => {
     if (!auth?.user?.email) return;
 
-    void props.services
+    void services
       .getProjects(null, auth.user.authToken)
       .then((p: Project[]) =>
         setStateIfMounted(p, setProjects, isMounted.current)
       );
 
     if (isOwnerOrMember()) {
-      void props.services
-        .queryTeam(null, auth.user.authToken)
-        .then((team: Team) => {
-          const invitees = team.profiles.filter(
-            ({ email }) => email !== auth?.user?.email
-          );
-          setStateIfMounted(invitees, setInvitees, isMounted.current);
-          if (invitees.length > 0) {
-            setStateIfMounted(invitees[0].email, setInvitee, isMounted.current);
-          }
-        });
+      void services.queryTeam(null, auth.user.authToken).then((team: Team) => {
+        const invitees = team.profiles.filter(
+          ({ email }) => email !== auth?.user?.email
+        );
+        setStateIfMounted(invitees, setInvitees, isMounted.current);
+        if (invitees.length > 0) {
+          setStateIfMounted(invitees[0].email, setInvitee, isMounted.current);
+        }
+      });
     }
-  }, [auth, props.services, isMounted, isOwnerOrMember]);
+  }, [auth, services, isMounted, isOwnerOrMember]);
+
+  useEffect(() => {
+    if (!projects || !isMounted.current || !auth.user.email) return;
+
+    const projectUids = projects.map(({ uid }) => uid);
+
+    void getAnnotationProgress(projectUids, auth.user.email).then(
+      (newProgress) => {
+        if (newProgress) {
+          console.log(newProgress);
+          setStateIfMounted(newProgress, setProgress, isMounted.current);
+        }
+      }
+    );
+  }, [isMounted, projects, auth.user.email, getAnnotationProgress]);
 
   const inviteToProject = async (
     projectId: string,
     inviteeEmail: string
   ): Promise<void> => {
-    await props.services.inviteToProject({ projectId, email: inviteeEmail });
+    await services.inviteToProject({ projectId, email: inviteeEmail });
 
     console.log(`invite complete!: ${inviteeEmail}`);
   };
 
   const createProject = async (name: string): Promise<string> => {
-    await props.services.createProject({ name });
-    const p = (await props.services.getProjects()) as Project[];
+    await services.createProject({ name });
+    const p = (await services.getProjects()) as Project[];
     setProjects(p);
     // TODO: would be nice if services.createProject could return the uid of the new project
     return p?.find((project) => project.name === name).uid;
@@ -164,10 +198,20 @@ export const ProjectsView = (props: Props): ReactElement => {
             <TableContainer>
               <Table aria-label="simple table">
                 <TableBody>
-                  {projects.map(({ name, uid }: Project) => (
+                  <TableRow key="tab-header">
+                    <TableCell className={classes.tableHeader}>Name</TableCell>
+                    <TableCell className={classes.tableHeader}>
+                      Annotation Progress
+                    </TableCell>
+                    <TableCell className={classes.tableHeader} />
+                  </TableRow>
+                  {projects.map(({ name, uid }) => (
                     <TableRow key={uid}>
                       <TableCell className={classes.tableCell}>
                         {name}
+                      </TableCell>
+                      <TableCell className={classes.tableCell}>
+                        {progress && <ProgressBar progress={progress[uid]} />}
                       </TableCell>
                       <TableCell className={classes.tableCell} align="right">
                         {isOwnerOrMember() && (
@@ -181,17 +225,15 @@ export const ProjectsView = (props: Props): ReactElement => {
                           />
                         )}
                         <LaunchIcon
-                          launchCallback={() => props.launchCurateCallback(uid)}
+                          launchCallback={() => launchCurateCallback(uid)}
                           tooltip={`Open ${name} in CURATE`}
                         />
                         {isOwnerOrMember() &&
                           auth.user.tierID > 1 &&
-                          props.launchAuditCallback !== null && (
+                          launchAuditCallback !== null && (
                             <LaunchIcon
                               data-testid={`audit-${uid}`}
-                              launchCallback={() =>
-                                props.launchAuditCallback(uid)
-                              }
+                              launchCallback={() => launchAuditCallback(uid)}
                               tooltip={`Open ${name} in AUDIT`}
                             />
                           )}
