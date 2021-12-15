@@ -351,7 +351,11 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </div>
-      <WarningSnackbar open={open} onClose={handleClose} messageText="hello" />
+      <WarningSnackbar
+        open={open}
+        onClose={handleClose}
+        messageText="Cant invite new user, limit is reached"
+      />
     </>
   );
 };

@@ -117,7 +117,6 @@ export const TeamView = (props: Props): JSX.Element => {
       console.error(`${(e as Error).message}`);
     }
   };
-
   useEffect(() => {
     // runs at mount
     isMounted.current = true;
@@ -311,7 +310,11 @@ export const TeamView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </div>
-      <WarningSnackbar open={open} onClose={handleClose} messageText="hello" />
+      <WarningSnackbar
+        open={open}
+        onClose={handleClose}
+        messageText="Cant invite new user, limit is reached"
+      />
     </>
   );
 };

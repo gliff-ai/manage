@@ -19,7 +19,7 @@ import {
 } from "@material-ui/core";
 
 import { Add } from "@material-ui/icons";
-import { LoadingSpinner, theme } from "@gliff-ai/style";
+import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { TrustedService } from "@/interfaces";
@@ -82,10 +82,10 @@ export const TrustedServiceView = (props: Props): ReactElement => {
     useState<TrustedService[] | null>(null); // all trustedServices
   const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
   const [creating, setCreating] = useState(false);
-  const [error, setError] = useState("");
   const [key, setKey] = useState<string | null>(null);
   const classes = useStyles()();
   const isMounted = useRef(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     // runs at mount
@@ -106,19 +106,24 @@ export const TrustedServiceView = (props: Props): ReactElement => {
     }
   }, [auth, props.services, key, isMounted]);
 
+  const handleSnackbar = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const createTrustedService = async (): Promise<unknown> => {
     try {
       const tsKey = await props.services.createTrustedService(
         newTrustedService
       );
 
-      if (!tsKey) {
-        setError("Couldn't create trusted service");
-      }
-
       return tsKey;
-    } catch (e) {
-      setError("Couldn't create trusted service");
+    } catch (e: any) {
+      handleSnackbar();
+      console.error(`${(e as Error).message}`);
       return null;
     }
   };
@@ -302,7 +307,11 @@ export const TrustedServiceView = (props: Props): ReactElement => {
 
       {keyDialog}
 
-      {error ? <MessageAlert message={error} severity="error" /> : null}
+      <WarningSnackbar
+        open={open}
+        onClose={handleClose}
+        messageText="Couldn't create trusted service"
+      />
     </>
   );
 };
