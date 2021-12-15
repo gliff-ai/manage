@@ -65,10 +65,7 @@ interface Props {
   services: ServiceFunctions;
   launchCurateCallback?: (projectUid: string) => void | null;
   launchAuditCallback?: (projectUid: string) => void | null;
-  getAnnotationProgress: (
-    collectionUids: string[],
-    username: string
-  ) => Promise<Progress>;
+  getAnnotationProgress: (username: string) => Promise<Progress>;
 }
 
 export const ProjectsView = ({
@@ -110,7 +107,7 @@ export const ProjectsView = ({
   }, []);
 
   useEffect(() => {
-    if (!auth?.user?.email) return;
+    if (!isMounted.current || !auth?.user?.email) return;
 
     void services
       .getProjects(null, auth.user.authToken)
@@ -132,19 +129,14 @@ export const ProjectsView = ({
   }, [auth, services, isMounted, isOwnerOrMember]);
 
   useEffect(() => {
-    if (!projects || !isMounted.current || !auth.user.email) return;
+    if (!isMounted.current || !auth?.user?.email) return;
 
-    const projectUids = projects.map(({ uid }) => uid);
-
-    void getAnnotationProgress(projectUids, auth.user.email).then(
-      (newProgress) => {
-        if (newProgress) {
-          console.log(newProgress);
-          setStateIfMounted(newProgress, setProgress, isMounted.current);
-        }
+    void getAnnotationProgress(auth.user.email).then((newProgress) => {
+      if (newProgress) {
+        setStateIfMounted(newProgress, setProgress, isMounted.current);
       }
-    );
-  }, [isMounted, projects, auth.user.email, getAnnotationProgress]);
+    });
+  }, [isMounted, auth, getAnnotationProgress]);
 
   const inviteToProject = async (
     projectId: string,

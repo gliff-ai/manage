@@ -70,11 +70,8 @@ export const config = {
   } as Services,
 };
 
-export const getAnnotationProgress = (
-  uids: string[],
-  username: string
-): Promise<any> =>
+export const getAnnotationProgress = (username: string): Promise<any> =>
   Promise.resolve({
     1: { total: 12, complete: 1 },
-    2: { total: 0, complete: 5 },
+    2: { total: 0, complete: 0 },
   });

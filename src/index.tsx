@@ -44,10 +44,7 @@ interface Props {
   showAppBar: boolean;
   launchCurateCallback?: (projectUid: string) => void;
   launchAuditCallback?: (projectUid: string) => void;
-  getAnnotationProgress: (
-    collectionUids: string[],
-    username: string
-  ) => Promise<Progress>;
+  getAnnotationProgress: (username: string) => Promise<Progress>;
 }
 
 const useStyles = makeStyles(() => ({
