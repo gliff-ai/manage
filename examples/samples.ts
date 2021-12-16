@@ -69,3 +69,9 @@ export const config = {
       Promise.resolve([{ name: "TS", url: "https://ts.gliff.app" }]),
   } as Services,
 };
+
+export const getAnnotationProgress = (username: string): Promise<any> =>
+  Promise.resolve({
+    1: { total: 12, complete: 1 },
+    2: { total: 0, complete: 0 },
+  });
