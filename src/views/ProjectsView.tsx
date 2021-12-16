@@ -1,4 +1,11 @@
-import { useEffect, useState, ChangeEvent, ReactElement, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  ChangeEvent,
+  ReactElement,
+  useRef,
+  useCallback,
+} from "react";
 import {
   Paper,
   Box,
@@ -25,7 +32,7 @@ import { Clear, Add } from "@material-ui/icons";
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { Project, Profile, Team } from "@/interfaces";
+import { Project, Profile, Team, UserAccess } from "@/interfaces";
 import { InviteDialog, LaunchIcon } from "@/components";
 import { setStateIfMounted } from "@/helpers";
 
@@ -76,7 +83,7 @@ export const ProjectsView = (props: Props): ReactElement => {
   const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
   const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
   const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
-  const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>(null); // team members selected in the New Project dialog
+  const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]); // team members selected in the New Project dialog
   const classes = useStyles()();
   const isMounted = useRef(false);
 
@@ -86,6 +93,13 @@ export const ProjectsView = (props: Props): ReactElement => {
   ): void => {
     setInvitee(value.email);
   };
+
+  const isOwnerOrMember = useCallback(
+    (): boolean =>
+      auth.user.userAccess === UserAccess.Owner ||
+      auth.user.userAccess === UserAccess.Member,
+    [auth.user.userAccess]
+  );
 
   useEffect(() => {
     // runs at mount
@@ -105,7 +119,7 @@ export const ProjectsView = (props: Props): ReactElement => {
         setStateIfMounted(p, setProjects, isMounted.current)
       );
 
-    if (auth.user.isOwner) {
+    if (isOwnerOrMember()) {
       void props.services
         .queryTeam(null, auth.user.authToken)
         .then((team: Team) => {
@@ -118,7 +132,7 @@ export const ProjectsView = (props: Props): ReactElement => {
           }
         });
     }
-  }, [auth, props.services, isMounted]);
+  }, [auth, props.services, isMounted, isOwnerOrMember]);
 
   const inviteToProject = (projectId: string, inviteeEmail: string) =>
     props.services
@@ -139,7 +153,7 @@ export const ProjectsView = (props: Props): ReactElement => {
     <TableRow key={uid}>
       <TableCell className={classes.tableCell}>{name}</TableCell>
       <TableCell className={classes.tableCell} align="right">
-        {auth.user.isOwner && (
+        {isOwnerOrMember() && (
           <InviteDialog
             projectUid={uid}
             projectInvitees={projectInvitees}
@@ -151,13 +165,15 @@ export const ProjectsView = (props: Props): ReactElement => {
           launchCallback={() => props.launchCurateCallback(uid)}
           tooltip={`Open ${name} in CURATE`}
         />
-        {auth.user.isOwner && props.launchAuditCallback !== null && (
-          <LaunchIcon
-            data-testid={`audit-${uid}`}
-            launchCallback={() => props.launchAuditCallback(uid)}
-            tooltip={`Open ${name} in AUDIT`}
-          />
-        )}
+        {isOwnerOrMember() &&
+          auth.user.tierID > 1 &&
+          props.launchAuditCallback !== null && (
+            <LaunchIcon
+              data-testid={`audit-${uid}`}
+              launchCallback={() => props.launchAuditCallback(uid)}
+              tooltip={`Open ${name} in AUDIT`}
+            />
+          )}
       </TableCell>
     </TableRow>
   );
@@ -182,7 +198,7 @@ export const ProjectsView = (props: Props): ReactElement => {
         </Paper>
 
         <Paper elevation={0} square style={{ height: "100%" }}>
-          {auth.user.isOwner && (
+          {isOwnerOrMember() && projects !== null && (
             <List style={{ paddingBottom: "0px" }}>
               <ListItem
                 divider
@@ -221,7 +237,6 @@ export const ProjectsView = (props: Props): ReactElement => {
               </Table>
             </TableContainer>
           )}
-
           <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
             <Card>
               <Paper
@@ -234,7 +249,6 @@ export const ProjectsView = (props: Props): ReactElement => {
                   New Project
                 </Typography>
               </Paper>
-
               <Paper
                 elevation={0}
                 square
@@ -262,6 +276,7 @@ export const ProjectsView = (props: Props): ReactElement => {
                   style={{ marginTop: "26px" }}
                   onChange={(event, value) => {
                     // add the selected user profile to dialogInvitees if it's not already there:
+                    if (!value) return;
                     setDialogInvitees(
                       dialogInvitees.includes(value as Profile)
                         ? dialogInvitees

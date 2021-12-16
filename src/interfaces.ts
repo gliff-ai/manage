@@ -1,8 +1,14 @@
 export interface User {
   email: string;
   authToken: string;
-  isOwner: boolean;
+  userAccess: UserAccess;
   tierID: number;
+}
+
+export enum UserAccess {
+  Owner = "owner",
+  Member = "member",
+  Collaborator = "collaborator",
 }
 
 export type Project = {
