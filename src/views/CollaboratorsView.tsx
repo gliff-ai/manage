@@ -226,7 +226,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
     </>
   );
 
-  if (!auth || !auth?.user?.isOwner) return null;
+  if (!auth) return null;
 
   return (
     <>

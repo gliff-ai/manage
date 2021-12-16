@@ -1,9 +1,10 @@
+import { UserAccess } from "@/interfaces";
 import type { Services } from "../src";
 
 export const user = {
   email: "a@b.com",
   authToken: "22345",
-  isOwner: true,
+  userAccess: UserAccess.Owner,
   tierID: 2,
 };
 
