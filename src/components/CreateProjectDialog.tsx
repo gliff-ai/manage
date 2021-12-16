@@ -44,6 +44,7 @@ const useStyles = makeStyles({
     fontSize: "16px",
     maxHeight: "28px",
   },
+  addButton: { position: "absolute", right: "25px", top: "110px" },
 });
 
 interface Props {
@@ -66,31 +67,13 @@ export function CreateProjectDialog({
   const classes = useStyles();
   return (
     <>
-      <List style={{ paddingBottom: "0px" }}>
-        <ListItem
-          divider
-          style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
-          onClick={() => {
-            setDialogOpen(!dialogOpen);
-          }}
-        >
-          <div
-            style={{
-              margin: "10px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Add
-              fontSize="large"
-              style={{ marginRight: "10px", color: "grey" }}
-            />
-            <Typography style={{ color: "grey" }}>
-              Create New Project
-            </Typography>
-          </div>
-        </ListItem>
-      </List>
+      <IconButton
+        className={classes.addButton}
+        onClick={() => setDialogOpen(true)}
+        color="inherit"
+      >
+        <Add />
+      </IconButton>
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <Card>
           <Paper

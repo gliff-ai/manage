@@ -172,8 +172,6 @@ export const ProjectsView = ({
           >
             Projects
           </Typography>
-        </Paper>
-        <Paper elevation={0} square style={{ height: "100%" }}>
           {isOwnerOrMember() && projects !== null && (
             <CreateProjectDialog
               projects={projects}
@@ -182,6 +180,8 @@ export const ProjectsView = ({
               inviteToProject={inviteToProject}
             />
           )}
+        </Paper>
+        <Paper elevation={0} square style={{ height: "100%" }}>
           {projects === null ? (
             <Box display="flex" height="100%">
               <LoadingSpinner />
