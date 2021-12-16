@@ -23,7 +23,6 @@ import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { TrustedService } from "@/interfaces";
-import { MessageAlert } from "@/components/MessageAlert";
 import { setStateIfMounted } from "@/helpers";
 
 const useStyles = () =>
