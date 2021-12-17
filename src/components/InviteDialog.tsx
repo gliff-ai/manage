@@ -1,4 +1,4 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, ReactElement } from "react";
 import {
   Paper,
   Button,
@@ -8,6 +8,9 @@ import {
   Typography,
   makeStyles,
   TextField,
+  DialogActions,
+  List,
+  Chip,
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -19,24 +22,29 @@ const useStyles = makeStyles(() => ({
   card: {
     display: "flex",
     flexDirection: "column",
-    width: "auto",
+    width: "300px",
     hegith: "400px",
   },
   inviteBtn: {
-    marginTop: "15px",
-    backgroundColor: theme.palette.primary.main,
     position: "relative",
-    left: "68px",
+    marginLeft: "100px",
+    "&:hover": {
+      backgroundColor: theme.palette.info.main,
+    },
   },
-
   userInviteTopography: {
     color: "#000000",
     display: "inline",
     fontSize: "21px",
-    marginRight: "125px",
+    marginLeft: "8px",
   },
   paperBody: {
     margin: "15px",
+  },
+  chipLabel: {
+    margin: "5px 5px 0 0",
+    borderColor: "black",
+    borderRadius: "9px",
   },
 }));
 
@@ -48,17 +56,27 @@ interface Props {
     value: Profile
   ) => void;
   inviteToProject: () => void;
+  projectMembers: string[];
 }
 
-export function InviteDialog(props: Props): React.ReactElement {
+export function InviteDialog(props: Props): ReactElement | null {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
+
+  if (!props.projectInvitees) return null;
+
+  const getOptions = () =>
+    props.projectMembers === undefined
+      ? props.projectInvitees
+      : props.projectInvitees.filter(
+          ({ email }) => !props.projectMembers.includes(email)
+        );
 
   const inviteSelect = (
     <form noValidate autoComplete="off">
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
-        options={props.projectInvitees}
+        options={getOptions()}
         getOptionLabel={(option: Profile) => option.name}
         onChange={props.handleSelectChange}
         renderInput={(params) => (
@@ -66,17 +84,30 @@ export function InviteDialog(props: Props): React.ReactElement {
         )}
         autoSelect
       />
+      <List>
+        {props.projectMembers?.map((username) => (
+          <Chip
+            key={username}
+            className={classes.chipLabel}
+            label={username}
+            variant="outlined"
+          />
+        ))}
+      </List>
       {/* eslint-enable react/jsx-props-no-spreading */}
-      <Button
-        className={classes.inviteBtn}
-        onClick={() => {
-          props.inviteToProject();
-          setOpen(false);
-        }}
-        variant="outlined"
-      >
-        Invite
-      </Button>
+      <DialogActions>
+        <Button
+          className={classes.inviteBtn}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            props.inviteToProject();
+            setOpen(false);
+          }}
+        >
+          Invite
+        </Button>
+      </DialogActions>
     </form>
   );
 
@@ -102,7 +133,7 @@ export function InviteDialog(props: Props): React.ReactElement {
             className={classes.paperHeader}
           >
             <Typography className={classes.userInviteTopography}>
-              Invite User
+              Edit Project
             </Typography>
           </Paper>
           <Paper elevation={0} square className={classes.paperBody}>
