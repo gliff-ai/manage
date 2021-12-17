@@ -35,6 +35,7 @@ const defaultServices = {
   inviteToProject: "POST /projects/invite",
   createTrustedService: "POST /trusted_service",
   getTrustedServices: "GET /trusted_service",
+  getCollectionsMembers: "GET /projects/collectionsmembers",
 } as Services;
 
 interface Props {

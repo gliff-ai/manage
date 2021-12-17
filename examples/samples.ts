@@ -67,6 +67,8 @@ export const config = {
       Promise.resolve("key key key"),
     getTrustedServices: (data): Promise<any> =>
       Promise.resolve([{ name: "TS", url: "https://ts.gliff.app" }]),
+    getCollectionsMembers: () =>
+      Promise.resolve({ 1: ["user1@gliff.app"], 2: [] }),
   } as Services,
 };
 

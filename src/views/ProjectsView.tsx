@@ -32,14 +32,16 @@ import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles({
   paperHeader: {
-    padding: "10px",
+    padding: "2px",
     backgroundColor: theme.palette.primary.main,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   projectsTopography: {
     color: "#000000",
-    display: "inline",
     fontSize: "21px",
-    marginRight: "125px",
+    marginLeft: "20px",
   },
   // eslint-disable-next-line mui-unused-classes/unused-classes
   "@global": {
@@ -79,6 +81,9 @@ export const ProjectsView = ({
   const [progress, setProgress] = useState<Progress | null>(null);
   const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
   const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
+  const [projectMembers, setProjectMembers] = useState<{
+    [uid: string]: string[];
+  } | null>({});
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -129,6 +134,14 @@ export const ProjectsView = ({
   }, [auth, services, isMounted, isOwnerOrMember]);
 
   useEffect(() => {
+    if (!isMounted?.current || !isOwnerOrMember() || !projectInvitees) return;
+
+    void services.getCollectionsMembers().then((members) => {
+      setStateIfMounted(members, setProjectMembers, isMounted.current);
+    });
+  }, [auth, services, isMounted, projectInvitees, isOwnerOrMember]);
+
+  useEffect(() => {
     if (!isMounted.current || !auth?.user?.email) return;
 
     void getAnnotationProgress(auth.user.email).then((newProgress) => {
@@ -166,10 +179,7 @@ export const ProjectsView = ({
           square
           className={classes.paperHeader}
         >
-          <Typography
-            className={classes.projectsTopography}
-            style={{ marginLeft: "14px" }}
-          >
+          <Typography className={classes.projectsTopography}>
             Projects
           </Typography>
           {isOwnerOrMember() && projects !== null && (
@@ -214,6 +224,7 @@ export const ProjectsView = ({
                             inviteToProject={() =>
                               inviteToProject(uid, projectInvitee)
                             }
+                            projectMembers={projectMembers[uid]}
                           />
                         )}
                         <LaunchIcon

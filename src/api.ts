@@ -23,6 +23,7 @@ interface Services {
   inviteToProject: APIRoute | ServiceFunction;
   createTrustedService: APIRoute | ServiceFunction;
   getTrustedServices: APIRoute | ServiceFunction;
+  getCollectionsMembers: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {
