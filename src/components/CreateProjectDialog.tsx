@@ -5,19 +5,19 @@ import {
   Typography,
   Card,
   List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
+  Chip,
+  Avatar,
   Dialog,
   TextField,
   DialogActions,
   Button,
   makeStyles,
 } from "@material-ui/core";
+import SVG from "react-inlinesvg";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear, Add } from "@material-ui/icons";
-import { theme } from "@gliff-ai/style";
+import { Add } from "@material-ui/icons";
+import { theme, icons } from "@gliff-ai/style";
 import { Profile, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
@@ -29,7 +29,7 @@ const useStyles = makeStyles({
     color: "#000000",
     display: "inline",
     fontSize: "21px",
-    marginRight: "125px",
+    marginLeft: "8px",
   },
   cancelButton: {
     textTransform: "none",
@@ -44,7 +44,17 @@ const useStyles = makeStyles({
     fontSize: "16px",
     maxHeight: "28px",
   },
-  addButton: { position: "absolute", right: "25px", top: "110px" },
+  chipLabel: {
+    margin: "5px 5px 0 0",
+    borderColor: "black",
+    borderRadius: "9px",
+  },
+  iconSize: {
+    width: "15px",
+  },
+  addButton: {
+    color: "#000000",
+  },
 });
 
 interface Props {
@@ -70,20 +80,19 @@ export function CreateProjectDialog({
       <IconButton
         className={classes.addButton}
         onClick={() => setDialogOpen(true)}
-        color="inherit"
       >
         <Add />
       </IconButton>
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <Card>
           <Paper
+            className={classes.paperHeader}
             elevation={0}
             variant="outlined"
             square
-            className={classes.paperHeader}
           >
             <Typography className={classes.projectsTopography}>
-              New Project
+              Create Project
             </Typography>
           </Paper>
           <Paper elevation={0} square style={{ width: "20vw", margin: "20px" }}>
@@ -118,10 +127,14 @@ export function CreateProjectDialog({
             />
             <List>
               {dialogInvitees?.map((profile) => (
-                <ListItem key={profile.email}>
-                  <ListItemText>{profile.name}</ListItemText>
-                  <ListItemSecondaryAction>
-                    <IconButton
+                <Chip
+                  key={profile.email}
+                  avatar={
+                    <Avatar
+                      variant="circular"
+                      style={{
+                        cursor: "pointer",
+                      }}
                       onClick={() => {
                         // remove `email` from dialogInvitees:
                         setDialogInvitees(
@@ -131,10 +144,17 @@ export function CreateProjectDialog({
                         );
                       }}
                     >
-                      <Clear />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
+                      <SVG
+                        className={classes.iconSize}
+                        src={icons.removeLabel}
+                        fill="inherit"
+                      />
+                    </Avatar>
+                  }
+                  className={classes.chipLabel}
+                  label={profile.name}
+                  variant="outlined"
+                />
               ))}
             </List>
             <DialogActions>
