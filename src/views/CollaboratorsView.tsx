@@ -140,7 +140,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
           auth.user.authToken
         )
         .then((p: Project[]): string => {
-          if (p.length > 1) {
+          if (p?.length > 1) {
             return "Error!";
           }
           return p[0].name;
