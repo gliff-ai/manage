@@ -1,8 +1,21 @@
 export interface User {
   email: string;
   authToken: string;
-  isOwner: boolean;
+  userAccess: UserAccess;
   tierID: number;
+}
+
+export type Progress = {
+  [uid: string]: {
+    total: number; // number of assigned images
+    complete: number; // number of images with a complete annotation
+  };
+};
+
+export enum UserAccess {
+  Owner = "owner",
+  Member = "member",
+  Collaborator = "collaborator",
 }
 
 export type Project = {

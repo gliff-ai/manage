@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
   AppBar,
@@ -10,7 +10,7 @@ import {
 import { makeStyles, StylesProvider } from "@material-ui/core/styles";
 import { theme, generateClassName, Logo } from "@gliff-ai/style";
 
-import { initApiRequest } from "@/api";
+import { initApiRequest, ServiceFunctions } from "@/api";
 import { TeamView } from "@/views/TeamView";
 import { ProjectsView } from "@/views/ProjectsView";
 import { TrustedServiceView } from "./views/TrustedServiceView";
@@ -20,7 +20,8 @@ import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 import type { Services } from "@/api";
 import { PageSelector } from "./components/PageSelector";
-import { User } from "./interfaces";
+import { Progress, User } from "./interfaces";
+import { setStateIfMounted } from "./helpers";
 
 const defaultServices = {
   queryTeam: "GET /team",
@@ -43,6 +44,7 @@ interface Props {
   showAppBar: boolean;
   launchCurateCallback?: (projectUid: string) => void;
   launchAuditCallback?: (projectUid: string) => void;
+  getAnnotationProgress: (username: string) => Promise<Progress>;
 }
 
 const useStyles = makeStyles(() => ({
@@ -59,10 +61,25 @@ const useStyles = makeStyles(() => ({
 
 export function UserInterface(props: Props): JSX.Element {
   const classes = useStyles();
+  const [services, setServices] = useState<ServiceFunctions | null>(null);
   const auth = useAuth();
 
-  // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
-  const services = initApiRequest(props.apiUrl, props.services);
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    // runs at mount
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
+    const newServices = initApiRequest(props.apiUrl, props.services);
+    setStateIfMounted(newServices, setServices, isMounted.current);
+  }, [props.apiUrl, props.services, isMounted]);
 
   useEffect(() => {
     if (!auth) return;
@@ -70,7 +87,7 @@ export function UserInterface(props: Props): JSX.Element {
     if (props.user) {
       auth?.saveUser(props.user);
     }
-  }, [auth]);
+  }, [auth, props.user]);
 
   if (!auth?.user) return null;
 
@@ -118,6 +135,7 @@ export function UserInterface(props: Props): JSX.Element {
                   services={services}
                   launchCurateCallback={props.launchCurateCallback}
                   launchAuditCallback={props.launchAuditCallback}
+                  getAnnotationProgress={props.getAnnotationProgress}
                 />
               }
             />

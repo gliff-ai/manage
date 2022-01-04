@@ -24,20 +24,32 @@ wrapper(() => {
 
       expect(title).toEqual("gliff.ai MANAGE");
 
-      const el = await driver.wait(until.elementLocated(By.xpath('//*[@id="react-container"]/div/div/div/span/a')),10000);
+      const el = await driver.wait(
+        until.elementLocated(
+          By.xpath('//*[@id="react-container"]/div/div/div/span/a')
+        ),
+        10000
+      );
 
       await el.click();
 
-      const projectsTable = await driver.wait(until.elementLocated(
-        By.xpath('//*[@id="react-container"]/div/div[2]/div[1]/p')
-      ), 10000);
+      const projectsTable = await driver.wait(
+        until.elementLocated(
+          By.xpath('//*[@id="react-container"]/div/div[2]/div[1]/p')
+        ),
+        10000
+      );
 
-
-      const text = await driver.wait(until.elementLocated(
-        By.xpath(
-          '//*[@id="react-container"]/div/div[2]/div[2]/div/table/tbody/tr[1]/td[1]'
+      const text = await driver
+        .wait(
+          until.elementLocated(
+            By.xpath(
+              '//*[@id="react-container"]/div/div[2]/div[2]/div/table/tbody/tr[2]/td[1]'
+            )
+          ),
+          10000
         )
-      ), 10000).getText();
+        .getText();
 
       expect(text).toEqual("Project 1");
 
