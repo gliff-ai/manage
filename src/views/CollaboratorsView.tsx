@@ -92,13 +92,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
     setInviteEmail(value);
   };
 
-  const handleSnackbar = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
   const inviteNewCollaborator = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setInviteMessage("");
@@ -115,7 +108,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
         setInviteMessage("An error happened with the invite");
       }
     } catch (e: any) {
-      handleSnackbar();
+      setOpen(true);
       console.error(`${(e as Error).message}`);
     }
   };
@@ -353,7 +346,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
       </div>
       <WarningSnackbar
         open={open}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         messageText="Cant invite new user, limit is reached"
       />
     </>

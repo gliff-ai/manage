@@ -105,14 +105,6 @@ export const TrustedServiceView = (props: Props): ReactElement => {
     }
   }, [auth, props.services, key, isMounted]);
 
-  const handleSnackbar = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const createTrustedService = async (): Promise<unknown> => {
     try {
       const tsKey = await props.services.createTrustedService(
@@ -121,7 +113,7 @@ export const TrustedServiceView = (props: Props): ReactElement => {
 
       return tsKey;
     } catch (e: any) {
-      handleSnackbar();
+      setOpen(true);
       console.error(`${(e as Error).message}`);
       return null;
     }
@@ -308,7 +300,7 @@ export const TrustedServiceView = (props: Props): ReactElement => {
 
       <WarningSnackbar
         open={open}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         messageText="Couldn't create trusted service"
       />
     </>
