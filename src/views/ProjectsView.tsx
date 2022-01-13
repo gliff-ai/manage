@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useState,
-  ChangeEvent,
-  ReactElement,
-  useRef,
-  useCallback,
-} from "react";
+import { useEffect, useState, ReactElement, useRef, useCallback } from "react";
 import {
   Paper,
   Box,
@@ -23,7 +16,7 @@ import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { Project, Profile, Team, UserAccess, Progress } from "@/interfaces";
 import {
-  InviteDialog,
+  EditProjectDialog,
   LaunchIcon,
   CreateProjectDialog,
   ProgressBar,
@@ -53,6 +46,7 @@ const useStyles = makeStyles({
     padding: "0px 16px 0px 25px",
     fontSize: "16px",
     maxHeight: "28px",
+    maxWidth: "250px",
   },
   tableHeader: {
     padding: "0px 16px 0px 25px",
@@ -79,7 +73,6 @@ export const ProjectsView = ({
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
   const [progress, setProgress] = useState<Progress | null>(null);
-  const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
   const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
   const [projectMembers, setProjectMembers] = useState<{
     [uid: string]: string[];
@@ -87,13 +80,6 @@ export const ProjectsView = ({
 
   const classes = useStyles();
   const isMounted = useRef(false);
-
-  const handleSelectChange = (
-    event: ChangeEvent<HTMLSelectElement>,
-    value: Profile
-  ): void => {
-    setInvitee(value.email);
-  };
 
   const isOwnerOrMember = useCallback(
     (): boolean =>
@@ -122,13 +108,7 @@ export const ProjectsView = ({
 
     if (isOwnerOrMember()) {
       void services.queryTeam(null, auth.user.authToken).then((team: Team) => {
-        const invitees = team.profiles.filter(
-          ({ email }) => email !== auth?.user?.email
-        );
-        setStateIfMounted(invitees, setInvitees, isMounted.current);
-        if (invitees.length > 0) {
-          setStateIfMounted(invitees[0].email, setInvitee, isMounted.current);
-        }
+        setStateIfMounted(team.profiles, setInvitees, isMounted.current);
       });
     }
   }, [auth, services, isMounted, isOwnerOrMember]);
@@ -168,6 +148,13 @@ export const ProjectsView = ({
     return p?.find((project) => project.name === name).uid;
   };
 
+  const listAssignees = (assignees: string[]): any => (
+    <p>
+      {assignees.slice(0, 3).join(", ")}
+      {assignees.length > 3 && <b> + {assignees.length - 3} others</b>}
+    </p>
+  );
+
   if (!auth?.user) return null;
 
   return (
@@ -202,6 +189,11 @@ export const ProjectsView = ({
                 <TableBody>
                   <TableRow key="tab-header">
                     <TableCell className={classes.tableHeader}>Name</TableCell>
+                    {isOwnerOrMember() && (
+                      <TableCell className={classes.tableHeader}>
+                        Assignees
+                      </TableCell>
+                    )}
                     <TableCell className={classes.tableHeader}>
                       Annotation Progress
                     </TableCell>
@@ -212,19 +204,22 @@ export const ProjectsView = ({
                       <TableCell className={classes.tableCell}>
                         {name}
                       </TableCell>
+                      {isOwnerOrMember() && (
+                        <TableCell className={classes.tableCell}>
+                          {projectMembers[uid] !== undefined &&
+                            listAssignees(projectMembers[uid])}
+                        </TableCell>
+                      )}
                       <TableCell className={classes.tableCell}>
                         {progress && <ProgressBar progress={progress[uid]} />}
                       </TableCell>
                       <TableCell className={classes.tableCell} align="right">
                         {isOwnerOrMember() && (
-                          <InviteDialog
+                          <EditProjectDialog
                             projectUid={uid}
-                            projectInvitees={projectInvitees}
-                            handleSelectChange={handleSelectChange}
-                            inviteToProject={() =>
-                              inviteToProject(uid, projectInvitee)
-                            }
                             projectMembers={projectMembers[uid]}
+                            projectInvitees={projectInvitees}
+                            inviteToProject={inviteToProject}
                           />
                         )}
                         <LaunchIcon

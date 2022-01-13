@@ -11,6 +11,7 @@ import {
   DialogActions,
   List,
   Chip,
+  Checkbox,
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -23,10 +24,11 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
     width: "300px",
-    hegith: "400px",
+    height: "auto",
   },
   inviteBtn: {
     position: "relative",
+    marginTop: "15px",
     marginLeft: "100px",
     "&:hover": {
       backgroundColor: theme.palette.info.main,
@@ -46,24 +48,42 @@ const useStyles = makeStyles(() => ({
     borderColor: "black",
     borderRadius: "9px",
   },
+  selectedOptions: {
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis",
+    width: "270px",
+    height: "30",
+  },
+  divider: {
+    margin: 0,
+    width: "100%",
+    height: "1.5px",
+  },
+  checkboxIcon: { width: "18px", height: "auto" },
 }));
 
 interface Props {
   projectUid: string;
-  projectInvitees: Profile[];
-  handleSelectChange: (
-    event: ChangeEvent<HTMLSelectElement>,
-    value: Profile
-  ) => void;
-  inviteToProject: () => void;
   projectMembers: string[];
+  projectInvitees: Profile[];
+  inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
 }
 
-export function InviteDialog(props: Props): ReactElement | null {
+export function EditProjectDialog(props: Props): ReactElement | null {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
+  const [selectedInvitees, setSelectedInvitees] =
+    useState<Profile[] | null>(null);
 
   if (!props.projectInvitees) return null;
+
+  const handleSelectChange = (
+    event: ChangeEvent<HTMLSelectElement>,
+    value: Profile[]
+  ): void => {
+    setSelectedInvitees(value);
+  };
 
   const getOptions = () =>
     props.projectMembers === undefined
@@ -73,17 +93,65 @@ export function InviteDialog(props: Props): ReactElement | null {
         );
 
   const inviteSelect = (
-    <form noValidate autoComplete="off">
+    <>
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
+        multiple
+        disableCloseOnSelect
+        disableClearable
         options={getOptions()}
-        getOptionLabel={(option: Profile) => option.name}
-        onChange={props.handleSelectChange}
-        renderInput={(params) => (
-          <TextField {...params} label="Add Team Member" variant="outlined" />
+        getOptionLabel={(option: Profile): string => option.name}
+        renderOption={(option: Profile, { selected }) => (
+          <>
+            <Checkbox
+              icon={
+                <SVG
+                  className={classes.checkboxIcon}
+                  src={icons.notSelectedTickbox}
+                />
+              }
+              checkedIcon={
+                <SVG
+                  className={classes.checkboxIcon}
+                  src={icons.multipleImageSelection}
+                />
+              }
+              checked={selected}
+            />
+            {option.name}
+          </>
         )}
-        autoSelect
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Update Team Members"
+            variant="outlined"
+          />
+        )}
+        renderTags={(selectedOptions) => (
+          <p className={classes.selectedOptions}>
+            {selectedOptions.map((option) => option.name).join(", ")}
+          </p>
+        )}
+        style={{ marginTop: "26px" }}
+        onChange={handleSelectChange}
       />
+      <DialogActions>
+        <Button
+          className={classes.inviteBtn}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            selectedInvitees?.forEach(({ email }) => {
+              void props.inviteToProject(props.projectUid, email);
+            });
+            setOpen(false);
+          }}
+        >
+          OK
+        </Button>
+      </DialogActions>
+      <br />
       <List>
         {props.projectMembers?.map((username) => (
           <Chip
@@ -94,21 +162,7 @@ export function InviteDialog(props: Props): ReactElement | null {
           />
         ))}
       </List>
-      {/* eslint-enable react/jsx-props-no-spreading */}
-      <DialogActions>
-        <Button
-          className={classes.inviteBtn}
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            props.inviteToProject();
-            setOpen(false);
-          }}
-        >
-          Invite
-        </Button>
-      </DialogActions>
-    </form>
+    </>
   );
 
   return (
