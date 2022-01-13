@@ -68,7 +68,15 @@ export const config = {
     getTrustedServices: (data): Promise<any> =>
       Promise.resolve([{ name: "TS", url: "https://ts.gliff.app" }]),
     getCollectionsMembers: () =>
-      Promise.resolve({ 1: ["user1@gliff.app"], 2: [] }),
+      Promise.resolve({
+        1: [
+          "user1@gliff.app",
+          "user2@gliff.app",
+          "user3@gliff.app",
+          "user4@gliff.app",
+        ],
+        2: [],
+      }),
   } as Services,
 };
 
