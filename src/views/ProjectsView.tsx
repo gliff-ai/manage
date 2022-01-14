@@ -72,11 +72,11 @@ export const ProjectsView = ({
 }: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
-  const [progress, setProgress] = useState<Progress | null>(null);
-  const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
+  const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
+  const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team users
   const [projectMembers, setProjectMembers] = useState<{
     [uid: string]: string[];
-  } | null>({});
+  } | null>({}); // users in each project
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -98,6 +98,26 @@ export const ProjectsView = ({
   }, []);
 
   useEffect(() => {
+    if (!isMounted?.current || !isOwnerOrMember()) return;
+
+    void services.getCollectionsMembers().then((newMembers) => {
+      if (newMembers) {
+        setStateIfMounted(newMembers, setProjectMembers, isMounted.current);
+      }
+    });
+  }, [isMounted, services, isOwnerOrMember]);
+
+  useEffect(() => {
+    if (!isMounted.current || auth?.user || !isOwnerOrMember()) return;
+
+    void services
+      .queryTeam(null, auth.user.authToken)
+      .then(({ profiles }: Team) => {
+        setStateIfMounted(profiles, setInvitees, isMounted.current);
+      });
+  }, [auth, services, isMounted, isOwnerOrMember]);
+
+  useEffect(() => {
     if (!isMounted.current || !auth?.user?.email) return;
 
     void services
@@ -105,21 +125,7 @@ export const ProjectsView = ({
       .then((p: Project[]) =>
         setStateIfMounted(p, setProjects, isMounted.current)
       );
-
-    if (isOwnerOrMember()) {
-      void services.queryTeam(null, auth.user.authToken).then((team: Team) => {
-        setStateIfMounted(team.profiles, setInvitees, isMounted.current);
-      });
-    }
-  }, [auth, services, isMounted, isOwnerOrMember]);
-
-  useEffect(() => {
-    if (!isMounted?.current || !isOwnerOrMember() || !projectInvitees) return;
-
-    void services.getCollectionsMembers().then((members) => {
-      setStateIfMounted(members, setProjectMembers, isMounted.current);
-    });
-  }, [auth, services, isMounted, projectInvitees, isOwnerOrMember]);
+  }, [auth, services, isMounted]);
 
   useEffect(() => {
     if (!isMounted.current || !auth?.user?.email) return;
