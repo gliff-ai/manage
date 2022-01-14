@@ -66,7 +66,7 @@ const useStyles = makeStyles(() => ({
 interface Props {
   projectUid: string;
   projectMembers: string[];
-  projectInvitees: Profile[];
+  invitees: Profile[];
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
 }
 
@@ -76,7 +76,7 @@ export function EditProjectDialog(props: Props): ReactElement | null {
   const [selectedInvitees, setSelectedInvitees] =
     useState<Profile[] | null>(null);
 
-  if (!props.projectInvitees) return null;
+  if (!props.invitees) return null;
 
   const handleSelectChange = (
     event: ChangeEvent<HTMLSelectElement>,
@@ -87,8 +87,8 @@ export function EditProjectDialog(props: Props): ReactElement | null {
 
   const getOptions = () =>
     props.projectMembers === undefined
-      ? props.projectInvitees
-      : props.projectInvitees.filter(
+      ? props.invitees
+      : props.invitees.filter(
           ({ email }) => !props.projectMembers.includes(email)
         );
 

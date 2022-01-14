@@ -73,7 +73,7 @@ export const ProjectsView = ({
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
   const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
-  const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team users
+  const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
   const [projectMembers, setProjectMembers] = useState<{
     [uid: string]: string[];
   } | null>({}); // users in each project
@@ -178,7 +178,7 @@ export const ProjectsView = ({
           {isOwnerOrMember() && projects !== null && (
             <CreateProjectDialog
               projects={projects}
-              projectInvitees={projectInvitees}
+              invitees={invitees}
               createProject={createProject}
               inviteToProject={inviteToProject}
             />
@@ -224,7 +224,7 @@ export const ProjectsView = ({
                           <EditProjectDialog
                             projectUid={uid}
                             projectMembers={projectMembers[uid]}
-                            projectInvitees={projectInvitees}
+                            invitees={invitees}
                             inviteToProject={inviteToProject}
                           />
                         )}

@@ -59,14 +59,14 @@ const useStyles = makeStyles({
 
 interface Props {
   projects: Project[] | null;
-  projectInvitees: Profile[] | null;
+  invitees: Profile[] | null;
   createProject: (newName: string) => Promise<string>;
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
 }
 
 export function CreateProjectDialog({
   projects,
-  projectInvitees,
+  invitees,
   createProject,
   inviteToProject,
 }: Props): ReactElement {
@@ -105,7 +105,7 @@ export function CreateProjectDialog({
             />
             {/* eslint-disable react/jsx-props-no-spreading */}
             <Autocomplete
-              options={projectInvitees}
+              options={invitees}
               getOptionLabel={(option) => option.name}
               renderInput={(params) => (
                 <TextField
