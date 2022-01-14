@@ -24,6 +24,7 @@ interface Services {
   createTrustedService: APIRoute | ServiceFunction;
   getTrustedServices: APIRoute | ServiceFunction;
   getCollectionsMembers: APIRoute | ServiceFunction;
+  removeFromProject: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {

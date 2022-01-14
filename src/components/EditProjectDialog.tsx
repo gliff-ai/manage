@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, ReactElement } from "react";
+import { useState, ChangeEvent, ReactElement, useEffect } from "react";
 import {
   Paper,
   Button,
@@ -16,7 +16,7 @@ import {
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { theme, icons } from "@gliff-ai/style";
-import { Profile } from "@/interfaces";
+import { Profile, Team } from "@/interfaces";
 
 const useStyles = makeStyles(() => ({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
@@ -68,15 +68,22 @@ interface Props {
   projectMembers: string[];
   invitees: Profile[];
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
+  removeFromProject: (uid: string, username: string) => Promise<void>;
 }
 
-export function EditProjectDialog(props: Props): ReactElement | null {
+export function EditProjectDialog({
+  projectUid,
+  projectMembers,
+  invitees,
+  inviteToProject,
+  removeFromProject,
+}: Props): ReactElement | null {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedInvitees, setSelectedInvitees] =
     useState<Profile[] | null>(null);
 
-  if (!props.invitees) return null;
+  if (!invitees || projectMembers === undefined) return null;
 
   const handleSelectChange = (
     event: ChangeEvent<HTMLSelectElement>,
@@ -85,12 +92,22 @@ export function EditProjectDialog(props: Props): ReactElement | null {
     setSelectedInvitees(value);
   };
 
-  const getOptions = () =>
-    props.projectMembers === undefined
-      ? props.invitees
-      : props.invitees.filter(
-          ({ email }) => !props.projectMembers.includes(email)
-        );
+  const updateCollectionMembers = () => {
+    console.log(selectedInvitees);
+    invitees.forEach((profile) => {
+      if (
+        selectedInvitees.includes(profile) &&
+        !projectMembers.includes(profile.email)
+      ) {
+        void inviteToProject(projectUid, profile.email);
+      }
+
+      if (!selectedInvitees.includes(profile)) {
+        void removeFromProject(projectUid, profile.email);
+      }
+    });
+    setOpen(false);
+  };
 
   const inviteSelect = (
     <>
@@ -99,7 +116,10 @@ export function EditProjectDialog(props: Props): ReactElement | null {
         multiple
         disableCloseOnSelect
         disableClearable
-        options={getOptions()}
+        defaultValue={invitees.filter(({ email }) =>
+          projectMembers.includes(email)
+        )}
+        options={invitees}
         getOptionLabel={(option: Profile): string => option.name}
         renderOption={(option: Profile, { selected }) => (
           <>
@@ -116,7 +136,7 @@ export function EditProjectDialog(props: Props): ReactElement | null {
                   src={icons.multipleImageSelection}
                 />
               }
-              checked={selected}
+              defaultChecked={projectMembers.includes(option.email)}
             />
             {option.name}
           </>
@@ -141,19 +161,14 @@ export function EditProjectDialog(props: Props): ReactElement | null {
           className={classes.inviteBtn}
           variant="contained"
           color="primary"
-          onClick={() => {
-            selectedInvitees?.forEach(({ email }) => {
-              void props.inviteToProject(props.projectUid, email);
-            });
-            setOpen(false);
-          }}
+          onClick={updateCollectionMembers}
         >
           OK
         </Button>
       </DialogActions>
       <br />
       <List>
-        {props.projectMembers?.map((username) => (
+        {projectMembers?.map((username) => (
           <Chip
             key={username}
             className={classes.chipLabel}
@@ -168,7 +183,7 @@ export function EditProjectDialog(props: Props): ReactElement | null {
   return (
     <>
       <IconButton
-        data-testid={`edit-${props.projectUid}`}
+        data-testid={`edit-${projectUid}`}
         onClick={() => setOpen(!open)}
       >
         <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />

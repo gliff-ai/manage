@@ -108,7 +108,7 @@ export const ProjectsView = ({
   }, [isMounted, services, isOwnerOrMember]);
 
   useEffect(() => {
-    if (!isMounted.current || auth?.user || !isOwnerOrMember()) return;
+    if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
 
     void services
       .queryTeam(null, auth.user.authToken)
@@ -144,6 +144,15 @@ export const ProjectsView = ({
     await services.inviteToProject({ projectId, email: inviteeEmail });
 
     console.log(`invite complete!: ${inviteeEmail}`);
+  };
+
+  const removeFromProject = async (
+    uid: string,
+    username: string
+  ): Promise<void> => {
+    await services.removeFromProject({ uid, username });
+
+    console.log(`${username} removed from project ${uid}.`);
   };
 
   const createProject = async (name: string): Promise<string> => {
@@ -226,6 +235,7 @@ export const ProjectsView = ({
                             projectMembers={projectMembers[uid]}
                             invitees={invitees}
                             inviteToProject={inviteToProject}
+                            removeFromProject={removeFromProject}
                           />
                         )}
                         <LaunchIcon

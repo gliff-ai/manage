@@ -63,6 +63,7 @@ export const config = {
     inviteUser: (data): Promise<boolean> => Promise.resolve(true),
     inviteCollaborator: (data): Promise<boolean> => Promise.resolve(true),
     inviteToProject: (data): Promise<boolean> => Promise.resolve(true),
+    removeFromProject: (data): Promise<void> => Promise.resolve(),
     createTrustedService: (data): Promise<string> =>
       Promise.resolve("key key key"),
     getTrustedServices: (data): Promise<any> =>
