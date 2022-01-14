@@ -24,12 +24,15 @@
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/preset-env": "^7.16.4",
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.5",
+    "@mui/lab": "^5.0.0-alpha.64",
+    "@mui/material": "^5.2.8",
+    "@mui/styles": "^5.2.3",
     "@gliff-ai/eslint-config": "^0.2.0",
-    "@gliff-ai/style": "^3.0.0",
     "@gliff-ai/jest-browserstack-automate": "^5.0.0",
-    "@material-ui/core": "^4.12.3",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.60",
+    "@gliff-ai/style": "^3.0.0",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.20",
@@ -48,19 +51,21 @@
     "vite-aliases": "^0.8.6"
   },
   "peerDependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.5",
+    "@mui/lab": "^5.0.0-alpha.64",
+    "@mui/material": "^5.2.8",
+    "@mui/styles": "^5.2.3",
     "@gliff-ai/style": "^3.0.0",
-    "@material-ui/core": "^4.11.3",
-    "@material-ui/icons": "^4.11.2",
-    "@material-ui/lab": "^4.0.0-alpha.58",
     "history": "==5.0.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.1",
     "react-router-dom": "==6.0.0-beta.4"
   },
   "dependencies": {
+ 
     "axios": "^0.24.0",
     "react-inlinesvg": "^2.3.0"
   }
 }
-
-
