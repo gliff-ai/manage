@@ -11,13 +11,13 @@ import {
   Box,
   Typography,
   Card,
-  makeStyles,
   TableContainer,
   Table,
   TableBody,
   TableRow,
   TableCell,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";

@@ -1,4 +1,4 @@
-import { ButtonGroup } from "@material-ui/core";
+import { ButtonGroup } from "@mui/material";
 import { ReactElement } from "react";
 import { Link, useLocation, useResolvedPath } from "react-router-dom";
 import { IconButton, icons } from "@gliff-ai/style";

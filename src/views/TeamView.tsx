@@ -4,7 +4,6 @@ import {
   IconButton,
   Typography,
   Card,
-  makeStyles,
   List,
   ListItem,
   TableContainer,
@@ -16,8 +15,9 @@ import {
   TextField,
   ListSubheader,
   Box,
-} from "@material-ui/core";
-import { Send } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import { Send } from "@mui/icons-material";
 import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
@@ -171,7 +171,7 @@ export const TeamView = (props: Props): JSX.Element => {
             className={classes.textField}
             variant="filled"
           />
-          <IconButton type="submit">
+          <IconButton type="submit" size="large">
             <Send />
           </IconButton>
         </div>

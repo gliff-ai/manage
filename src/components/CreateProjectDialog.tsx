@@ -12,11 +12,12 @@ import {
   TextField,
   DialogActions,
   Button,
-  makeStyles,
-} from "@material-ui/core";
+} from "@mui/material";
 
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear, Add } from "@material-ui/icons";
+import makeStyles from "@mui/styles/makeStyles";
+
+import Autocomplete from "@mui/material/Autocomplete";
+import { Clear, Add } from "@mui/icons-material";
 import { theme } from "@gliff-ai/style";
 import { Profile, Project } from "@/interfaces";
 
@@ -81,10 +82,7 @@ export function CreateProjectDialog({
               alignItems: "center",
             }}
           >
-            <Add
-              fontSize="large"
-              style={{ marginRight: "10px", color: "grey" }}
-            />
+            <Add style={{ marginRight: "10px", color: "grey" }} />
             <Typography style={{ color: "grey" }}>
               Create New Project
             </Typography>

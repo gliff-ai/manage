@@ -3,7 +3,6 @@ import {
   Paper,
   Typography,
   Card,
-  makeStyles,
   List,
   ListItem,
   Dialog,
@@ -16,9 +15,11 @@ import {
   TableRow,
   TableCell,
   Box,
-} from "@material-ui/core";
+} from "@mui/material";
 
-import { Add } from "@material-ui/icons";
+import makeStyles from '@mui/styles/makeStyles';
+
+import { Add } from "@mui/icons-material";
 import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";

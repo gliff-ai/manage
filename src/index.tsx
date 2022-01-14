@@ -6,8 +6,11 @@ import {
   Grid,
   Toolbar,
   ThemeProvider,
-} from "@material-ui/core";
-import { makeStyles, StylesProvider } from "@material-ui/core/styles";
+  Theme,
+  StyledEngineProvider,
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import StylesProvider from '@mui/styles/StylesProvider';
 import { theme, generateClassName, Logo } from "@gliff-ai/style";
 
 import { initApiRequest, ServiceFunctions } from "@/api";
@@ -22,6 +25,13 @@ import type { Services } from "@/api";
 import { PageSelector } from "./components/PageSelector";
 import { Progress, User } from "./interfaces";
 import { setStateIfMounted } from "./helpers";
+
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
 
 const defaultServices = {
   queryTeam: "GET /team",
@@ -105,43 +115,45 @@ export function UserInterface(props: Props): JSX.Element {
 
   return (
     <StylesProvider generateClassName={generateClassName("manage")}>
-      <ThemeProvider theme={theme}>
-        {appbar}
-        <CssBaseline />
-        <div
-          style={{
-            marginTop: props.showAppBar ? "108px" : "20px",
-            display: "flex",
-          }}
-        >
-          <PageSelector user={auth.user} />
-          <Routes>
-            <Route path="/">
-              <Navigate to="projects" />
-            </Route>
-            <Route path="team" element={<TeamView services={services} />} />
-            <Route
-              path="services"
-              element={<TrustedServiceView services={services} />}
-            />
-            <Route
-              path="collaborators"
-              element={<CollaboratorsView services={services} />}
-            />
-            <Route
-              path="projects"
-              element={
-                <ProjectsView
-                  services={services}
-                  launchCurateCallback={props.launchCurateCallback}
-                  launchAuditCallback={props.launchAuditCallback}
-                  getAnnotationProgress={props.getAnnotationProgress}
-                />
-              }
-            />
-          </Routes>
-        </div>
-      </ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          {appbar}
+          <CssBaseline />
+          <div
+            style={{
+              marginTop: props.showAppBar ? "108px" : "20px",
+              display: "flex",
+            }}
+          >
+            <PageSelector user={auth.user} />
+            <Routes>
+              <Route path="/">
+                <Navigate to="projects" />
+              </Route>
+              <Route path="team" element={<TeamView services={services} />} />
+              <Route
+                path="services"
+                element={<TrustedServiceView services={services} />}
+              />
+              <Route
+                path="collaborators"
+                element={<CollaboratorsView services={services} />}
+              />
+              <Route
+                path="projects"
+                element={
+                  <ProjectsView
+                    services={services}
+                    launchCurateCallback={props.launchCurateCallback}
+                    launchAuditCallback={props.launchAuditCallback}
+                    getAnnotationProgress={props.getAnnotationProgress}
+                  />
+                }
+              />
+            </Routes>
+          </div>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </StylesProvider>
   );
 }
