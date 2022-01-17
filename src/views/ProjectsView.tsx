@@ -75,7 +75,7 @@ export const ProjectsView = ({
   const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
   const [projectMembers, setProjectMembers] = useState<{
-    [uid: string]: string[];
+    [uid: string]: { usernames: string[]; pendingUsernames: string[] };
   } | null>({}); // users in each project
 
   const classes = useStyles();
@@ -143,16 +143,16 @@ export const ProjectsView = ({
   ): Promise<void> => {
     await services.inviteToProject({ projectId, email: inviteeEmail });
 
-    console.log(`invite complete!: ${inviteeEmail}`);
+    console.log(`${inviteeEmail} invited to project ${projectId}`);
   };
 
   const removeFromProject = async (
-    uid: string,
+    projectId: string,
     username: string
   ): Promise<void> => {
-    await services.removeFromProject({ uid, username });
+    await services.removeFromProject({ uid: projectId, username });
 
-    console.log(`${username} removed from project ${uid}.`);
+    console.log(`${username} removed from project ${projectId}.`);
   };
 
   const createProject = async (name: string): Promise<string> => {
@@ -222,7 +222,7 @@ export const ProjectsView = ({
                       {isOwnerOrMember() && (
                         <TableCell className={classes.tableCell}>
                           {projectMembers[uid] !== undefined &&
-                            listAssignees(projectMembers[uid])}
+                            listAssignees(projectMembers[uid].usernames)}
                         </TableCell>
                       )}
                       <TableCell className={classes.tableCell}>

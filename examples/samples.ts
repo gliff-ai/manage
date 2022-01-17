@@ -70,13 +70,11 @@ export const config = {
       Promise.resolve([{ name: "TS", url: "https://ts.gliff.app" }]),
     getCollectionsMembers: () =>
       Promise.resolve({
-        1: [
-          "user1@gliff.app",
-          "user2@gliff.app",
-          "user3@gliff.app",
-          "user4@gliff.app",
-        ],
-        2: [],
+        1: {
+          usernames: ["user1@gliff.app", "user2@gliff.app"],
+          pendingUsernames: ["user3@gliff.app"],
+        },
+        2: { usernames: [], pendingUsernames: [] },
       }),
   } as Services,
 };
