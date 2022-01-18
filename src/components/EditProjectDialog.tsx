@@ -73,6 +73,7 @@ interface Props {
   invitees: Profile[];
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
   removeFromProject: (uid: string, username: string) => Promise<void>;
+  triggerRefetch: () => void;
 }
 
 export function EditProjectDialog({
@@ -81,11 +82,11 @@ export function EditProjectDialog({
   invitees,
   inviteToProject,
   removeFromProject,
+  triggerRefetch,
 }: Props): ReactElement | null {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedInvitees, setSelectedInvitees] =
-    useState<Profile[] | null>(null);
+  const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>([]);
   const [invited, setInvited] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -105,24 +106,27 @@ export function EditProjectDialog({
     setSelectedInvitees(value);
   };
 
-  const updateCollectionMembers = () => {
-    invitees.forEach((profile) => {
-      if (
-        selectedInvitees.includes(profile) &&
-        !invited.includes(profile.email)
-      ) {
-        void inviteToProject(projectUid, profile.email);
-      }
+  const changeCollectionMembers = async () => {
+    await Promise.all(
+      invitees.map(async (profile) => {
+        if (
+          selectedInvitees.includes(profile) &&
+          !invited.includes(profile.email)
+        ) {
+          await inviteToProject(projectUid, profile.email);
+        }
 
-      if (
-        !selectedInvitees.includes(profile) &&
-        projectMembers.usernames.includes(profile.email) // can only remove users that have already accepted or rejected invite
-      ) {
-        void removeFromProject(projectUid, profile.email);
-      }
-    });
+        if (
+          !selectedInvitees.includes(profile) &&
+          projectMembers.usernames.includes(profile.email) // can only remove users that have already accepted or rejected invite
+        ) {
+          await removeFromProject(projectUid, profile.email);
+        }
+        return true;
+      })
+    );
 
-    // trigger re-render
+    triggerRefetch();
     setOpen(false);
   };
 
@@ -188,7 +192,7 @@ export function EditProjectDialog({
           className={classes.inviteBtn}
           variant="contained"
           color="primary"
-          onClick={updateCollectionMembers}
+          onClick={changeCollectionMembers}
         >
           OK
         </Button>
