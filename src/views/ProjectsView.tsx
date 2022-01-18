@@ -77,6 +77,7 @@ export const ProjectsView = ({
   const [projectMembers, setProjectMembers] = useState<{
     [uid: string]: { usernames: string[]; pendingUsernames: string[] };
   } | null>({}); // users in each project
+  const [refetch, setTriggerRefetch] = useState<number>(0);
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -99,13 +100,12 @@ export const ProjectsView = ({
 
   useEffect(() => {
     if (!isMounted?.current || !isOwnerOrMember()) return;
-
     void services.getCollectionsMembers().then((newMembers) => {
       if (newMembers) {
         setStateIfMounted(newMembers, setProjectMembers, isMounted.current);
       }
     });
-  }, [isMounted, services, isOwnerOrMember]);
+  }, [isMounted, services, isOwnerOrMember, refetch]);
 
   useEffect(() => {
     if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
@@ -135,7 +135,7 @@ export const ProjectsView = ({
         setStateIfMounted(newProgress, setProgress, isMounted.current);
       }
     });
-  }, [isMounted, auth, getAnnotationProgress]);
+  }, [isMounted, auth, getAnnotationProgress, refetch]);
 
   const inviteToProject = async (
     projectId: string,
@@ -155,10 +155,15 @@ export const ProjectsView = ({
     console.log(`${username} removed from project ${projectId}.`);
   };
 
+  const triggerRefetch = () => setTriggerRefetch((count) => count + 1);
+
   const createProject = async (name: string): Promise<string> => {
     await services.createProject({ name });
     const p = (await services.getProjects()) as Project[];
     setProjects(p);
+
+    triggerRefetch();
+
     // TODO: would be nice if services.createProject could return the uid of the new project
     return p?.find((project) => project.name === name).uid;
   };
@@ -236,6 +241,7 @@ export const ProjectsView = ({
                             invitees={invitees}
                             inviteToProject={inviteToProject}
                             removeFromProject={removeFromProject}
+                            triggerRefetch={triggerRefetch}
                           />
                         )}
                         <LaunchIcon
