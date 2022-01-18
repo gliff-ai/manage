@@ -82,7 +82,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
   const [team, setTeam] = useState<Team | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
-  const [collaboratorProjects, setCollaboratorProjects] = useState([]);
   const classes = useStyles();
   const isMounted = useRef(false);
 
@@ -125,43 +124,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
         });
     }
   }, [auth, props.services, isMounted]);
-
-  useEffect(() => {
-    if (!team?.profiles) return;
-
-    const getCollaboratingProject = async (
-      collaboratorEmail: string
-    ): Promise<string> => {
-      const result: string = await props.services
-        .getCollaboratorProject(
-          {
-            email: collaboratorEmail,
-          },
-          auth.user.authToken
-        )
-        .then((p: Project[]): string => {
-          if (p?.length > 1) {
-            return "Error!";
-          }
-          return p[0].name;
-        });
-
-      if (result) {
-        return result;
-      }
-      return "";
-    };
-
-    const collaboratorProjectsPromises = [];
-    for (let i = 0; i < team.profiles.length; i += 1) {
-      collaboratorProjectsPromises[i] = getCollaboratingProject(
-        team.profiles[i].email
-      );
-    }
-    void Promise.all(collaboratorProjectsPromises).then((result) => {
-      setStateIfMounted(result, setCollaboratorProjects, isMounted.current);
-    });
-  }, [team, props.services, auth, isMounted]);
 
   let pendingInvites;
   if (team?.pending_invites?.length > 0) {
@@ -237,7 +199,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
                 <TableRow>
                   <TableCell className={classes.tableText}>Name</TableCell>
                   <TableCell className={classes.tableText}>Email</TableCell>
-                  <TableCell className={classes.tableText}>Project</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -251,7 +212,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
                         <TableCell className={classes.tableText}>
                           {email}
                         </TableCell>
-                        <TableCell>{collaboratorProjects[index]}</TableCell>
                       </TableRow>
                     )
                 )}
