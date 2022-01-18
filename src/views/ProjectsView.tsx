@@ -61,7 +61,10 @@ interface Props {
   services: ServiceFunctions;
   launchCurateCallback?: (projectUid: string) => void | null;
   launchAuditCallback?: (projectUid: string) => void | null;
-  getAnnotationProgress: (username: string) => Promise<Progress>;
+  getAnnotationProgress: (
+    username: string,
+    projectId?: string
+  ) => Promise<Progress>;
 }
 
 export const ProjectsView = ({
@@ -88,6 +91,45 @@ export const ProjectsView = ({
     [auth.user.userAccess]
   );
 
+  const updateProjectMembers = useCallback(
+    (projectUid: string): void => {
+      void services
+        .getCollectionMembers({ collectionUid: projectUid })
+        .then(
+          (newMembers: { usernames: string[]; pendingUsernames: string[] }) => {
+            if (newMembers && isMounted.current) {
+              setProjectMembers((members) => {
+                const newProjectMembers = { ...members };
+                newProjectMembers[projectUid] = newMembers;
+                return newProjectMembers;
+              });
+            }
+          }
+        );
+    },
+    [services, isMounted]
+  );
+
+  const updateAnnotationProgress = useCallback(
+    (projectId: string): void => {
+      if (!auth?.user?.email) return;
+
+      void getAnnotationProgress(auth.user.email, projectId).then(
+        (newProgress) => {
+          if (newProgress && isMounted.current) {
+            setProgress((p) => ({ ...p, ...newProgress }));
+          }
+        }
+      );
+    },
+    [getAnnotationProgress, isMounted, auth]
+  );
+
+  const triggerRefetch = (projectId: string) => {
+    updateProjectMembers(projectId);
+    updateAnnotationProgress(projectId);
+  };
+
   useEffect(() => {
     // runs at mount
     isMounted.current = true;
@@ -105,25 +147,6 @@ export const ProjectsView = ({
       }
     });
   }, [isMounted, services, isOwnerOrMember]);
-
-  const updateProjectMembers = useCallback(
-    (projectUid: string): void => {
-      void services
-        .getCollectionMembers({ collectionUid: projectUid })
-        .then(
-          (newMembers: { usernames: string[]; pendingUsernames: string[] }) => {
-            if (newMembers && isMounted.current) {
-              setProjectMembers((members) => {
-                const newProjectMembers = { ...members };
-                newProjectMembers[projectUid] = newMembers;
-                return newProjectMembers;
-              });
-            }
-          }
-        );
-    },
-    [services, projectMembers, isMounted]
-  );
 
   useEffect(() => {
     if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
@@ -180,7 +203,7 @@ export const ProjectsView = ({
     const p = (await services.getProjects()) as Project[];
     setProjects(p);
 
-    updateProjectMembers(projectId);
+    triggerRefetch(projectId);
 
     return projectId;
   };
@@ -258,7 +281,7 @@ export const ProjectsView = ({
                             invitees={invitees}
                             inviteToProject={inviteToProject}
                             removeFromProject={removeFromProject}
-                            updateProjectMembers={updateProjectMembers}
+                            triggerRefetch={triggerRefetch}
                           />
                         )}
                         <LaunchIcon

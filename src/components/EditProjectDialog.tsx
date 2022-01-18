@@ -73,7 +73,7 @@ interface Props {
   invitees: Profile[];
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
   removeFromProject: (uid: string, username: string) => Promise<void>;
-  updateProjectMembers: (uid: string) => void;
+  triggerRefetch: (uid: string) => void;
 }
 
 export function EditProjectDialog({
@@ -82,7 +82,7 @@ export function EditProjectDialog({
   invitees,
   inviteToProject,
   removeFromProject,
-  updateProjectMembers,
+  triggerRefetch,
 }: Props): ReactElement | null {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
@@ -127,7 +127,7 @@ export function EditProjectDialog({
       })
     );
 
-    updateProjectMembers(projectUid);
+    triggerRefetch(projectUid);
     setSelectedInvitees(null);
     setOpen(false);
   };
@@ -154,7 +154,7 @@ export function EditProjectDialog({
         defaultValue={invitees.filter(({ email }) => invited.includes(email))}
         options={invitees}
         getOptionLabel={(option: Profile): string => option.name}
-        renderOption={(option: Profile, { selected }) => (
+        renderOption={(option: Profile) => (
           <>
             <Checkbox
               icon={
