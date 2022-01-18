@@ -57,9 +57,9 @@ export const config = {
         { name: "Project 1", uid: "1" },
         { name: "Project 2", uid: "2" },
       ]),
-    getCollaboratorProject: (data) =>
-      Promise.resolve([{ name: "Project 1", uid: "1" }]),
-    createProject: (data) => Promise.resolve([]),
+    getCollectionMembers: (data) =>
+      Promise.resolve({ usernames: [], pendingUsernames: [] }),
+    createProject: (data): Promise<string> => Promise.resolve("3"),
     inviteUser: (data): Promise<boolean> => Promise.resolve(true),
     inviteCollaborator: (data): Promise<boolean> => Promise.resolve(true),
     inviteToProject: (data): Promise<boolean> => Promise.resolve(true),
@@ -71,12 +71,7 @@ export const config = {
     getCollectionsMembers: () =>
       Promise.resolve({
         1: {
-          usernames: [
-            "user1@gliff.app",
-            "user2@gliff.app",
-            "user3@gliff.app",
-            "trustedservice@gliff.app",
-          ],
+          usernames: ["user1@gliff.app", "user2@gliff.app", "user3@gliff.app"],
           pendingUsernames: [],
         },
         2: {
