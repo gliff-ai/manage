@@ -118,9 +118,8 @@ export function UserInterface(props: Props): JSX.Element {
         >
           <PageSelector user={auth.user} />
           <Routes>
-            <Route path="/">
-              <Navigate to="projects" />
-            </Route>
+            <Route path="/" element={<Navigate to="projects" />} />
+
             <Route path="team" element={<TeamView services={services} />} />
             <Route
               path="services"
