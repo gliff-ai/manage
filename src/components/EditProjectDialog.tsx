@@ -73,7 +73,7 @@ interface Props {
   invitees: Profile[];
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
   removeFromProject: (uid: string, username: string) => Promise<void>;
-  triggerRefetch: () => void;
+  updateProjectMembers: (uid: string) => void;
 }
 
 export function EditProjectDialog({
@@ -82,11 +82,11 @@ export function EditProjectDialog({
   invitees,
   inviteToProject,
   removeFromProject,
-  triggerRefetch,
+  updateProjectMembers,
 }: Props): ReactElement | null {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>([]);
+  const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>(null);
   const [invited, setInvited] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -107,6 +107,7 @@ export function EditProjectDialog({
   };
 
   const changeCollectionMembers = async () => {
+    if (!selectedInvitees) return;
     await Promise.all(
       invitees.map(async (profile) => {
         if (
@@ -126,7 +127,8 @@ export function EditProjectDialog({
       })
     );
 
-    triggerRefetch();
+    updateProjectMembers(projectUid);
+    setSelectedInvitees(null);
     setOpen(false);
   };
 
@@ -193,6 +195,7 @@ export function EditProjectDialog({
           variant="contained"
           color="primary"
           onClick={changeCollectionMembers}
+          disabled={selectedInvitees === null}
         >
           OK
         </Button>

@@ -77,7 +77,6 @@ export const ProjectsView = ({
   const [projectMembers, setProjectMembers] = useState<{
     [uid: string]: { usernames: string[]; pendingUsernames: string[] };
   } | null>({}); // users in each project
-  const [refetch, setTriggerRefetch] = useState<number>(0);
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -105,7 +104,26 @@ export const ProjectsView = ({
         setStateIfMounted(newMembers, setProjectMembers, isMounted.current);
       }
     });
-  }, [isMounted, services, isOwnerOrMember, refetch]);
+  }, [isMounted, services, isOwnerOrMember]);
+
+  const updateProjectMembers = useCallback(
+    (projectUid: string): void => {
+      void services
+        .getCollectionMembers({ collectionUid: projectUid })
+        .then(
+          (newMembers: { usernames: string[]; pendingUsernames: string[] }) => {
+            if (newMembers && isMounted.current) {
+              setProjectMembers((members) => {
+                const newProjectMembers = { ...members };
+                newProjectMembers[projectUid] = newMembers;
+                return newProjectMembers;
+              });
+            }
+          }
+        );
+    },
+    [services, projectMembers, isMounted]
+  );
 
   useEffect(() => {
     if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
@@ -135,7 +153,7 @@ export const ProjectsView = ({
         setStateIfMounted(newProgress, setProgress, isMounted.current);
       }
     });
-  }, [isMounted, auth, getAnnotationProgress, refetch]);
+  }, [isMounted, auth, getAnnotationProgress]);
 
   const inviteToProject = async (
     projectId: string,
@@ -155,17 +173,16 @@ export const ProjectsView = ({
     console.log(`${username} removed from project ${projectId}.`);
   };
 
-  const triggerRefetch = () => setTriggerRefetch((count) => count + 1);
-
   const createProject = async (name: string): Promise<string> => {
-    await services.createProject({ name });
+    const projectId = (await services.createProject({
+      name,
+    })) as string;
     const p = (await services.getProjects()) as Project[];
     setProjects(p);
 
-    triggerRefetch();
+    updateProjectMembers(projectId);
 
-    // TODO: would be nice if services.createProject could return the uid of the new project
-    return p?.find((project) => project.name === name).uid;
+    return projectId;
   };
 
   const listAssignees = (assignees: string[]): any => (
@@ -241,7 +258,7 @@ export const ProjectsView = ({
                             invitees={invitees}
                             inviteToProject={inviteToProject}
                             removeFromProject={removeFromProject}
-                            triggerRefetch={triggerRefetch}
+                            updateProjectMembers={updateProjectMembers}
                           />
                         )}
                         <LaunchIcon
