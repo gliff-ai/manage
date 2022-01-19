@@ -106,7 +106,7 @@ export function CreateProjectDialog({
             {/* eslint-disable react/jsx-props-no-spreading */}
             <Autocomplete
               options={invitees}
-              getOptionLabel={(option) => option.name}
+              getOptionLabel={(option) => `${option.name} — ${option.email}`}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -152,7 +152,7 @@ export function CreateProjectDialog({
                     </Avatar>
                   }
                   className={classes.chipLabel}
-                  label={profile.name}
+                  label={profile.email}
                   variant="outlined"
                 />
               ))}
