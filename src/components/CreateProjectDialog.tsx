@@ -55,6 +55,12 @@ const useStyles = makeStyles({
   addButton: {
     color: "#000000",
   },
+  closeButton: {
+    position: "absolute",
+    top: "7px",
+    right: "5px",
+  },
+  closeIcon: { width: "15px" },
 });
 
 interface Props {
@@ -94,6 +100,12 @@ export function CreateProjectDialog({
             <Typography className={classes.projectsTopography}>
               Create Project
             </Typography>
+            <IconButton
+              className={classes.closeButton}
+              onClick={() => setDialogOpen(false)}
+            >
+              <SVG src={icons.removeLabel} className={classes.closeIcon} />
+            </IconButton>
           </Paper>
           <Paper elevation={0} square style={{ width: "20vw", margin: "20px" }}>
             <TextField
