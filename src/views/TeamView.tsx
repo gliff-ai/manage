@@ -95,18 +95,15 @@ export const TeamView = (props: Props): JSX.Element => {
     setInviteMessage("");
 
     try {
-      const result = await props.services.inviteUser({
+      await props.services.inviteUser({
         email: inviteEmail,
       });
-      if (result) {
-        setInviteEmail("");
-        setInviteMessage("Invite was sent");
-      } else {
-        setInviteMessage("An error happened with the invite");
-      }
+      setInviteEmail("");
+      setInviteMessage("Invite was sent");
     } catch (e: any) {
       setOpen(true);
       console.error(`${(e as Error).message}`);
+      setInviteMessage("An error happened with the invite");
     }
   };
   useEffect(() => {
@@ -305,7 +302,7 @@ export const TeamView = (props: Props): JSX.Element => {
       <WarningSnackbar
         open={open}
         onClose={() => setOpen(false)}
-        messageText="Cant invite new user, limit is reached"
+        messageText="Cant invite new user"
       />
     </>
   );
