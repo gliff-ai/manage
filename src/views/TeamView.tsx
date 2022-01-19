@@ -103,7 +103,6 @@ export const TeamView = (props: Props): JSX.Element => {
     } catch (e: any) {
       setOpen(true);
       console.error(`${(e as Error).message}`);
-      setInviteMessage("An error happened with the invite");
     }
   };
   useEffect(() => {
