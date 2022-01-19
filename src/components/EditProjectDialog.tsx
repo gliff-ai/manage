@@ -12,6 +12,7 @@ import {
   List,
   Chip,
   Checkbox,
+  Divider,
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -60,11 +61,17 @@ const useStyles = makeStyles({
     height: "30",
   },
   divider: {
-    margin: 0,
+    margin: "30px 0 10px 0",
     width: "100%",
     height: "1.5px",
   },
   checkboxIcon: { width: "18px", height: "auto" },
+  closeButton: {
+    position: "absolute",
+    top: "7px",
+    right: "5px",
+  },
+  closeIcon: { width: "15px" },
 });
 
 interface Props {
@@ -200,7 +207,7 @@ export function EditProjectDialog({
           OK
         </Button>
       </DialogActions>
-      <br />
+      <Divider className={classes.divider} />
       <List>
         {getChips(projectMembers.usernames)}
         {getChips(projectMembers.pendingUsernames, true)}
@@ -216,12 +223,7 @@ export function EditProjectDialog({
       >
         <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />
       </IconButton>
-      <Dialog
-        open={open}
-        onClose={() => {
-          setOpen(false);
-        }}
-      >
+      <Dialog open={open} onClose={() => setOpen(false)}>
         <Card className={classes.card}>
           <Paper
             elevation={0}
@@ -232,6 +234,12 @@ export function EditProjectDialog({
             <Typography className={classes.userInviteTopography}>
               Edit Project
             </Typography>
+            <IconButton
+              className={classes.closeButton}
+              onClick={() => setOpen(false)}
+            >
+              <SVG src={icons.removeLabel} className={classes.closeIcon} />
+            </IconButton>
           </Paper>
           <Paper elevation={0} square className={classes.paperBody}>
             {inviteSelect}
