@@ -204,7 +204,7 @@ export function EditProjectDialog({
           onClick={changeCollectionMembers}
           disabled={selectedInvitees === null}
         >
-          OK
+          UPDATE
         </Button>
       </DialogActions>
       <Divider className={classes.divider} />
