@@ -97,16 +97,11 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
     setInviteMessage("");
 
     try {
-      const result = await props.services.inviteCollaborator({
+      await props.services.inviteCollaborator({
         email: inviteEmail,
       });
-
-      if (result) {
-        setInviteEmail("");
-        setInviteMessage("Invite was sent");
-      } else {
-        setInviteMessage("An error happened with the invite");
-      }
+      setInviteEmail("");
+      setInviteMessage("Invite was sent");
     } catch (e: any) {
       setOpen(true);
       console.error(`${(e as Error).message}`);
@@ -347,7 +342,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
       <WarningSnackbar
         open={open}
         onClose={() => setOpen(false)}
-        messageText="Cant invite new user, limit is reached"
+        messageText="Cant invite new user"
       />
     </>
   );

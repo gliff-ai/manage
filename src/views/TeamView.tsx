@@ -16,7 +16,7 @@ import {
   ListSubheader,
   Box,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { Send } from "@mui/icons-material";
 import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
@@ -95,15 +95,11 @@ export const TeamView = (props: Props): JSX.Element => {
     setInviteMessage("");
 
     try {
-      const result = await props.services.inviteUser({
+      await props.services.inviteUser({
         email: inviteEmail,
       });
-      if (result) {
-        setInviteEmail("");
-        setInviteMessage("Invite was sent");
-      } else {
-        setInviteMessage("An error happened with the invite");
-      }
+      setInviteEmail("");
+      setInviteMessage("Invite was sent");
     } catch (e: any) {
       setOpen(true);
       console.error(`${(e as Error).message}`);
@@ -305,7 +301,7 @@ export const TeamView = (props: Props): JSX.Element => {
       <WarningSnackbar
         open={open}
         onClose={() => setOpen(false)}
-        messageText="Cant invite new user, limit is reached"
+        messageText="Cant invite new user"
       />
     </>
   );
