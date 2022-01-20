@@ -18,7 +18,7 @@ import {
   Box,
 } from "@material-ui/core";
 import { Send } from "@material-ui/icons";
-import { LoadingSpinner, theme } from "@gliff-ai/style";
+import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 
 import { Project, Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
@@ -84,6 +84,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
   const [inviteMessage, setInviteMessage] = useState("");
   const classes = useStyles();
   const isMounted = useRef(false);
+  const [open, setOpen] = useState(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
@@ -94,15 +95,15 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
     event.preventDefault();
     setInviteMessage("");
 
-    const result = await props.services.inviteCollaborator({
-      email: inviteEmail,
-    });
-
-    if (result) {
+    try {
+      await props.services.inviteCollaborator({
+        email: inviteEmail,
+      });
       setInviteEmail("");
       setInviteMessage("Invite was sent");
-    } else {
-      setInviteMessage("An error happened with the invite");
+    } catch (e: any) {
+      setOpen(true);
+      console.error(`${(e as Error).message}`);
     }
   };
 
@@ -298,6 +299,11 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </div>
+      <WarningSnackbar
+        open={open}
+        onClose={() => setOpen(false)}
+        messageText="Cant invite new user"
+      />
     </>
   );
 };
