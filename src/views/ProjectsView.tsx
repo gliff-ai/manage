@@ -96,7 +96,7 @@ export const ProjectsView = ({
     [auth.user.userAccess]
   );
 
-  const updateProjectMembers = useCallback(
+  const updateProjectUsers = useCallback(
     (projectUid: string): void => {
       void services
         .getCollectionMembers({ collectionUid: projectUid })
@@ -131,7 +131,7 @@ export const ProjectsView = ({
   );
 
   const triggerRefetch = (projectId: string) => {
-    updateProjectMembers(projectId);
+    updateProjectUsers(projectId);
     updateAnnotationProgress(projectId);
   };
 
