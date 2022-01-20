@@ -113,7 +113,7 @@ export function EditProjectDialog({
     )
       return;
     setProjectUsers(otherProps.projectUsers[projectUid]);
-  }, [otherProps]);
+  }, [otherProps, projectUid]);
 
   useEffect(() => {
     if (!projectUsers) return;
