@@ -23,6 +23,12 @@ export type Project = {
   name: string;
 };
 
+export type ProjectsUsers = {
+  [uid: string]: ProjectUsers;
+};
+
+export type ProjectUsers = { usernames: string[]; pendingUsernames: string[] };
+
 export type TrustedService = {
   name: string;
   base_url: string;

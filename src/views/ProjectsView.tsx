@@ -14,7 +14,14 @@ import {
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { Project, Profile, Team, UserAccess, Progress } from "@/interfaces";
+import {
+  Project,
+  Profile,
+  Team,
+  UserAccess,
+  Progress,
+  ProjectsUsers,
+} from "@/interfaces";
 import {
   EditProjectDialog,
   LaunchIcon,
@@ -77,9 +84,8 @@ export const ProjectsView = ({
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
   const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
-  const [projectMembers, setProjectMembers] = useState<{
-    [uid: string]: { usernames: string[]; pendingUsernames: string[] };
-  } | null>({}); // users in each project
+  const [projectMembers, setProjectMembers] =
+    useState<ProjectsUsers | null>(null); // users in each project
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -208,12 +214,20 @@ export const ProjectsView = ({
     return projectId;
   };
 
-  const listAssignees = (assignees: string[]): any => (
-    <p>
-      {assignees.slice(0, 3).join(", ")}
-      {assignees.length > 3 && <b> + {assignees.length - 3} others</b>}
-    </p>
-  );
+  const listAssignees = (
+    users: ProjectsUsers,
+    uid: string
+  ): ReactElement | null => {
+    if (!users || users[uid] === undefined) return null;
+
+    const assignees = users[uid].usernames;
+    return (
+      <p>
+        {assignees.slice(0, 3).join(", ")}
+        {assignees.length > 3 && <b> + {assignees.length - 3} others</b>}
+      </p>
+    );
+  };
 
   if (!auth?.user) return null;
 
@@ -266,8 +280,7 @@ export const ProjectsView = ({
                       </TableCell>
                       {isOwnerOrMember() && (
                         <TableCell className={classes.tableCell}>
-                          {projectMembers[uid] !== undefined &&
-                            listAssignees(projectMembers[uid].usernames)}
+                          {listAssignees(projectMembers, uid)}
                         </TableCell>
                       )}
                       <TableCell className={classes.tableCell}>
@@ -277,7 +290,8 @@ export const ProjectsView = ({
                         {isOwnerOrMember() && (
                           <EditProjectDialog
                             projectUid={uid}
-                            projectMembers={projectMembers[uid]}
+                            projects={projects}
+                            projectMembers={projectMembers}
                             invitees={invitees}
                             inviteToProject={inviteToProject}
                             removeFromProject={removeFromProject}
