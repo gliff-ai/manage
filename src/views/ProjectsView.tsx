@@ -84,8 +84,7 @@ export const ProjectsView = ({
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
   const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
-  const [projectMembers, setProjectMembers] =
-    useState<ProjectsUsers | null>(null); // users in each project
+  const [projectUsers, setProjectUsers] = useState<ProjectsUsers | null>(null); // users in each project
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -102,12 +101,12 @@ export const ProjectsView = ({
       void services
         .getCollectionMembers({ collectionUid: projectUid })
         .then(
-          (newMembers: { usernames: string[]; pendingUsernames: string[] }) => {
-            if (newMembers && isMounted.current) {
-              setProjectMembers((members) => {
-                const newProjectMembers = { ...members };
-                newProjectMembers[projectUid] = newMembers;
-                return newProjectMembers;
+          (newUsers: { usernames: string[]; pendingUsernames: string[] }) => {
+            if (newUsers && isMounted.current) {
+              setProjectUsers((users) => {
+                const newProjectsUsers = { ...users };
+                newProjectsUsers[projectUid] = newUsers;
+                return newProjectsUsers;
               });
             }
           }
@@ -147,9 +146,9 @@ export const ProjectsView = ({
 
   useEffect(() => {
     if (!isMounted?.current || !isOwnerOrMember()) return;
-    void services.getCollectionsMembers().then((newMembers) => {
-      if (newMembers) {
-        setStateIfMounted(newMembers, setProjectMembers, isMounted.current);
+    void services.getCollectionsMembers().then((newUsers) => {
+      if (newUsers) {
+        setStateIfMounted(newUsers, setProjectUsers, isMounted.current);
       }
     });
   }, [isMounted, services, isOwnerOrMember]);
@@ -280,7 +279,7 @@ export const ProjectsView = ({
                       </TableCell>
                       {isOwnerOrMember() && (
                         <TableCell className={classes.tableCell}>
-                          {listAssignees(projectMembers, uid)}
+                          {listAssignees(projectUsers, uid)}
                         </TableCell>
                       )}
                       <TableCell className={classes.tableCell}>
@@ -291,7 +290,7 @@ export const ProjectsView = ({
                           <EditProjectDialog
                             projectUid={uid}
                             projects={projects}
-                            projectMembers={projectMembers}
+                            projectUsers={projectUsers}
                             invitees={invitees}
                             inviteToProject={inviteToProject}
                             removeFromProject={removeFromProject}

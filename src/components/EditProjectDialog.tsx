@@ -77,7 +77,7 @@ const useStyles = makeStyles({
 interface Props {
   projectUid: string;
   projects: Project[] | null;
-  projectMembers: ProjectsUsers;
+  projectUsers: ProjectsUsers;
   invitees: Profile[];
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
   removeFromProject: (uid: string, username: string) => Promise<void>;
@@ -96,28 +96,27 @@ export function EditProjectDialog({
   const [open, setOpen] = useState<boolean>(false);
   const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>(null);
   const [projectUid, setProjectUid] = useState<string>(otherProps.projectUid);
-  const [projectMembers, setProjectMembers] =
-    useState<ProjectUsers | null>(null);
+  const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null);
   const [invited, setInvited] = useState<string[] | null>(null);
 
   useEffect(() => {
     if (
-      !otherProps.projectMembers ||
-      otherProps.projectMembers[projectUid] === undefined
+      !otherProps.projectUsers ||
+      otherProps.projectUsers[projectUid] === undefined
     )
       return;
-    setProjectMembers(otherProps.projectMembers[projectUid]);
+    setProjectUsers(otherProps.projectUsers[projectUid]);
   }, [otherProps]);
 
   useEffect(() => {
-    if (!projectMembers) return;
-    const newInvited = projectMembers.usernames.concat(
-      projectMembers.pendingUsernames
+    if (!projectUsers) return;
+    const newInvited = projectUsers.usernames.concat(
+      projectUsers.pendingUsernames
     );
     setInvited(newInvited);
-  }, [projectMembers, projectUid]);
+  }, [projectUsers, projectUid]);
 
-  if (!invitees || !projectMembers || !invited || !projects) return null;
+  if (!invitees || !projectUsers || !invited || !projects) return null;
 
   const handleSelectChange = (
     event: ChangeEvent<HTMLSelectElement>,
@@ -139,7 +138,7 @@ export function EditProjectDialog({
 
         if (
           !selectedInvitees.includes(profile) &&
-          projectMembers.usernames.includes(profile.email) // can only remove users that have already accepted or rejected invite
+          projectUsers.usernames.includes(profile.email) // can only remove users that have already accepted or rejected invite
         ) {
           await removeFromProject(projectUid, profile.email);
         }
@@ -152,8 +151,8 @@ export function EditProjectDialog({
     setOpen(false);
   };
 
-  const getChips = (members: string[], isPending = false) =>
-    members.map((username) => (
+  const getChips = (usernames: string[], isPending = false) =>
+    usernames.map((username) => (
       <Chip
         key={username}
         className={`${classes.chipLabel} ${
@@ -175,10 +174,10 @@ export function EditProjectDialog({
           const project = projects.find(({ name }) => name === newInputKey);
           if (
             project !== undefined &&
-            otherProps.projectMembers[project.uid] !== undefined
+            otherProps.projectUsers[project.uid] !== undefined
           ) {
             setProjectUid(project.uid);
-            setProjectMembers(otherProps.projectMembers[project.uid]);
+            setProjectUsers(otherProps.projectUsers[project.uid]);
           }
         }}
         options={projects}
@@ -243,8 +242,8 @@ export function EditProjectDialog({
       </DialogActions>
       <Divider className={classes.divider} />
       <List>
-        {getChips(projectMembers.usernames)}
-        {getChips(projectMembers.pendingUsernames, true)}
+        {getChips(projectUsers.usernames)}
+        {getChips(projectUsers.pendingUsernames, true)}
       </List>
     </>
   );
