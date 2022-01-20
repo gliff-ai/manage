@@ -17,8 +17,7 @@ import {
   Box,
 } from "@mui/material";
 
-
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 
 import { Add } from "@mui/icons-material";
 

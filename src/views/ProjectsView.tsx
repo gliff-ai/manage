@@ -17,7 +17,7 @@ import {
   TableRow,
   TableCell,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";

@@ -1,8 +1,16 @@
 import { useState, ChangeEvent } from "react";
-import { Paper, Button, Card, Dialog, IconButton, Typography, TextField } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  Paper,
+  Button,
+  Card,
+  Dialog,
+  IconButton,
+  Typography,
+  TextField,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from "@mui/material/Autocomplete";
 import { theme, icons } from "@gliff-ai/style";
 import { Profile } from "@/interfaces";
 
@@ -72,34 +80,37 @@ export function InviteDialog(props: Props): React.ReactElement {
     </form>
   );
 
-  return <>
-    <IconButton
-      data-testid={`edit-${props.projectUid}`}
-      onClick={() => setOpen(!open)}
-      size="large">
-      <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />
-    </IconButton>
-    <Dialog
-      open={open}
-      onClose={() => {
-        setOpen(false);
-      }}
-    >
-      <Card className={classes.card}>
-        <Paper
-          elevation={0}
-          variant="outlined"
-          square
-          className={classes.paperHeader}
-        >
-          <Typography className={classes.userInviteTopography}>
-            Invite User
-          </Typography>
-        </Paper>
-        <Paper elevation={0} square className={classes.paperBody}>
-          {inviteSelect}
-        </Paper>
-      </Card>
-    </Dialog>
-  </>;
+  return (
+    <>
+      <IconButton
+        data-testid={`edit-${props.projectUid}`}
+        onClick={() => setOpen(!open)}
+        size="large"
+      >
+        <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />
+      </IconButton>
+      <Dialog
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+      >
+        <Card className={classes.card}>
+          <Paper
+            elevation={0}
+            variant="outlined"
+            square
+            className={classes.paperHeader}
+          >
+            <Typography className={classes.userInviteTopography}>
+              Invite User
+            </Typography>
+          </Paper>
+          <Paper elevation={0} square className={classes.paperBody}>
+            {inviteSelect}
+          </Paper>
+        </Card>
+      </Dialog>
+    </>
+  );
 }

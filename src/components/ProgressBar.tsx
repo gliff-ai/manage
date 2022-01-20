@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 import { LinearProgress, Typography, Box } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { theme } from "@gliff-ai/style";
 
 const useStyle = makeStyles({

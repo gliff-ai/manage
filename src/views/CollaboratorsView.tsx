@@ -16,7 +16,7 @@ import {
   ListSubheader,
   Box,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { Send } from "@mui/icons-material";
 import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 

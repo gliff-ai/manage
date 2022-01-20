@@ -65,7 +65,9 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
-    "react-inlinesvg": "^2.3.0"
+    "react-inlinesvg": "^2.3.0",
+    "csstype": "^3.0.10"
+
   }
 }
 
