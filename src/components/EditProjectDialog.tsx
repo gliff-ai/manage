@@ -41,9 +41,16 @@ const useStyles = makeStyles({
     fontSize: "21px",
     marginLeft: "8px",
   },
-  paperBody: {
-    margin: "15px",
+  editProjectSection: {
+    margin: "20px 15px 15px",
   },
+  editUsersSection: {
+    margin: "20px 15px 15px",
+  },
+  listUsersSection: {
+    margin: "10px 15px 30px",
+  },
+  usersList: { padding: 0 },
   chipLabel: {
     margin: "5px 5px 0 0",
     borderRadius: "9px",
@@ -61,9 +68,9 @@ const useStyles = makeStyles({
     height: "30",
   },
   divider: {
-    margin: "30px 0 10px 0",
     width: "100%",
-    height: "1.5px",
+    margin: "0",
+    lineHeight: "1px",
   },
   checkboxIcon: { width: "18px", height: "auto" },
   closeButton: {
@@ -163,8 +170,8 @@ export function EditProjectDialog({
       />
     ));
 
-  const inviteSelect = (
-    <>
+  const editProjectSection = (
+    <Paper elevation={0} square className={classes.editProjectSection}>
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
         disableClearable
@@ -186,6 +193,11 @@ export function EditProjectDialog({
         )}
         defaultValue={projects.find(({ uid }) => uid === otherProps.projectUid)}
       />
+    </Paper>
+  );
+
+  const editUsersSection = (
+    <Paper elevation={0} square className={classes.editUsersSection}>
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
         multiple
@@ -226,7 +238,6 @@ export function EditProjectDialog({
             {selectedOptions.map((option) => option.name).join(", ")}
           </p>
         )}
-        style={{ marginTop: "26px" }}
         onChange={handleSelectChange}
       />
       <DialogActions>
@@ -240,12 +251,16 @@ export function EditProjectDialog({
           UPDATE
         </Button>
       </DialogActions>
-      <Divider className={classes.divider} />
-      <List>
+    </Paper>
+  );
+
+  const listUsersSection = (
+    <Paper elevation={0} square className={classes.listUsersSection}>
+      <List className={classes.usersList}>
         {getChips(projectUsers.usernames)}
         {getChips(projectUsers.pendingUsernames, true)}
       </List>
-    </>
+    </Paper>
   );
 
   return (
@@ -274,9 +289,11 @@ export function EditProjectDialog({
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>
-          <Paper elevation={0} square className={classes.paperBody}>
-            {inviteSelect}
-          </Paper>
+          {editProjectSection}
+          <Divider className={classes.divider} />
+          {editUsersSection}
+          <Divider className={classes.divider} />
+          {listUsersSection}
         </Card>
       </Dialog>
     </>
