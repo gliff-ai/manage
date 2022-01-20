@@ -55,7 +55,7 @@ export function PageSelector({ user }: { user: User }): ReactElement {
         marginRight: "20px",
       }}
     >
-      <ButtonGroup orientation="vertical">
+      <ButtonGroup orientation="vertical" variant="text">
         {links.map((name) => (
           <NavLink name={name} key={name} />
         ))}
