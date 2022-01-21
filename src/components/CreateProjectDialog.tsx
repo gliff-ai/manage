@@ -108,6 +108,7 @@ export function CreateProjectDialog({
               onChange={(event) => {
                 setNewProjectName(event.target.value);
               }}
+              variant="standard"
             />
             {/* eslint-disable react/jsx-props-no-spreading */}
             <Autocomplete

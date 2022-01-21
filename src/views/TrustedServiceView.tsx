@@ -242,6 +242,7 @@ export const TrustedServiceView = (props: Props): ReactElement => {
                         url: newTrustedService.url,
                       });
                     }}
+                    variant="standard"
                   />
                   <TextField
                     placeholder="Url"
@@ -253,6 +254,7 @@ export const TrustedServiceView = (props: Props): ReactElement => {
                         name: newTrustedService.name,
                       });
                     }}
+                    variant="standard"
                   />
 
                   <DialogActions>
