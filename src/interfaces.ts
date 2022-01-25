@@ -22,12 +22,6 @@ export type Project = {
   uid: string;
   name: string;
 };
-
-export type TrustedService = {
-  name: string;
-  base_url: string;
-};
-
 export interface Profile {
   email: string;
   name: string;
@@ -42,4 +36,33 @@ export interface Team {
     sent_date: string;
     is_collaborator: boolean;
   }>;
+}
+
+export enum Product {
+  "CURATE" = "CURATE",
+  "ANNOTATE" = "ANNOTATE",
+  "ALL" = "ALL",
+}
+
+export enum PluginType {
+  "Javascript" = "Javascript",
+  "Python" = "Python",
+  "AI" = "AI",
+}
+
+export interface IPlugin {
+  type: PluginType;
+  name: string;
+  url: string;
+  products: Product;
+  enabled: boolean;
+}
+
+export interface TrustedService extends Omit<IPlugin, "type" | "products"> {
+  type: "Python" | "AI";
+  products: "CURATE" | "ANNOTATE" | "ALL";
+}
+
+export interface JsPlugin extends Omit<IPlugin, "type" | "products"> {
+  products: "CURATE" | "ANNOTATE" | "ALL";
 }
