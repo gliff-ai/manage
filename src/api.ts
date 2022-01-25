@@ -23,6 +23,8 @@ interface Services {
   inviteToProject: APIRoute | ServiceFunction;
   createTrustedService: APIRoute | ServiceFunction;
   getTrustedServices: APIRoute | ServiceFunction;
+  createJsPlugin: APIRoute | ServiceFunction;
+  getJsPlugins: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {

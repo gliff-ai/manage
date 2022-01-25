@@ -1,4 +1,4 @@
-import { UserAccess } from "@/interfaces";
+import { UserAccess, TrustedService, JsPlugin } from "@/interfaces";
 import type { Services } from "../src";
 
 export const user = {
@@ -65,8 +65,26 @@ export const config = {
     inviteToProject: (data): Promise<boolean> => Promise.resolve(true),
     createTrustedService: (data): Promise<string> =>
       Promise.resolve("key key key"),
-    getTrustedServices: (data): Promise<any> =>
-      Promise.resolve([{ name: "TS", url: "https://ts.gliff.app" }]),
+    getTrustedServices: (data): Promise<TrustedService[]> =>
+      Promise.resolve([
+        {
+          type: "Python",
+          name: "python-plugin",
+          url: "https://ts.gliff.app",
+          products: "ALL",
+          enabled: false,
+        },
+      ]),
+    createJsPlugin: (data): Promise<void> => Promise.resolve(),
+    getJsPlugins: (data): Promise<JsPlugin[]> =>
+      Promise.resolve([
+        {
+          name: "js-plugin",
+          url: "https://plugin.gliff.app",
+          products: "CURATE",
+          enabled: true,
+        },
+      ]),
   } as Services,
 };
 
