@@ -243,7 +243,6 @@ export function EditProjectDialog({
           variant="contained"
           color="primary"
           onClick={changeCollectionMembers}
-          disabled={selectedInvitees === null}
         >
           UPDATE
         </Button>

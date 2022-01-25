@@ -20,7 +20,7 @@ import {
 import { Send } from "@material-ui/icons";
 import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 
-import { Project, Team } from "@/interfaces";
+import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
