@@ -286,7 +286,6 @@ export function AddPluginDialog({
       <FormControl
         className={classes.marginTop}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          console.log(e.target.value);
           setNewPlugin((p) => ({ ...p, products: e.target.value } as IPlugin));
         }}
       >
