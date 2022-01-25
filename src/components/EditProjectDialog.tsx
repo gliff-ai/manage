@@ -104,7 +104,6 @@ export function EditProjectDialog({
   const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>(null);
   const [projectUid, setProjectUid] = useState<string>(otherProps.projectUid);
   const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null);
-  const [invited, setInvited] = useState<string[] | null>(null);
 
   useEffect(() => {
     if (
@@ -115,15 +114,17 @@ export function EditProjectDialog({
     setProjectUsers(otherProps.projectUsers[projectUid]);
   }, [otherProps, projectUid]);
 
+  const alreadyInvited = (user: Profile): boolean =>
+    projectUsers.usernames.includes(user.email) ||
+    projectUsers.pendingUsernames.includes(user.email);
+
   useEffect(() => {
     if (!projectUsers) return;
-    const newInvited = projectUsers.usernames.concat(
-      projectUsers.pendingUsernames
-    );
-    setInvited(newInvited);
+
+    setSelectedInvitees(invitees.filter(alreadyInvited));
   }, [projectUsers, projectUid]);
 
-  if (!invitees || !projectUsers || !invited || !projects) return null;
+  if (!invitees || !projectUsers || !selectedInvitees || !projects) return null;
 
   const handleSelectChange = (
     event: ChangeEvent<HTMLSelectElement>,
@@ -136,10 +137,7 @@ export function EditProjectDialog({
     if (!selectedInvitees) return;
     await Promise.all(
       invitees.map(async (profile) => {
-        if (
-          selectedInvitees.includes(profile) &&
-          !invited.includes(profile.email)
-        ) {
+        if (selectedInvitees.includes(profile) && !alreadyInvited(profile)) {
           await inviteToProject(projectUid, profile.email);
         }
 
@@ -154,7 +152,6 @@ export function EditProjectDialog({
     );
 
     triggerRefetch(projectUid);
-    setSelectedInvitees(null);
     setOpen(false);
   };
 
@@ -203,10 +200,11 @@ export function EditProjectDialog({
         multiple
         disableCloseOnSelect
         disableClearable
-        value={invitees.filter(({ email }) => invited.includes(email))}
         options={invitees}
-        getOptionLabel={(option: Profile): string => option.name}
-        renderOption={(option: Profile) => (
+        value={selectedInvitees}
+        onChange={handleSelectChange}
+        getOptionLabel={(option) => option.name}
+        renderOption={(option) => (
           <>
             <Checkbox
               icon={
@@ -221,7 +219,7 @@ export function EditProjectDialog({
                   src={icons.multipleImageSelection}
                 />
               }
-              defaultChecked={invited.includes(option.email)}
+              checked={selectedInvitees.includes(option)}
             />
             {option.name} — {option.email}
           </>
@@ -238,7 +236,6 @@ export function EditProjectDialog({
             {selectedOptions.map((option) => option.name).join(", ")}
           </p>
         )}
-        onChange={handleSelectChange}
       />
       <DialogActions>
         <Button
