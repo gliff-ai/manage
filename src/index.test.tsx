@@ -52,7 +52,7 @@ describe.each([UserAccess.Owner, UserAccess.Member])(
       ["Projects", "projects"],
       ["Team Members", "team"],
       ["Collaborators", "collaborators"],
-      ["Trusted Services", "services"],
+      ["Plugins", "plugins"],
     ])("can access '%s' page", async (text: string, testId: string) => {
       expect(screen.queryByTestId(testId)).toBeDefined();
       await act(async () => {
