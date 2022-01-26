@@ -18,9 +18,10 @@ import {
   Avatar,
   Chip,
   List,
+  Divider,
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-import { Add } from "@material-ui/icons";
+import { Add, PeopleRounded } from "@material-ui/icons";
 import SVG from "react-inlinesvg";
 import { theme, icons } from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
@@ -31,14 +32,15 @@ const useStyles = makeStyles({
     padding: "10px",
     backgroundColor: theme.palette.primary.main,
   },
+  paperBody: { width: "25vw", margin: "10px 20px" },
   addButton: {
     color: "black",
   },
-  projectsTopography: {
+  topography: {
     color: "#000000",
     display: "inline",
     fontSize: "21px",
-    marginRight: "125px",
+    marginLeft: "8px",
   },
   key: {
     width: "100%",
@@ -59,6 +61,9 @@ const useStyles = makeStyles({
   },
   greenButton: {
     backgroundColor: theme.palette.primary.main,
+    "&:disabled": {
+      backgroundColor: theme.palette.grey[300],
+    },
     textTransform: "none",
     "&:hover": {
       backgroundColor: theme.palette.info.main,
@@ -83,6 +88,12 @@ const useStyles = makeStyles({
     fill: "white",
     borderRadius: "3px",
     backgroundColor: theme.palette.primary.main,
+  },
+  divider: { width: "500px", margin: "12px -20px" },
+  option: {
+    backgroundColor: `#FFFFFF !important`,
+    fontSize: "16px",
+    "&:hover": { backgroundColor: `${theme.palette.grey[100]} !important` },
   },
 });
 
@@ -250,13 +261,12 @@ export function AddPluginDialog({
         </RadioGroup>
       </FormControl>
       <DialogActions className={classes.dialogActions}>
-        <Button variant="contained" className={classes.whiteButton}>
+        <Button variant="outlined" className={classes.whiteButton}>
           {/* TODO: add onClick with link to docs */}
           Learn more
         </Button>
         <Button
-          variant="contained"
-          color="primary"
+          variant="outlined"
           className={classes.greenButton}
           onClick={() => setDialogPage((page) => page + 1)}
         >
@@ -270,19 +280,23 @@ export function AddPluginDialog({
     <>
       <TextField
         className={classes.marginTop}
+        variant="outlined"
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
         }}
       />
+      <Divider className={classes.divider} />
       <TextField
         className={classes.marginTop}
+        variant="outlined"
         placeholder="Plug-in URL"
         type="url"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           setNewPlugin((p) => ({ ...p, url: e.target.value } as IPlugin));
         }}
       />
+      <Divider className={classes.divider} />
       <FormControl
         className={classes.marginTop}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -311,34 +325,38 @@ export function AddPluginDialog({
           )}
         </RadioGroup>
       </FormControl>
+      <Divider className={classes.divider} />
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
         className={classes.marginTop}
+        classes={{ option: classes.option }}
         multiple
         disableCloseOnSelect
         disableClearable
         value={addedToProjects}
         onChange={(e: ChangeEvent<HTMLSelectElement>, value: Project[]) => {
-          console.log(value);
           setAddedToProjects(value);
         }}
         renderTags={(option) => null}
         options={projects}
         getOptionLabel={(option) => option.name}
         renderOption={(option) => (
-          <>
-            <Checkbox
-              icon={<div style={{ width: "10px", height: "auto" }} />}
-              checkedIcon={
-                <SVG
-                  className={classes.checkboxIcon}
-                  src={icons.multipleImageSelection}
-                />
-              }
-              checked={addedToProjects.includes(option)}
-            />
-            {option.name}
-          </>
+          <FormControlLabel
+            label={option.name}
+            control={
+              <Checkbox
+                style={{ padding: "10px" }}
+                icon={<div className={classes.checkboxIcon} />}
+                checkedIcon={
+                  <SVG
+                    className={classes.checkboxIcon}
+                    src={icons.multipleImageSelection}
+                  />
+                }
+                checked={addedToProjects.includes(option)}
+              />
+            }
+          />
         )}
         renderInput={(params) => (
           <TextField
@@ -378,16 +396,15 @@ export function AddPluginDialog({
 
       <DialogActions className={classes.dialogActions}>
         <Button
-          variant="contained"
+          variant="outlined"
           onClick={() => setDialogPage((page) => page - 1)}
           className={classes.whiteButton}
         >
           Back
         </Button>
         <Button
+          variant="outlined"
           className={classes.greenButton}
-          variant="contained"
-          color="primary"
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={createPlugin}
         >
@@ -430,9 +447,7 @@ export function AddPluginDialog({
             variant="outlined"
             square
           >
-            <Typography className={classes.projectsTopography}>
-              Add Plug-in
-            </Typography>
+            <Typography className={classes.topography}>Add Plug-in</Typography>
             <IconButton
               className={classes.closeButton}
               onClick={() => setOpen(false)}
@@ -440,7 +455,7 @@ export function AddPluginDialog({
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>
-          <Paper elevation={0} square style={{ width: "25vw", margin: "20px" }}>
+          <Paper elevation={0} square className={classes.paperBody}>
             {pickPluginTypeDialog}
             {enterValuesDialog}
             {accessKeyDialog}
