@@ -1,10 +1,7 @@
 name: check PR title and label appropriately
 on:
-  push:
-    branches:
-      - main, staging
   pull_request:
-    types: [opened, edited, synchronize, auto_merge_enabled, reopened]
+    types: [opened, edited, synchronize]
     branches:
       - main, staging
 
