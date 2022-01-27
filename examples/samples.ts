@@ -50,13 +50,15 @@ export const config = {
         ],
       }),
     loginUser: "GET /login",
-    getProject: "GET /project",
+    getProject: (uid) =>
+      Promise.resolve({ name: "New Project Name", uid: "1" }),
     getTeam: "GET /team",
     getProjects: () =>
       Promise.resolve([
         { name: "Project 1", uid: "1" },
         { name: "Project 2", uid: "2" },
       ]),
+    updateProjectName: (data): Promise<boolean> => Promise.resolve(true),
     getCollectionMembers: (data) =>
       Promise.resolve({ usernames: [], pendingUsernames: [] }),
     createProject: (data): Promise<string> => Promise.resolve("3"),

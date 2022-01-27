@@ -17,6 +17,7 @@ interface Services {
   inviteUser: APIRoute | ServiceFunction;
   inviteCollaborator: APIRoute | ServiceFunction;
   getProjects: APIRoute | ServiceFunction;
+  updateProjectName: APIRoute | ServiceFunction;
   getProject: APIRoute | ServiceFunction;
   getCollectionMembers: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
