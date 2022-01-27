@@ -25,12 +25,11 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "column",
     width: "300px",
-    height: "auto",
   },
-  inviteBtn: {
-    position: "relative",
+  confirmButton: {
+    textTransform: "none",
     marginTop: "15px",
-    marginLeft: "100px",
+    backgroundColor: theme.palette.primary.main,
     "&:hover": {
       backgroundColor: theme.palette.info.main,
     },
@@ -238,12 +237,11 @@ export function EditProjectDialog({
       />
       <DialogActions>
         <Button
-          className={classes.inviteBtn}
-          variant="contained"
-          color="primary"
+          className={classes.confirmButton}
+          variant="outlined"
           onClick={updateProject}
         >
-          UPDATE
+          Confirm
         </Button>
       </DialogActions>
     </Paper>
