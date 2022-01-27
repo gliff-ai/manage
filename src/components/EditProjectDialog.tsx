@@ -17,7 +17,7 @@ import {
 import SVG from "react-inlinesvg";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { theme, icons } from "@gliff-ai/style";
-import { Profile, Project, ProjectsUsers, ProjectUsers } from "@/interfaces";
+import { Profile, ProjectUsers } from "@/interfaces";
 
 const useStyles = makeStyles({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
@@ -79,40 +79,43 @@ const useStyles = makeStyles({
     right: "5px",
   },
   closeIcon: { width: "15px" },
+  option: {
+    backgroundColor: `#FFFFFF !important`,
+    fontSize: "16px",
+    "&:hover": { backgroundColor: `${theme.palette.grey[100]} !important` },
+  },
 });
 
 interface Props {
   projectUid: string;
-  projects: Project[] | null;
-  projectUsers: ProjectsUsers;
+  projectName: string;
+  projectUsers: ProjectUsers;
   invitees: Profile[];
+  updateProjectName: (data: {
+    projectUid: string;
+    projectName: string;
+  }) => Promise<unknown>;
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
   removeFromProject: (uid: string, username: string) => Promise<void>;
   triggerRefetch: (uid: string) => void;
 }
 
 export function EditProjectDialog({
-  projects,
   invitees,
+  projectUid,
   inviteToProject,
   removeFromProject,
+  updateProjectName,
   triggerRefetch,
+  projectUsers,
   ...otherProps
 }: Props): ReactElement | null {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>(null);
-  const [projectUid, setProjectUid] = useState<string>(otherProps.projectUid);
-  const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null);
-
-  useEffect(() => {
-    if (
-      !otherProps.projectUsers ||
-      otherProps.projectUsers[projectUid] === undefined
-    )
-      return;
-    setProjectUsers(otherProps.projectUsers[projectUid]);
-  }, [otherProps, projectUid]);
+  const [projectName, setProjectName] = useState<string>(
+    otherProps.projectName
+  );
 
   const alreadyInvited = (user: Profile): boolean =>
     projectUsers.usernames.includes(user.email) ||
@@ -122,9 +125,9 @@ export function EditProjectDialog({
     if (!projectUsers) return;
 
     setSelectedInvitees(invitees.filter(alreadyInvited));
-  }, [projectUsers, projectUid]);
+  }, [projectUsers]);
 
-  if (!invitees || !projectUsers || !selectedInvitees || !projects) return null;
+  if (!invitees || !projectUsers || !selectedInvitees) return null;
 
   const handleSelectChange = (
     event: ChangeEvent<HTMLSelectElement>,
@@ -150,6 +153,14 @@ export function EditProjectDialog({
         return true;
       })
     );
+  };
+
+  const updateProject = async () => {
+    await changeCollectionMembers();
+
+    if (projectName !== otherProps.projectName) {
+      await updateProjectName({ projectUid, projectName });
+    }
 
     triggerRefetch(projectUid);
     setOpen(false);
@@ -169,26 +180,13 @@ export function EditProjectDialog({
 
   const editProjectSection = (
     <Paper elevation={0} square className={classes.editProjectSection}>
-      {/* eslint-disable react/jsx-props-no-spreading */}
-      <Autocomplete
-        disableClearable
-        getOptionLabel={(option: Project) => option.name}
-        getOptionSelected={(option, value) => option.name === value.name}
-        onInputChange={(e: ChangeEvent, newInputKey: string) => {
-          const project = projects.find(({ name }) => name === newInputKey);
-          if (
-            project !== undefined &&
-            otherProps.projectUsers[project.uid] !== undefined
-          ) {
-            setProjectUid(project.uid);
-            setProjectUsers(otherProps.projectUsers[project.uid]);
-          }
+      <TextField
+        placeholder="Project Name"
+        variant="outlined"
+        value={projectName}
+        onChange={(event) => {
+          setProjectName(event.target.value);
         }}
-        options={projects}
-        renderInput={(params: unknown) => (
-          <TextField {...params} label="Project Name" variant="outlined" />
-        )}
-        defaultValue={projects.find(({ uid }) => uid === otherProps.projectUid)}
       />
     </Paper>
   );
@@ -204,6 +202,7 @@ export function EditProjectDialog({
         value={selectedInvitees}
         onChange={handleSelectChange}
         getOptionLabel={(option) => option.name}
+        classes={{ option: classes.option }}
         renderOption={(option) => (
           <>
             <Checkbox
@@ -242,7 +241,7 @@ export function EditProjectDialog({
           className={classes.inviteBtn}
           variant="contained"
           color="primary"
-          onClick={changeCollectionMembers}
+          onClick={updateProject}
         >
           UPDATE
         </Button>

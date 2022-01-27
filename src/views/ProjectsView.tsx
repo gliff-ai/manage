@@ -38,7 +38,7 @@ const useStyles = makeStyles({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  projectsTopography: {
+  topography: {
     color: "#000000",
     fontSize: "21px",
     marginLeft: "20px",
@@ -115,6 +115,19 @@ export const ProjectsView = ({
     [services, isMounted]
   );
 
+  const updateProject = useCallback(
+    (projectUid: string) => {
+      void services.getProject({ projectUid }).then((newProject: Project) => {
+        if (isMounted.current) {
+          setProjects((prevProjects: Project[]) =>
+            prevProjects.map((p) => (p.uid === newProject.uid ? newProject : p))
+          );
+        }
+      });
+    },
+    [services, isMounted]
+  );
+
   const updateAnnotationProgress = useCallback(
     (projectId: string): void => {
       if (!auth?.user?.email) return;
@@ -131,6 +144,7 @@ export const ProjectsView = ({
   );
 
   const triggerRefetch = (projectId: string) => {
+    updateProject(projectId);
     updateProjectUsers(projectId);
     updateAnnotationProgress(projectId);
   };
@@ -231,95 +245,92 @@ export const ProjectsView = ({
   if (!auth?.user) return null;
 
   return (
-    <>
-      <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
-        <Paper
-          elevation={0}
-          variant="outlined"
-          square
-          className={classes.paperHeader}
-        >
-          <Typography className={classes.projectsTopography}>
-            Projects
-          </Typography>
-          {isOwnerOrMember() && projects !== null && (
-            <CreateProjectDialog
-              projects={projects}
-              invitees={invitees}
-              createProject={createProject}
-              inviteToProject={inviteToProject}
-            />
-          )}
-        </Paper>
-        <Paper elevation={0} square style={{ height: "100%" }}>
-          {projects === null ? (
-            <Box display="flex" height="100%">
-              <LoadingSpinner />
-            </Box>
-          ) : (
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableBody>
-                  <TableRow key="tab-header">
-                    <TableCell className={classes.tableHeader}>Name</TableCell>
+    <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
+      <Paper
+        elevation={0}
+        variant="outlined"
+        square
+        className={classes.paperHeader}
+      >
+        <Typography className={classes.topography}>Projects</Typography>
+        {isOwnerOrMember() && projects !== null && (
+          <CreateProjectDialog
+            projects={projects}
+            invitees={invitees}
+            createProject={createProject}
+            inviteToProject={inviteToProject}
+          />
+        )}
+      </Paper>
+      <Paper elevation={0} square style={{ height: "100%" }}>
+        {projects === null ? (
+          <Box display="flex" height="100%">
+            <LoadingSpinner />
+          </Box>
+        ) : (
+          <TableContainer>
+            <Table aria-label="simple table">
+              <TableBody>
+                <TableRow key="tab-header">
+                  <TableCell className={classes.tableHeader}>Name</TableCell>
+                  {isOwnerOrMember() && (
+                    <TableCell className={classes.tableHeader}>
+                      Assignees
+                    </TableCell>
+                  )}
+                  <TableCell className={classes.tableHeader}>
+                    Annotation Progress
+                  </TableCell>
+                  <TableCell className={classes.tableHeader} />
+                </TableRow>
+                {projects.map(({ name, uid }) => (
+                  <TableRow key={uid}>
+                    <TableCell className={classes.tableCell}>{name}</TableCell>
                     {isOwnerOrMember() && (
-                      <TableCell className={classes.tableHeader}>
-                        Assignees
+                      <TableCell className={classes.tableCell}>
+                        {listAssignees(projectUsers, uid)}
                       </TableCell>
                     )}
-                    <TableCell className={classes.tableHeader}>
-                      Annotation Progress
+                    <TableCell className={classes.tableCell}>
+                      {progress && <ProgressBar progress={progress[uid]} />}
                     </TableCell>
-                    <TableCell className={classes.tableHeader} />
-                  </TableRow>
-                  {projects.map(({ name, uid }) => (
-                    <TableRow key={uid}>
-                      <TableCell className={classes.tableCell}>
-                        {name}
-                      </TableCell>
-                      {isOwnerOrMember() && (
-                        <TableCell className={classes.tableCell}>
-                          {listAssignees(projectUsers, uid)}
-                        </TableCell>
-                      )}
-                      <TableCell className={classes.tableCell}>
-                        {progress && <ProgressBar progress={progress[uid]} />}
-                      </TableCell>
-                      <TableCell className={classes.tableCell} align="right">
-                        {isOwnerOrMember() && (
+                    <TableCell className={classes.tableCell} align="right">
+                      {isOwnerOrMember() &&
+                        projectUsers &&
+                        projectUsers[uid] !== undefined && (
                           <EditProjectDialog
                             projectUid={uid}
-                            projects={projects}
-                            projectUsers={projectUsers}
+                            projectName={name}
+                            projectUsers={projectUsers[uid]}
                             invitees={invitees}
+                            updateProjectName={services.updateProjectName}
                             inviteToProject={inviteToProject}
                             removeFromProject={removeFromProject}
                             triggerRefetch={triggerRefetch}
                           />
                         )}
-                        <LaunchIcon
-                          launchCallback={() => launchCurateCallback(uid)}
-                          tooltip={`Open ${name} in CURATE`}
-                        />
-                        {isOwnerOrMember() &&
-                          auth.user.tierID > 1 &&
-                          launchAuditCallback !== null && (
-                            <LaunchIcon
-                              data-testid={`audit-${uid}`}
-                              launchCallback={() => launchAuditCallback(uid)}
-                              tooltip={`Open ${name} in AUDIT`}
-                            />
-                          )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </Paper>
-      </Card>
-    </>
+                      <LaunchIcon
+                        launchCallback={() => launchCurateCallback(uid)}
+                        tooltip={`Open ${name} in CURATE`}
+                      />
+                      {isOwnerOrMember() &&
+                        auth.user.tierID > 1 &&
+                        launchAuditCallback !== null && (
+                          <LaunchIcon
+                            data-testid={`audit-${uid}`}
+                            launchCallback={() => launchAuditCallback(uid)}
+                            tooltip={`Open ${name} in AUDIT`}
+                          />
+                        )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Paper>
+    </Card>
   );
 };
 
