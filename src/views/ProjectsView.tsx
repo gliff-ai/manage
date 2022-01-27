@@ -50,17 +50,15 @@ const useStyles = makeStyles({
     },
   },
   tableCell: {
-    padding: "0px 16px 0px 25px",
+    padding: "0 20px",
     fontSize: "16px",
     maxHeight: "28px",
     maxWidth: "250px",
   },
   tableHeader: {
-    padding: "0px 16px 0px 25px",
     fontSize: "16px",
-    maxHeight: "28px",
-    fontWeight: 700,
-    height: "40px",
+    paddingLeft: "20px",
+    fontWeight: 500,
   },
 });
 
