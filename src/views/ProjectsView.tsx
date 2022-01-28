@@ -1,11 +1,4 @@
-import {
-  useEffect,
-  useState,
-  ChangeEvent,
-  ReactElement,
-  useRef,
-  useCallback,
-} from "react";
+import { useEffect, useState, ReactElement, useRef, useCallback } from "react";
 import {
   Paper,
   Box,
@@ -21,9 +14,16 @@ import {
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { Project, Profile, Team, UserAccess, Progress } from "@/interfaces";
 import {
-  InviteDialog,
+  Project,
+  Profile,
+  Team,
+  UserAccess,
+  Progress,
+  ProjectsUsers,
+} from "@/interfaces";
+import {
+  EditProjectDialog,
   LaunchIcon,
   CreateProjectDialog,
   ProgressBar,
@@ -32,14 +32,16 @@ import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles({
   paperHeader: {
-    padding: "10px",
+    padding: "2px",
     backgroundColor: theme.palette.primary.main,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  projectsTopography: {
+  topography: {
     color: "#000000",
-    display: "inline",
     fontSize: "21px",
-    marginRight: "125px",
+    marginLeft: "20px",
   },
   // eslint-disable-next-line mui-unused-classes/unused-classes
   "@global": {
@@ -48,16 +50,15 @@ const useStyles = makeStyles({
     },
   },
   tableCell: {
-    padding: "0px 16px 0px 25px",
+    padding: "0 20px",
     fontSize: "16px",
     maxHeight: "28px",
+    maxWidth: "250px",
   },
   tableHeader: {
-    padding: "0px 16px 0px 25px",
     fontSize: "16px",
-    maxHeight: "28px",
-    fontWeight: 700,
-    height: "40px",
+    paddingLeft: "20px",
+    fontWeight: 500,
   },
 });
 
@@ -65,7 +66,10 @@ interface Props {
   services: ServiceFunctions;
   launchCurateCallback?: (projectUid: string) => void | null;
   launchAuditCallback?: (projectUid: string) => void | null;
-  getAnnotationProgress: (username: string) => Promise<Progress>;
+  getAnnotationProgress: (
+    username: string,
+    projectId?: string
+  ) => Promise<Progress>;
 }
 
 export const ProjectsView = ({
@@ -76,19 +80,12 @@ export const ProjectsView = ({
 }: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
-  const [progress, setProgress] = useState<Progress | null>(null);
-  const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
-  const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
+  const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
+  const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
+  const [projectUsers, setProjectUsers] = useState<ProjectsUsers | null>(null); // users in each project
 
   const classes = useStyles();
   const isMounted = useRef(false);
-
-  const handleSelectChange = (
-    event: ChangeEvent<HTMLSelectElement>,
-    value: Profile
-  ): void => {
-    setInvitee(value.email);
-  };
 
   const isOwnerOrMember = useCallback(
     (): boolean =>
@@ -96,6 +93,59 @@ export const ProjectsView = ({
       auth.user.userAccess === UserAccess.Member,
     [auth.user.userAccess]
   );
+
+  const updateProjectUsers = useCallback(
+    (projectUid: string): void => {
+      void services
+        .getCollectionMembers({ collectionUid: projectUid })
+        .then(
+          (newUsers: { usernames: string[]; pendingUsernames: string[] }) => {
+            if (newUsers && isMounted.current) {
+              setProjectUsers((users) => {
+                const newProjectsUsers = { ...users };
+                newProjectsUsers[projectUid] = newUsers;
+                return newProjectsUsers;
+              });
+            }
+          }
+        );
+    },
+    [services, isMounted]
+  );
+
+  const updateProject = useCallback(
+    (projectUid: string) => {
+      void services.getProject({ projectUid }).then((newProject: Project) => {
+        if (isMounted.current) {
+          setProjects((prevProjects: Project[]) =>
+            prevProjects.map((p) => (p.uid === newProject.uid ? newProject : p))
+          );
+        }
+      });
+    },
+    [services, isMounted]
+  );
+
+  const updateAnnotationProgress = useCallback(
+    (projectId: string): void => {
+      if (!auth?.user?.email) return;
+
+      void getAnnotationProgress(auth.user.email, projectId).then(
+        (newProgress) => {
+          if (newProgress && isMounted.current) {
+            setProgress((p) => ({ ...p, ...newProgress }));
+          }
+        }
+      );
+    },
+    [getAnnotationProgress, isMounted, auth]
+  );
+
+  const triggerRefetch = (projectId: string) => {
+    updateProject(projectId);
+    updateProjectUsers(projectId);
+    updateAnnotationProgress(projectId);
+  };
 
   useEffect(() => {
     // runs at mount
@@ -107,6 +157,25 @@ export const ProjectsView = ({
   }, []);
 
   useEffect(() => {
+    if (!isMounted?.current || !isOwnerOrMember()) return;
+    void services.getCollectionsMembers().then((newUsers) => {
+      if (newUsers) {
+        setStateIfMounted(newUsers, setProjectUsers, isMounted.current);
+      }
+    });
+  }, [isMounted, services, isOwnerOrMember]);
+
+  useEffect(() => {
+    if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
+
+    void services
+      .queryTeam(null, auth.user.authToken)
+      .then(({ profiles }: Team) => {
+        setStateIfMounted(profiles, setInvitees, isMounted.current);
+      });
+  }, [auth, services, isMounted, isOwnerOrMember]);
+
+  useEffect(() => {
     if (!isMounted.current || !auth?.user?.email) return;
 
     void services
@@ -114,19 +183,7 @@ export const ProjectsView = ({
       .then((p: Project[]) =>
         setStateIfMounted(p, setProjects, isMounted.current)
       );
-
-    if (isOwnerOrMember()) {
-      void services.queryTeam(null, auth.user.authToken).then((team: Team) => {
-        const invitees = team.profiles.filter(
-          ({ email }) => email !== auth?.user?.email
-        );
-        setStateIfMounted(invitees, setInvitees, isMounted.current);
-        if (invitees.length > 0) {
-          setStateIfMounted(invitees[0].email, setInvitee, isMounted.current);
-        }
-      });
-    }
-  }, [auth, services, isMounted, isOwnerOrMember]);
+  }, [auth, services, isMounted]);
 
   useEffect(() => {
     if (!isMounted.current || !auth?.user?.email) return;
@@ -144,101 +201,134 @@ export const ProjectsView = ({
   ): Promise<void> => {
     await services.inviteToProject({ projectId, email: inviteeEmail });
 
-    console.log(`invite complete!: ${inviteeEmail}`);
+    console.log(`${inviteeEmail} invited to project ${projectId}`);
+  };
+
+  const removeFromProject = async (
+    projectId: string,
+    username: string
+  ): Promise<void> => {
+    await services.removeFromProject({ uid: projectId, username });
+
+    console.log(`${username} removed from project ${projectId}.`);
   };
 
   const createProject = async (name: string): Promise<string> => {
-    await services.createProject({ name });
+    const projectId = (await services.createProject({
+      name,
+    })) as string;
     const p = (await services.getProjects()) as Project[];
     setProjects(p);
-    // TODO: would be nice if services.createProject could return the uid of the new project
-    return p?.find((project) => project.name === name).uid;
+
+    triggerRefetch(projectId);
+
+    return projectId;
+  };
+
+  const listAssignees = (
+    users: ProjectsUsers,
+    uid: string
+  ): ReactElement | null => {
+    if (!users || users[uid] === undefined) return null;
+
+    const assignees = users[uid].usernames;
+    return (
+      <p>
+        {assignees.slice(0, 3).join(", ")}
+        {assignees.length > 3 && <b> + {assignees.length - 3} others</b>}
+      </p>
+    );
   };
 
   if (!auth?.user) return null;
 
   return (
-    <>
-      <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
-        <Paper
-          elevation={0}
-          variant="outlined"
-          square
-          className={classes.paperHeader}
-        >
-          <Typography
-            className={classes.projectsTopography}
-            style={{ marginLeft: "14px" }}
-          >
-            Projects
-          </Typography>
-        </Paper>
-        <Paper elevation={0} square style={{ height: "100%" }}>
-          {isOwnerOrMember() && projects !== null && (
-            <CreateProjectDialog
-              projects={projects}
-              projectInvitees={projectInvitees}
-              createProject={createProject}
-              inviteToProject={inviteToProject}
-            />
-          )}
-          {projects === null ? (
-            <Box display="flex" height="100%">
-              <LoadingSpinner />
-            </Box>
-          ) : (
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableBody>
-                  <TableRow key="tab-header">
-                    <TableCell className={classes.tableHeader}>Name</TableCell>
+    <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
+      <Paper
+        elevation={0}
+        variant="outlined"
+        square
+        className={classes.paperHeader}
+      >
+        <Typography className={classes.topography}>Projects</Typography>
+        {isOwnerOrMember() && projects !== null && (
+          <CreateProjectDialog
+            projects={projects}
+            invitees={invitees}
+            createProject={createProject}
+            inviteToProject={inviteToProject}
+          />
+        )}
+      </Paper>
+      <Paper elevation={0} square style={{ height: "100%" }}>
+        {projects === null ? (
+          <Box display="flex" height="100%">
+            <LoadingSpinner />
+          </Box>
+        ) : (
+          <TableContainer>
+            <Table aria-label="simple table">
+              <TableBody>
+                <TableRow key="tab-header">
+                  <TableCell className={classes.tableHeader}>Name</TableCell>
+                  {isOwnerOrMember() && (
                     <TableCell className={classes.tableHeader}>
-                      Annotation Progress
+                      Assignees
                     </TableCell>
-                    <TableCell className={classes.tableHeader} />
-                  </TableRow>
-                  {projects.map(({ name, uid }) => (
-                    <TableRow key={uid}>
+                  )}
+                  <TableCell className={classes.tableHeader}>
+                    Annotation Progress
+                  </TableCell>
+                  <TableCell className={classes.tableHeader} />
+                </TableRow>
+                {projects.map(({ name, uid }) => (
+                  <TableRow key={uid}>
+                    <TableCell className={classes.tableCell}>{name}</TableCell>
+                    {isOwnerOrMember() && (
                       <TableCell className={classes.tableCell}>
-                        {name}
+                        {listAssignees(projectUsers, uid)}
                       </TableCell>
-                      <TableCell className={classes.tableCell}>
-                        {progress && <ProgressBar progress={progress[uid]} />}
-                      </TableCell>
-                      <TableCell className={classes.tableCell} align="right">
-                        {isOwnerOrMember() && (
-                          <InviteDialog
+                    )}
+                    <TableCell className={classes.tableCell}>
+                      {progress && <ProgressBar progress={progress[uid]} />}
+                    </TableCell>
+                    <TableCell className={classes.tableCell} align="right">
+                      {isOwnerOrMember() &&
+                        projectUsers &&
+                        projectUsers[uid] !== undefined && (
+                          <EditProjectDialog
                             projectUid={uid}
-                            projectInvitees={projectInvitees}
-                            handleSelectChange={handleSelectChange}
-                            inviteToProject={() =>
-                              inviteToProject(uid, projectInvitee)
-                            }
+                            projectName={name}
+                            projectUsers={projectUsers[uid]}
+                            invitees={invitees}
+                            updateProjectName={services.updateProjectName}
+                            inviteToProject={inviteToProject}
+                            removeFromProject={removeFromProject}
+                            triggerRefetch={triggerRefetch}
                           />
                         )}
-                        <LaunchIcon
-                          launchCallback={() => launchCurateCallback(uid)}
-                          tooltip={`Open ${name} in CURATE`}
-                        />
-                        {isOwnerOrMember() &&
-                          auth.user.tierID > 1 &&
-                          launchAuditCallback !== null && (
-                            <LaunchIcon
-                              data-testid={`audit-${uid}`}
-                              launchCallback={() => launchAuditCallback(uid)}
-                              tooltip={`Open ${name} in AUDIT`}
-                            />
-                          )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
-        </Paper>
-      </Card>
-    </>
+                      <LaunchIcon
+                        launchCallback={() => launchCurateCallback(uid)}
+                        tooltip={`Open ${name} in CURATE`}
+                      />
+                      {isOwnerOrMember() &&
+                        auth.user.tierID > 1 &&
+                        launchAuditCallback !== null && (
+                          <LaunchIcon
+                            data-testid={`audit-${uid}`}
+                            launchCallback={() => launchAuditCallback(uid)}
+                            tooltip={`Open ${name} in AUDIT`}
+                          />
+                        )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Paper>
+    </Card>
   );
 };
 

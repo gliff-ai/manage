@@ -5,19 +5,19 @@ import {
   Typography,
   Card,
   List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
+  Chip,
+  Avatar,
   Dialog,
   TextField,
   DialogActions,
   Button,
   makeStyles,
 } from "@material-ui/core";
+import SVG from "react-inlinesvg";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear, Add } from "@material-ui/icons";
-import { theme } from "@gliff-ai/style";
+import { Add } from "@material-ui/icons";
+import { theme, icons } from "@gliff-ai/style";
 import { Profile, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
@@ -29,7 +29,7 @@ const useStyles = makeStyles({
     color: "#000000",
     display: "inline",
     fontSize: "21px",
-    marginRight: "125px",
+    marginLeft: "8px",
   },
   cancelButton: {
     textTransform: "none",
@@ -44,18 +44,35 @@ const useStyles = makeStyles({
     fontSize: "16px",
     maxHeight: "28px",
   },
+  chipLabel: {
+    margin: "5px 5px 0 0",
+    borderColor: "black",
+    borderRadius: "9px",
+  },
+  iconSize: {
+    width: "15px",
+  },
+  addButton: {
+    color: "#000000",
+  },
+  closeButton: {
+    position: "absolute",
+    top: "7px",
+    right: "5px",
+  },
+  closeIcon: { width: "15px" },
 });
 
 interface Props {
   projects: Project[] | null;
-  projectInvitees: Profile[] | null;
+  invitees: Profile[] | null;
   createProject: (newName: string) => Promise<string>;
   inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
 }
 
 export function CreateProjectDialog({
   projects,
-  projectInvitees,
+  invitees,
   createProject,
   inviteToProject,
 }: Props): ReactElement {
@@ -66,42 +83,29 @@ export function CreateProjectDialog({
   const classes = useStyles();
   return (
     <>
-      <List style={{ paddingBottom: "0px" }}>
-        <ListItem
-          divider
-          style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
-          onClick={() => {
-            setDialogOpen(!dialogOpen);
-          }}
-        >
-          <div
-            style={{
-              margin: "10px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Add
-              fontSize="large"
-              style={{ marginRight: "10px", color: "grey" }}
-            />
-            <Typography style={{ color: "grey" }}>
-              Create New Project
-            </Typography>
-          </div>
-        </ListItem>
-      </List>
+      <IconButton
+        className={classes.addButton}
+        onClick={() => setDialogOpen(true)}
+      >
+        <Add />
+      </IconButton>
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <Card>
           <Paper
+            className={classes.paperHeader}
             elevation={0}
             variant="outlined"
             square
-            className={classes.paperHeader}
           >
             <Typography className={classes.projectsTopography}>
-              New Project
+              Create Project
             </Typography>
+            <IconButton
+              className={classes.closeButton}
+              onClick={() => setDialogOpen(false)}
+            >
+              <SVG src={icons.removeLabel} className={classes.closeIcon} />
+            </IconButton>
           </Paper>
           <Paper elevation={0} square style={{ width: "20vw", margin: "20px" }}>
             <TextField
@@ -113,8 +117,8 @@ export function CreateProjectDialog({
             />
             {/* eslint-disable react/jsx-props-no-spreading */}
             <Autocomplete
-              options={projectInvitees}
-              getOptionLabel={(option) => option.name}
+              options={invitees}
+              getOptionLabel={(option) => `${option.name} — ${option.email}`}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -135,10 +139,14 @@ export function CreateProjectDialog({
             />
             <List>
               {dialogInvitees?.map((profile) => (
-                <ListItem key={profile.email}>
-                  <ListItemText>{profile.name}</ListItemText>
-                  <ListItemSecondaryAction>
-                    <IconButton
+                <Chip
+                  key={profile.email}
+                  avatar={
+                    <Avatar
+                      variant="circular"
+                      style={{
+                        cursor: "pointer",
+                      }}
                       onClick={() => {
                         // remove `email` from dialogInvitees:
                         setDialogInvitees(
@@ -148,10 +156,17 @@ export function CreateProjectDialog({
                         );
                       }}
                     >
-                      <Clear />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
+                      <SVG
+                        className={classes.iconSize}
+                        src={icons.removeLabel}
+                        fill="inherit"
+                      />
+                    </Avatar>
+                  }
+                  className={classes.chipLabel}
+                  label={profile.email}
+                  variant="outlined"
+                />
               ))}
             </List>
             <DialogActions>

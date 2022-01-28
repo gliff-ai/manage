@@ -29,12 +29,15 @@ const defaultServices = {
   inviteUser: "POST /user/invite",
   inviteCollaborator: "POST /user/invite/collaborator",
   getProjects: "GET /projects",
+  updateProjectName: "POST /project/uid",
   getProject: "GET /project", // TODO: Support named params for GET? Body works tho...
-  getCollaboratorProject: "GET /team/collaboratorprojects",
+  getCollectionMembers: "GET /team/collectionmembers",
   createProject: "POST /projects",
   inviteToProject: "POST /projects/invite",
   createTrustedService: "POST /trusted_service",
   getTrustedServices: "GET /trusted_service",
+  getCollectionsMembers: "GET /projects/collectionsmembers",
+  removeFromProject: "POST /user/delete/collaborator",
 } as Services;
 
 interface Props {
