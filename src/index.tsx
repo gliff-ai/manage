@@ -58,8 +58,8 @@ interface Props {
 const useStyles = makeStyles(() => ({
   appBar: {
     backgroundColor: "white",
-    height: "90px !important",
-    paddingTop: "9px !important",
+    height: "90px",
+    paddingTop: "9px",
   },
   logo: {
     marginBottom: "5px",
@@ -115,8 +115,8 @@ export function UserInterface(props: Props): JSX.Element {
     <StylesProvider generateClassName={generateClassName("manage")}>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          {appbar}
           <CssBaseline />
+          {appbar}
           <div
             style={{
               marginTop: props.showAppBar ? "108px" : "20px",
