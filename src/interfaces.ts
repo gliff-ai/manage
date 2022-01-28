@@ -22,11 +22,17 @@ export type Project = {
   uid: string;
   name: string;
 };
+
+export type ProjectsUsers = {
+  [uid: string]: ProjectUsers;
+};
+
+export type ProjectUsers = { usernames: string[]; pendingUsernames: string[] };
 export interface Profile {
   email: string;
   name: string;
-  is_collaborator: boolean;
-  is_trusted_service: boolean;
+  is_collaborator?: boolean;
+  is_trusted_service?: boolean;
 }
 
 export interface Team {
