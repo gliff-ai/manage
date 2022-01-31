@@ -99,6 +99,8 @@ export const config = {
           pendingUsernames: ["user3@gliff.app"],
         },
       }),
+    deletePlugin: (data): Promise<boolean> => Promise.resolve(true),
+    updatePlugin: (data): Promise<boolean> => Promise.resolve(true),
   } as Services,
 };
 

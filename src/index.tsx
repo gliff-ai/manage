@@ -40,6 +40,8 @@ const defaultServices = {
   getJsPlugins: "GET /plugin",
   getCollectionsMembers: "GET /projects/collectionsmembers",
   removeFromProject: "POST /user/delete/collaborator",
+  deletePlugin: "DELETE /plugin",
+  updatePlugin: "POST /plugin",
 } as Services;
 
 interface Props {

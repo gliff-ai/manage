@@ -28,6 +28,8 @@ interface Services {
   getJsPlugins: APIRoute | ServiceFunction;
   getCollectionsMembers: APIRoute | ServiceFunction;
   removeFromProject: APIRoute | ServiceFunction;
+  deletePlugin: APIRoute | ServiceFunction;
+  updatePlugin: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {
