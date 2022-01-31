@@ -8,7 +8,7 @@ const pageIcons: { [name: string]: string } = {
   projects: icons.projectsPage,
   team: icons.usersPage,
   collaborators: icons.collaborators,
-  services: icons.trustedServices,
+  plugins: icons.plugins,
 };
 
 function NavLink({ name }: { name: string }): ReactElement {
@@ -39,7 +39,7 @@ export function PageSelector({ user }: { user: User }): ReactElement {
     user.userAccess === UserAccess.Member;
 
   if (isOwnerOrMember && user.tierID > 1) {
-    links = ["Projects", "Team", "Collaborators", "Services"] as const;
+    links = ["Projects", "Team", "Collaborators", "Plugins"] as const;
   } else if (isOwnerOrMember) {
     links = ["Projects", "Team", "Collaborators"] as const;
   } else {
