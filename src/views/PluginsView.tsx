@@ -11,13 +11,19 @@ import {
   TableCell,
   Box,
   Switch,
+  TableHead,
 } from "@material-ui/core";
 
 import { LoadingSpinner, theme } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
-import { AddPluginDialog, MessageAlert } from "@/components";
+import {
+  AddPluginDialog,
+  MessageAlert,
+  DeletePluginDialog,
+  EditPluginDialog,
+} from "@/components";
 import { IPlugin, PluginType, Project, JsPlugin } from "@/interfaces";
 
 const useStyles = () =>
@@ -26,6 +32,7 @@ const useStyles = () =>
       padding: "10px",
       backgroundColor: theme.palette.primary.main,
     },
+    paperBody: {},
     projectsTopography: {
       color: "#000000",
       display: "inline",
@@ -38,16 +45,24 @@ const useStyles = () =>
         background: "#01dbff",
       },
     },
-    tableHeader: {
-      paddingLeft: "20px",
+    tableText: {
       fontSize: "16px",
-      fontWeight: 700,
-    },
-    tableCell: {
       paddingLeft: "20px",
-      fontSize: "16px",
     },
     buttonsContainer: { position: "relative", float: "right", top: "-8px" },
+    tableRow: {
+      "&:hover": {
+        backgroundColor: theme.palette.grey[200],
+      },
+      "&:hover td div": {
+        visibility: "visible",
+      },
+    },
+    hiddenButtons: {
+      visibility: "hidden",
+      float: "right",
+      marginRight: "20px",
+    },
   }));
 
 interface Props {
@@ -101,6 +116,27 @@ export const PluginsView = ({ services }: Props): ReactElement => {
     setStateIfMounted(allPlugins, setPlugins, isMounted.current);
   }, []);
 
+  const updateEnabled = (currentPlugin: IPlugin) => {
+    let updatedPlugin: IPlugin | null = null;
+    setPlugins((prevPlugins) =>
+      prevPlugins.map((p) => {
+        const hasUpdated =
+          p.name === currentPlugin.name && p.url === currentPlugin.url;
+        if (hasUpdated) {
+          updatedPlugin = {
+            ...p,
+            enabled: !p.enabled,
+          };
+          return updatedPlugin;
+        }
+        return p;
+      })
+    );
+    if (updatedPlugin) {
+      void services.updatePlugin({ ...updatedPlugin });
+    }
+  };
+
   useEffect(() => {
     if (auth?.user?.email) {
       void fetchPlugins();
@@ -109,45 +145,49 @@ export const PluginsView = ({ services }: Props): ReactElement => {
 
   const tableHeader = (
     <TableRow>
-      <TableCell className={classes.tableHeader}>Name</TableCell>
-      <TableCell className={classes.tableHeader}>Type</TableCell>
-      <TableCell className={classes.tableHeader}>URL</TableCell>
-      <TableCell className={classes.tableHeader}>Products</TableCell>
-      <TableCell className={classes.tableHeader}>Enabled</TableCell>
-      <TableCell className={classes.tableHeader} align="right" />
+      <TableCell className={classes.tableText}>Name</TableCell>
+      <TableCell className={classes.tableText}>Type</TableCell>
+      <TableCell className={classes.tableText}>URL</TableCell>
+      <TableCell className={classes.tableText}>Products</TableCell>
+      <TableCell className={classes.tableText}>Enabled</TableCell>
+      <TableCell className={classes.tableText} />
     </TableRow>
   );
 
-  const fillTableRow = ({ name, url, type, enabled, products }: IPlugin) => (
-    <TableRow key={`${name}-${url}`}>
-      <TableCell className={classes.tableCell}>{name}</TableCell>
-      <TableCell className={classes.tableCell}>{type}</TableCell>
-      <TableCell className={classes.tableCell}>{url}</TableCell>
-      <TableCell className={classes.tableCell}>{products}</TableCell>
-      <TableCell className={classes.tableCell}>
-        <Switch
-          color="primary"
-          checked={enabled}
-          onChange={
-            () =>
-              setPlugins((prevPlugins) =>
-                prevPlugins.map((p) =>
-                  p.name === name && p.url === url
-                    ? {
-                        ...p,
-                        enabled: !enabled,
-                      }
-                    : p
-                )
-              )
-            // TODO: save changes
-          }
-          size="small"
-        />
-      </TableCell>
-      <TableCell className={classes.tableCell} align="right" />
-    </TableRow>
-  );
+  const fillTableRow = (currPlugin: IPlugin) => {
+    const { name, url, type, products, enabled } = currPlugin;
+    return (
+      <TableRow key={`${name}-${url}`} className={classes.tableRow}>
+        <TableCell className={classes.tableText}>{name}</TableCell>
+        <TableCell className={classes.tableText}>{type}</TableCell>
+        <TableCell className={classes.tableText}>{url}</TableCell>
+        <TableCell className={classes.tableText}>{products}</TableCell>
+        <TableCell className={classes.tableText}>
+          <Switch
+            size="small"
+            color="primary"
+            checked={enabled}
+            onChange={(e) => updateEnabled(currPlugin)}
+          />
+        </TableCell>
+        <TableCell>
+          <div className={classes.hiddenButtons}>
+            <EditPluginDialog
+              plugin={currPlugin}
+              allProjects={projects}
+              services={services}
+              currentProjects={[]} // TODO: fetch current projects
+            />
+            <DeletePluginDialog
+              services={services}
+              plugin={currPlugin}
+              currentProjects={[]} // TODO: fetch current projects
+            />
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  };
 
   if (!auth) return null;
 
@@ -175,16 +215,12 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           </div>
         </Paper>
         {plugins ? (
-          <Paper elevation={0} square>
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableBody>
-                  {tableHeader}
-                  {plugins.map(fillTableRow)}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+          <TableContainer>
+            <Table>
+              <TableHead>{tableHeader}</TableHead>
+              <TableBody>{plugins.map(fillTableRow)}</TableBody>
+            </Table>
+          </TableContainer>
         ) : (
           <Box display="flex" height="100%">
             <LoadingSpinner />
