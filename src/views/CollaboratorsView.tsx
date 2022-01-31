@@ -26,13 +26,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles(() => ({
-  topography: {
-    color: "#000000",
-    display: "inline",
-    fontSize: "21px",
-    marginRight: "125px",
-    paddingLeft: "8px",
-  },
   paperHeader: {
     padding: "10px",
     backgroundColor: theme.palette.primary.main,
@@ -42,6 +35,13 @@ const useStyles = makeStyles(() => ({
     width: "95%",
     fontSize: "17px",
     paddingLeft: "6px",
+  },
+  topography: {
+    color: "#000000",
+    display: "inline",
+    fontSize: "21px",
+    marginRight: "125px",
+    paddingLeft: "8px",
   },
   cardsContainer: {
     display: "flex",
@@ -192,10 +192,9 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
         >
           <Typography className={classes.topography}>Collaborators</Typography>
         </Paper>
-
         {team?.profiles ? (
           <TableContainer>
-            <Table aria-label="simple table">
+            <Table>
               <TableHead>
                 <TableRow>
                   <TableCell className={classes.tableText}>Name</TableCell>
