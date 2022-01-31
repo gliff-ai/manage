@@ -9,23 +9,19 @@ import {
   TextField,
   Typography,
   DialogActions,
-  FormControlLabel,
-  Checkbox,
   RadioGroup,
   FormControl,
   Box,
-  Radio,
-  Avatar,
-  Chip,
-  List,
   Divider,
 } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import { Add, PeopleRounded } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import SVG from "react-inlinesvg";
 import { theme, icons } from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
+import { FormLabelControl } from "./FormLabelControl";
+import { ProductsRadioForm } from "./ProductsRadioForm";
+import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 
 const useStyles = makeStyles({
   paperHeader: {
@@ -33,9 +29,6 @@ const useStyles = makeStyles({
     backgroundColor: theme.palette.primary.main,
   },
   paperBody: { width: "25vw", margin: "10px 20px" },
-  addButton: {
-    color: "black",
-  },
   topography: {
     color: "#000000",
     display: "inline",
@@ -69,32 +62,11 @@ const useStyles = makeStyles({
       backgroundColor: theme.palette.info.main,
     },
   },
-  formControl: { alignItems: "flex-start" },
-  radio: { marginRight: "15px" },
   dialogActions: { justifyContent: "space-between", marginTop: "30px" },
-  checkboxIcon: { width: "18px", height: "auto" },
-  radioName: { fontSize: "16px", lineHeight: 0 },
-  radioDescription: { fontSize: "14px", color: theme.palette.text.hint },
-  chipLabel: {
-    margin: "5px 5px 0 0",
-    borderColor: "black",
-    borderRadius: "9px",
-  },
   closeIcon: { width: "15px", height: "auto" },
   textFontSize: { fontSize: "16px" },
-  productRadioName: { fontSize: "16px", lineHeight: 0, fontWeight: 400 },
   marginTop: { marginTop: "15px" },
-  checkedIcon: {
-    fill: "white",
-    borderRadius: "3px",
-    backgroundColor: theme.palette.primary.main,
-  },
   divider: { width: "500px", margin: "12px -20px" },
-  option: {
-    backgroundColor: `#FFFFFF !important`,
-    fontSize: "16px",
-    "&:hover": { backgroundColor: `${theme.palette.grey[100]} !important` },
-  },
 });
 
 enum DialogPage {
@@ -194,44 +166,6 @@ export function AddPluginDialog({
     setDialogPage((page) => page + 1);
   };
 
-  const getPluginFormLabelControl = (
-    value: unknown,
-    name: string,
-    description: string,
-    nameStyling?: string,
-    descriptionStyling?: string
-  ): ReactElement => (
-    <FormControlLabel
-      className={classes.formControl}
-      control={
-        <Radio
-          icon={
-            <SVG
-              className={classes.checkboxIcon}
-              src={icons.notSelectedTickbox}
-            />
-          }
-          checkedIcon={
-            <SVG
-              className={`${classes.checkboxIcon} ${classes.checkedIcon}`}
-              src={icons.multipleImageSelection}
-            />
-          }
-          className={classes.radio}
-          value={value}
-        />
-      }
-      label={
-        <>
-          <h3 className={nameStyling || classes.radioName}>{name}</h3>
-          <p className={descriptionStyling || classes.radioDescription}>
-            {description}
-          </p>
-        </>
-      }
-    />
-  );
-
   const pickPluginTypeDialog = dialogPage === DialogPage.pickPluginType && (
     <Box>
       <FormControl
@@ -241,23 +175,23 @@ export function AddPluginDialog({
       >
         <h3>What type of plug-in do you want to register?</h3>
         <RadioGroup value={newPlugin.type}>
-          {getPluginFormLabelControl(
-            PluginType.Javascript,
-            "Javascript Plug-in",
-            "These plugins are client-side and run in each user's own browser with data decrypted locally."
-          )}
-          {getPluginFormLabelControl(
-            PluginType.Python,
-            "Python Plug-in",
-            `These plugins are server-side and run by your team on your own remote compute capacity.
-            Security issue responsabilities become the server's team.`
-          )}
-          {getPluginFormLabelControl(
-            PluginType.AI,
-            "AI Plug-in",
-            `These plugins are server-side and run by your team on your own remote compute capacity.
-            Security issue responsabilities become the server's team.`
-          )}
+          <FormLabelControl
+            value={PluginType.Javascript}
+            name="Javascript Plug-in"
+            description="These plugins are client-side and run in each user's own browser with data decrypted locally."
+          />
+          <FormLabelControl
+            value={PluginType.Python}
+            name="Python Plug-in"
+            description={`These plugins are server-side and run by your team on your own remote compute capacity.
+            Security issue responsabilities become the server's team.`}
+          />
+          <FormLabelControl
+            value={PluginType.AI}
+            name="AI Plug-in"
+            description={`These plugins are server-side and run by your team on your own remote compute capacity.
+            Security issue responsabilities become the server's team.`}
+          />
         </RadioGroup>
       </FormControl>
       <DialogActions className={classes.dialogActions}>
@@ -297,102 +231,13 @@ export function AddPluginDialog({
         }}
       />
       <Divider className={classes.divider} />
-      <FormControl
-        className={classes.marginTop}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, products: e.target.value } as IPlugin));
-        }}
-      >
-        <p className={classes.textFontSize}>Add plugin to:</p>
-        <RadioGroup value={newPlugin.products}>
-          {getPluginFormLabelControl(
-            Product.CURATE,
-            "CURATE plug-in toolbar",
-            "",
-            classes.productRadioName
-          )}
-          {getPluginFormLabelControl(
-            Product.ANNOTATE,
-            "ANNOTATE plug-in toolbar",
-            "",
-            classes.productRadioName
-          )}
-          {getPluginFormLabelControl(
-            Product.ALL,
-            "ALL plug-in toolbars",
-            "",
-            classes.productRadioName
-          )}
-        </RadioGroup>
-      </FormControl>
+      <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
       <Divider className={classes.divider} />
-      {/* eslint-disable react/jsx-props-no-spreading */}
-      <Autocomplete
-        className={classes.marginTop}
-        classes={{ option: classes.option }}
-        multiple
-        disableCloseOnSelect
-        disableClearable
-        value={addedToProjects}
-        onChange={(e: ChangeEvent<HTMLSelectElement>, value: Project[]) => {
-          setAddedToProjects(value);
-        }}
-        renderTags={(option) => null}
-        options={projects}
-        getOptionLabel={(option) => option.name}
-        renderOption={(option) => (
-          <FormControlLabel
-            label={option.name}
-            control={
-              <Checkbox
-                style={{ padding: "10px" }}
-                icon={<div className={classes.checkboxIcon} />}
-                checkedIcon={
-                  <SVG
-                    className={classes.checkboxIcon}
-                    src={icons.multipleImageSelection}
-                  />
-                }
-                checked={addedToProjects.includes(option)}
-              />
-            }
-          />
-        )}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="outlined"
-            placeholder="Add Plug-in to Projects"
-          />
-        )}
+      <ProjectsAutocomplete
+        allProjects={projects}
+        currentProjects={addedToProjects}
+        setProjects={setAddedToProjects}
       />
-      <List>
-        {addedToProjects?.map((project) => (
-          <Chip
-            variant="outlined"
-            key={project.name}
-            className={classes.chipLabel}
-            label={project.name}
-            avatar={
-              <Avatar
-                variant="circular"
-                style={{ cursor: "pointer" }}
-                onClick={() =>
-                  setAddedToProjects((prevProjects) =>
-                    prevProjects.filter((p) => p !== project)
-                  )
-                }
-              >
-                <SVG
-                  fill="inherit"
-                  className={classes.closeIcon}
-                  src={icons.removeLabel}
-                />
-              </Avatar>
-            }
-          />
-        ))}
-      </List>
 
       <DialogActions className={classes.dialogActions}>
         <Button
@@ -436,7 +281,7 @@ export function AddPluginDialog({
 
   return (
     <>
-      <IconButton className={classes.addButton} onClick={() => setOpen(true)}>
+      <IconButton onClick={() => setOpen(true)}>
         <Add />
       </IconButton>
       <Dialog open={open} onClose={() => setOpen(false)}>
