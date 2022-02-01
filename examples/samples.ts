@@ -1,4 +1,11 @@
-import { UserAccess, TrustedService, JsPlugin } from "@/interfaces";
+import {
+  UserAccess,
+  TrustedService,
+  JsPlugin,
+  IPlugin,
+  PluginType,
+  Product,
+} from "@/interfaces";
 import type { Services } from "../src";
 
 export const user = {
@@ -66,28 +73,6 @@ export const config = {
     inviteCollaborator: (data): Promise<boolean> => Promise.resolve(true),
     inviteToProject: (data): Promise<boolean> => Promise.resolve(true),
     removeFromProject: (data): Promise<void> => Promise.resolve(),
-    createTrustedService: (data): Promise<string> =>
-      Promise.resolve("key key key"),
-    getTrustedServices: (data): Promise<TrustedService[]> =>
-      Promise.resolve([
-        {
-          type: "Python",
-          name: "python-plugin",
-          url: "https://ts.gliff.app",
-          products: "ALL",
-          enabled: false,
-        },
-      ]),
-    createJsPlugin: (data): Promise<void> => Promise.resolve(),
-    getJsPlugins: (data): Promise<JsPlugin[]> =>
-      Promise.resolve([
-        {
-          name: "js-plugin",
-          url: "https://plugin.gliff.app",
-          products: "CURATE",
-          enabled: true,
-        },
-      ]),
     getCollectionsMembers: () =>
       Promise.resolve({
         1: {
@@ -99,8 +84,26 @@ export const config = {
           pendingUsernames: ["user3@gliff.app"],
         },
       }),
-    deletePlugin: (data): Promise<boolean> => Promise.resolve(true),
-    updatePlugin: (data): Promise<boolean> => Promise.resolve(true),
+    createPlugin: (data): Promise<string> => Promise.resolve("key key key"),
+    getPlugins: (data): Promise<IPlugin[]> =>
+      Promise.resolve([
+        {
+          type: PluginType.Python,
+          name: "python-plugin",
+          url: "https://ts.gliff.app",
+          products: Product.ALL,
+          enabled: false,
+        } as IPlugin,
+        {
+          type: PluginType.Javascript,
+          name: "js-plugin",
+          url: "https://plugin.gliff.app",
+          products: Product.CURATE,
+          enabled: true,
+        } as IPlugin,
+      ]),
+    updatePlugin: (data): Promise<number> => Promise.resolve(1),
+    deletePlugin: (data): Promise<number> => Promise.resolve(1),
   } as Services,
 };
 

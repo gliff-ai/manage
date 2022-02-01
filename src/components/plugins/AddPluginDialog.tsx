@@ -79,6 +79,7 @@ interface Props {
   projects: Project[];
   services: ServiceFunctions;
   setError: (error: string) => void;
+  getPlugins: () => Promise<void>;
 }
 
 const defaultPlugin = {
@@ -93,6 +94,7 @@ export function AddPluginDialog({
   services,
   setError,
   projects,
+  getPlugins,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
   const [key, setKey] = useState<string | null>(null);
@@ -102,36 +104,6 @@ export function AddPluginDialog({
   const [addedToProjects, setAddedToProjects] = useState<Project[]>([]);
 
   const classes = useStyles();
-
-  const createJsPlugin = async (): Promise<void> => {
-    try {
-      const { type, products, ...rest } = newPlugin;
-      await services.createJsPlugin({
-        products: String(products),
-        ...rest,
-      });
-    } catch (e) {
-      setError("Couldn't create plugin");
-    }
-  };
-
-  const createTrustedService = async (): Promise<unknown> => {
-    try {
-      const { type, products, ...rest } = newPlugin;
-      const tsKey = await services.createTrustedService({
-        type: String(type),
-        products: String(products),
-        ...rest,
-      });
-      if (!tsKey) {
-        setError("Couldn't create plugin");
-      }
-      return tsKey;
-    } catch (e) {
-      setError("Couldn't create plugin");
-      return null;
-    }
-  };
 
   useEffect(() => {
     if (open) return;
@@ -144,26 +116,34 @@ export function AddPluginDialog({
       setCreating(false);
       setDialogPage(DialogPage.pickPluginType);
       setKey(null);
+      setError("");
     }, 500);
   }, [open]);
 
-  const createPlugin = async () => {
+  const createPlugin = async (): Promise<boolean> => {
     setCreating(true);
 
-    if (newPlugin.type === PluginType.Javascript) {
-      // create new plugin
-      await createJsPlugin();
-      setOpen(false);
-    } else {
-      // create new trusted service
-      const res = await createTrustedService();
-      if (res) {
-        setKey(res as string);
-      }
-    }
+    try {
+      const result = await services.createPlugin({ ...newPlugin });
 
-    setCreating(false);
-    setDialogPage((page) => page + 1);
+      if (newPlugin.type === PluginType.Javascript) {
+        setOpen(false);
+        return true;
+      }
+
+      if (!result) {
+        setError("Couldn't create plugin");
+        return false;
+      }
+
+      setKey(result as string);
+      setCreating(false);
+      setDialogPage((page) => page + 1);
+      return true;
+    } catch (e) {
+      setError("Couldn't create plugin");
+      return false;
+    }
   };
 
   const pickPluginTypeDialog = dialogPage === DialogPage.pickPluginType && (
@@ -251,7 +231,13 @@ export function AddPluginDialog({
           variant="outlined"
           className={classes.greenButton}
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
-          onClick={createPlugin}
+          onClick={() => {
+            void createPlugin().then((result: boolean) => {
+              if (result) {
+                void getPlugins();
+              }
+            });
+          }}
         >
           {creating ? "Loading..." : "Confirm"}
         </Button>
@@ -281,7 +267,7 @@ export function AddPluginDialog({
 
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
+      <IconButton color="inherit" onClick={() => setOpen(true)}>
         <Add />
       </IconButton>
       <Dialog open={open} onClose={() => setOpen(false)}>

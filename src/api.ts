@@ -22,10 +22,8 @@ interface Services {
   getCollectionMembers: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
   inviteToProject: APIRoute | ServiceFunction;
-  createTrustedService: APIRoute | ServiceFunction;
-  getTrustedServices: APIRoute | ServiceFunction;
-  createJsPlugin: APIRoute | ServiceFunction;
-  getJsPlugins: APIRoute | ServiceFunction;
+  createPlugin: APIRoute | ServiceFunction;
+  getPlugins: APIRoute | ServiceFunction;
   getCollectionsMembers: APIRoute | ServiceFunction;
   removeFromProject: APIRoute | ServiceFunction;
   deletePlugin: APIRoute | ServiceFunction;

@@ -1,4 +1,10 @@
-import { ReactElement, useEffect, useState } from "react";
+import {
+  ReactElement,
+  useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import {
   Button,
   Card,
@@ -63,16 +69,21 @@ interface Props {
   plugin: IPlugin;
   services: ServiceFunctions;
   currentProjects: Project[];
+  setPlugins: Dispatch<SetStateAction<IPlugin[]>>;
 }
 
-export function DeletePluginDialog(props: Props): ReactElement {
+export function DeletePluginDialog({
+  plugin,
+  services,
+  currentProjects,
+  setPlugins,
+}: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
   const [canDelete, setCanDelete] = useState<boolean>(false);
   const classes = useStyles();
-  console.log(canDelete);
 
   const triggerDelete = () => {
-    if (props.currentProjects.length > 0) {
+    if (currentProjects.length > 0) {
       setOpen(true);
     } else {
       setCanDelete(true);
@@ -81,7 +92,10 @@ export function DeletePluginDialog(props: Props): ReactElement {
 
   useEffect(() => {
     if (canDelete) {
-      void props.services.deletePlugin().then(() => {
+      void services.deletePlugin({ ...plugin }).then((result) => {
+        if (result) {
+          setPlugins((prevPlugins) => prevPlugins.filter((p) => p !== plugin));
+        }
         setOpen(false);
       });
     }
@@ -119,11 +133,9 @@ export function DeletePluginDialog(props: Props): ReactElement {
           </Paper>
           <Paper elevation={0} square className={classes.paperBody}>
             <span>
-              <p className={classes.purpleText}>{props.plugin.name}</p>
+              <p className={classes.purpleText}>{plugin.name}</p>
               &nbsp;plug-in is currently enabled in&nbsp;
-              <p className={classes.purpleText}>
-                {props.currentProjects.length}
-              </p>
+              <p className={classes.purpleText}>{currentProjects.length}</p>
               &nbsp;projects.
             </span>
             <p>Do you want to delete this plug-in or cancel?</p>

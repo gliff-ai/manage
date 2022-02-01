@@ -56,14 +56,14 @@ const useStyles = makeStyles({
 interface Props {
   plugin: IPlugin;
   allProjects: Project[];
-  services: ServiceFunctions;
   currentProjects: Project[];
+  updatePlugins: (prevPlugin: IPlugin, plugin: IPlugin) => void;
 }
 
 export function EditPluginDialog({
   plugin,
   allProjects,
-  services,
+  updatePlugins,
   currentProjects,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
@@ -148,9 +148,7 @@ export function EditPluginDialog({
                 variant="outlined"
                 className={classes.greenButton}
                 disabled={JSON.stringify(newPlugin) === JSON.stringify(plugin)}
-                onClick={() => {
-                  void services.updatePlugin({ ...newPlugin });
-                }}
+                onClick={() => updatePlugins(plugin, newPlugin)}
               >
                 Confirm
               </Button>

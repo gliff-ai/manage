@@ -24,7 +24,7 @@ import {
   DeletePluginDialog,
   EditPluginDialog,
 } from "@/components";
-import { IPlugin, PluginType, Project, JsPlugin } from "@/interfaces";
+import { IPlugin, Project } from "@/interfaces";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -98,49 +98,36 @@ export const PluginsView = ({ services }: Props): ReactElement => {
       );
   }, [isMounted, services]);
 
-  const fetchPlugins = useCallback(async () => {
-    const trustedService = (await services.getTrustedServices(
-      null,
-      auth.user.authToken
-    )) as IPlugin[];
+  const getPlugins = useCallback(async () => {
+    if (!auth?.user?.email) return;
+    const newPlugins = await services.getPlugins();
 
-    const jsplugins = (await services.getJsPlugins(
-      null,
-      auth.user.authToken
-    )) as JsPlugin[];
+    setStateIfMounted(newPlugins, setPlugins, isMounted.current);
+  }, [auth, services]);
 
-    const allPlugins = trustedService.concat(
-      jsplugins.map((p) => ({ ...p, type: PluginType.Javascript } as IPlugin))
+  const updatePlugins = (prevPlugin: IPlugin, plugin: IPlugin) => {
+    void services.updatePlugin({ ...plugin }).then((result) => {
+      if (result) {
+        setPlugins((prevPlugins) =>
+          prevPlugins.map((p) => (prevPlugin === p ? plugin : p))
+        );
+      }
+    });
+  };
+
+  const updateEnabled = (plugin: IPlugin) => {
+    const newPlugin: IPlugin = plugins.find(
+      (p) => p.name === plugin.name && p.url === plugin.url
     );
+    newPlugin.enabled = !newPlugin.enabled;
 
-    setStateIfMounted(allPlugins, setPlugins, isMounted.current);
-  }, []);
-
-  const updateEnabled = (currentPlugin: IPlugin) => {
-    let updatedPlugin: IPlugin | null = null;
-    setPlugins((prevPlugins) =>
-      prevPlugins.map((p) => {
-        const hasUpdated =
-          p.name === currentPlugin.name && p.url === currentPlugin.url;
-        if (hasUpdated) {
-          updatedPlugin = {
-            ...p,
-            enabled: !p.enabled,
-          };
-          return updatedPlugin;
-        }
-        return p;
-      })
-    );
-    if (updatedPlugin) {
-      void services.updatePlugin({ ...updatedPlugin });
+    if (newPlugin) {
+      updatePlugins(plugin, newPlugin);
     }
   };
 
   useEffect(() => {
-    if (auth?.user?.email) {
-      void fetchPlugins();
-    }
+    void getPlugins();
   }, [auth, services, isMounted]);
 
   const tableHeader = (
@@ -175,13 +162,14 @@ export const PluginsView = ({ services }: Props): ReactElement => {
             <EditPluginDialog
               plugin={currPlugin}
               allProjects={projects}
-              services={services}
+              updatePlugins={updatePlugins}
               currentProjects={[]} // TODO: fetch current projects
             />
             <DeletePluginDialog
               services={services}
               plugin={currPlugin}
               currentProjects={[]} // TODO: fetch current projects
+              setPlugins={setPlugins}
             />
           </div>
         </TableCell>
@@ -211,6 +199,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
               services={services}
               setError={setError}
               projects={projects}
+              getPlugins={getPlugins}
             />
           </div>
         </Paper>
