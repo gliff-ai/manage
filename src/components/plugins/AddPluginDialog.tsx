@@ -121,8 +121,6 @@ export function AddPluginDialog({
   }, [open]);
 
   const createPlugin = async (): Promise<boolean> => {
-    setCreating(true);
-
     try {
       const result = await services.createPlugin({ ...newPlugin });
 
@@ -137,7 +135,6 @@ export function AddPluginDialog({
       }
 
       setKey(result as string);
-      setCreating(false);
       setDialogPage((page) => page + 1);
       return true;
     } catch (e) {
@@ -232,7 +229,9 @@ export function AddPluginDialog({
           className={classes.greenButton}
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={() => {
+            setCreating(true);
             void createPlugin().then((result: boolean) => {
+              setCreating(false);
               if (result) {
                 void getPlugins();
               }
