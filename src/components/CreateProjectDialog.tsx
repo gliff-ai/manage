@@ -66,8 +66,8 @@ const useStyles = makeStyles({
 interface Props {
   projects: Project[] | null;
   invitees: Profile[] | null;
-  createProject: (newName: string) => Promise<string>;
-  inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
+  createProject: (name: string) => Promise<string>;
+  inviteToProject: (uid: string, email: string) => Promise<void>;
 }
 
 export function CreateProjectDialog({

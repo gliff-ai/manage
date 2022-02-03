@@ -196,21 +196,21 @@ export const ProjectsView = ({
   }, [isMounted, auth, getAnnotationProgress]);
 
   const inviteToProject = async (
-    projectId: string,
-    inviteeEmail: string
+    projectUid: string,
+    email: string
   ): Promise<void> => {
-    await services.inviteToProject({ projectId, email: inviteeEmail });
+    await services.inviteToProject({ projectUid, email });
 
-    console.log(`${inviteeEmail} invited to project ${projectId}`);
+    console.log(`${email} invited to project ${projectUid}`);
   };
 
   const removeFromProject = async (
-    projectId: string,
-    username: string
+    projectUid: string,
+    email: string
   ): Promise<void> => {
-    await services.removeFromProject({ uid: projectId, username });
+    await services.removeFromProject({ projectUid, email });
 
-    console.log(`${username} removed from project ${projectId}.`);
+    console.log(`${email} removed from project ${projectUid}.`);
   };
 
   const createProject = async (name: string): Promise<string> => {

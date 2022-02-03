@@ -73,7 +73,7 @@ export const ProjectsAutocomplete = ({
           if (!plugin.collection_uids.includes(uid) && newUids.includes(uid)) {
             try {
               await services.inviteToProject({
-                projectId: uid,
+                projectUid: uid,
                 email: plugin.username,
               });
               addToPlugin(uid);
@@ -88,8 +88,8 @@ export const ProjectsAutocomplete = ({
           if (plugin?.collection_uids.includes(uid) && !newUids.includes(uid)) {
             try {
               await services.removeFromProject({
-                uid,
-                username: plugin.username,
+                projectUid: uid,
+                email: plugin.username,
               });
               removeFromPlugin(uid);
             } catch (e) {
@@ -117,8 +117,8 @@ export const ProjectsAutocomplete = ({
     ) {
       try {
         await services.removeFromProject({
-          uid: project.uid,
-          username: plugin.username,
+          projectUid: project.uid,
+          email: plugin.username,
         });
       } catch (e) {
         canRemove = false;

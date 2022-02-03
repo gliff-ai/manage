@@ -100,8 +100,8 @@ interface Props {
     projectUid: string;
     projectName: string;
   }) => Promise<unknown>;
-  inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
-  removeFromProject: (uid: string, username: string) => Promise<void>;
+  inviteToProject: (uid: string, email: string) => Promise<void>;
+  removeFromProject: (uid: string, email: string) => Promise<void>;
   triggerRefetch: (uid: string) => void;
 }
 
