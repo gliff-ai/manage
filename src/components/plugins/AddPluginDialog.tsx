@@ -88,6 +88,7 @@ const defaultPlugin = {
   url: "",
   products: Product.ALL,
   enabled: false,
+  collection_uids: [] as string[],
 };
 
 export function AddPluginDialog({
@@ -101,7 +102,6 @@ export function AddPluginDialog({
   const [creating, setCreating] = useState(false);
   const [dialogPage, setDialogPage] = useState(DialogPage.pickPluginType);
   const [newPlugin, setNewPlugin] = useState<IPlugin>(defaultPlugin);
-  const [addedToProjects, setAddedToProjects] = useState<Project[]>([]);
 
   const classes = useStyles();
 
@@ -116,7 +116,7 @@ export function AddPluginDialog({
       setCreating(false);
       setDialogPage(DialogPage.pickPluginType);
       setKey(null);
-      setError("");
+      setError(null);
     }, 500);
   }, [open]);
 
@@ -212,8 +212,10 @@ export function AddPluginDialog({
       <Divider className={classes.divider} />
       <ProjectsAutocomplete
         allProjects={projects}
-        currentProjects={addedToProjects}
-        setProjects={setAddedToProjects}
+        plugin={newPlugin}
+        setPlugin={setNewPlugin}
+        services={services}
+        setError={setError}
       />
 
       <DialogActions className={classes.dialogActions}>

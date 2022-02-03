@@ -57,18 +57,11 @@ export enum PluginType {
 }
 
 export interface IPlugin {
+  username?: string;
   type: PluginType;
   name: string;
   url: string;
   products: Product;
   enabled: boolean;
-}
-
-export interface TrustedService extends Omit<IPlugin, "type" | "products"> {
-  type: "Python" | "AI";
-  products: "CURATE" | "ANNOTATE" | "ALL";
-}
-
-export interface JsPlugin extends Omit<IPlugin, "type" | "products"> {
-  products: "CURATE" | "ANNOTATE" | "ALL";
+  collection_uids: string[];
 }

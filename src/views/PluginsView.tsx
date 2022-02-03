@@ -14,13 +14,12 @@ import {
   TableHead,
 } from "@material-ui/core";
 
-import { LoadingSpinner, theme } from "@gliff-ai/style";
+import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
 import {
   AddPluginDialog,
-  MessageAlert,
   DeletePluginDialog,
   EditPluginDialog,
 } from "@/components";
@@ -73,7 +72,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [plugins, setPlugins] = useState<IPlugin[] | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const isMounted = useRef(false);
 
@@ -127,8 +126,10 @@ export const PluginsView = ({ services }: Props): ReactElement => {
   };
 
   useEffect(() => {
-    void getPlugins();
-  }, [auth, services, isMounted]);
+    if (!plugins) {
+      void getPlugins();
+    }
+  }, [auth, services, isMounted, plugins]);
 
   const tableHeader = (
     <TableRow>
@@ -163,13 +164,13 @@ export const PluginsView = ({ services }: Props): ReactElement => {
               plugin={currPlugin}
               allProjects={projects}
               updatePlugins={updatePlugins}
-              currentProjects={[]} // TODO: fetch current projects
+              services={services}
+              setError={setError}
             />
             <DeletePluginDialog
-              services={services}
               plugin={currPlugin}
-              currentProjects={[]} // TODO: fetch current projects
               setPlugins={setPlugins}
+              services={services}
             />
           </div>
         </TableCell>
@@ -216,7 +217,11 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           </Box>
         )}
       </Card>
-      {error ? <MessageAlert message={error} severity="error" /> : null}
+      <WarningSnackbar
+        open={error !== null}
+        onClose={() => setError(null)}
+        messageText={error}
+      />
     </>
   );
 };

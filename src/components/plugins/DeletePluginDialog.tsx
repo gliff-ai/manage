@@ -67,15 +67,13 @@ const useStyles = makeStyles({
 
 interface Props {
   plugin: IPlugin;
-  services: ServiceFunctions;
-  currentProjects: Project[];
   setPlugins: Dispatch<SetStateAction<IPlugin[]>>;
+  services: ServiceFunctions;
 }
 
 export function DeletePluginDialog({
   plugin,
   services,
-  currentProjects,
   setPlugins,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
@@ -83,7 +81,7 @@ export function DeletePluginDialog({
   const classes = useStyles();
 
   const triggerDelete = () => {
-    if (currentProjects.length > 0) {
+    if (plugin.collection_uids.length > 0) {
       setOpen(true);
     } else {
       setCanDelete(true);
@@ -135,7 +133,9 @@ export function DeletePluginDialog({
             <span>
               <p className={classes.purpleText}>{plugin.name}</p>
               &nbsp;plug-in is currently enabled in&nbsp;
-              <p className={classes.purpleText}>{currentProjects.length}</p>
+              <p className={classes.purpleText}>
+                {plugin.collection_uids.length}
+              </p>
               &nbsp;projects.
             </span>
             <p>Do you want to delete this plug-in or cancel?</p>

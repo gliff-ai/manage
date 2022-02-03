@@ -56,20 +56,21 @@ const useStyles = makeStyles({
 interface Props {
   plugin: IPlugin;
   allProjects: Project[];
-  currentProjects: Project[];
   updatePlugins: (prevPlugin: IPlugin, plugin: IPlugin) => void;
+  services: ServiceFunctions;
+  setError: (error: string) => void;
 }
 
 export function EditPluginDialog({
   plugin,
   allProjects,
   updatePlugins,
-  currentProjects,
+  services,
+  setError,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
   const [newPlugin, setNewPlugin] = useState<IPlugin>(plugin);
-  const [addedToProjects, setAddedToProjects] =
-    useState<Project[]>(currentProjects);
+
   const classes = useStyles();
 
   useEffect(() => {
@@ -109,8 +110,10 @@ export function EditPluginDialog({
       <Divider className={classes.divider} />
       <ProjectsAutocomplete
         allProjects={allProjects}
-        currentProjects={addedToProjects}
-        setProjects={setAddedToProjects}
+        plugin={newPlugin}
+        setPlugin={setNewPlugin}
+        services={services}
+        setError={setError}
       />
     </>
   );

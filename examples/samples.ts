@@ -1,11 +1,4 @@
-import {
-  UserAccess,
-  TrustedService,
-  JsPlugin,
-  IPlugin,
-  PluginType,
-  Product,
-} from "@/interfaces";
+import { UserAccess, IPlugin, PluginType, Product } from "@/interfaces";
 import type { Services } from "../src";
 
 export const user = {
@@ -88,11 +81,13 @@ export const config = {
     getPlugins: (data): Promise<IPlugin[]> =>
       Promise.resolve([
         {
+          username: "1234@trustedservice.gliff.app",
           type: PluginType.Python,
           name: "python-plugin",
           url: "https://ts.gliff.app",
           products: Product.ALL,
           enabled: false,
+          collection_uids: [],
         } as IPlugin,
         {
           type: PluginType.Javascript,
@@ -100,6 +95,7 @@ export const config = {
           url: "https://plugin.gliff.app",
           products: Product.CURATE,
           enabled: true,
+          collection_uids: [],
         } as IPlugin,
       ]),
     updatePlugin: (data): Promise<number> => Promise.resolve(1),
