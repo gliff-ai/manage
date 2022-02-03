@@ -78,7 +78,7 @@ export function EditPluginDialog({
     if (!open) {
       setNewPlugin(plugin);
     }
-  }, [open]);
+  }, [open, plugin]);
 
   const editDialogSection = (
     <>

@@ -118,7 +118,7 @@ export function AddPluginDialog({
       setKey(null);
       setError(null);
     }, 500);
-  }, [open]);
+  }, [open, setError]);
 
   const createPlugin = async (): Promise<boolean> => {
     try {

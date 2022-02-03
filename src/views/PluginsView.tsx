@@ -95,7 +95,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
       .then((p: Project[]) =>
         setStateIfMounted(p, setProjects, isMounted.current)
       );
-  }, [isMounted, services]);
+  }, [isMounted, services, auth]);
 
   const getPlugins = useCallback(async () => {
     if (!auth?.user?.email) return;
@@ -129,7 +129,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
     if (!plugins) {
       void getPlugins();
     }
-  }, [auth, services, isMounted, plugins]);
+  }, [auth, isMounted, plugins, getPlugins]);
 
   const tableHeader = (
     <TableRow>

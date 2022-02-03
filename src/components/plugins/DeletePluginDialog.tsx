@@ -17,7 +17,7 @@ import {
 } from "@material-ui/core";
 import SVG from "react-inlinesvg";
 import { theme, icons } from "@gliff-ai/style";
-import { IPlugin, Project } from "@/interfaces";
+import { IPlugin } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
 const useStyles = makeStyles({
@@ -97,7 +97,7 @@ export function DeletePluginDialog({
         setOpen(false);
       });
     }
-  }, [canDelete]);
+  }, [canDelete, services, plugin, setPlugins]);
 
   useEffect(() => {
     if (!open) {

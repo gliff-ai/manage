@@ -47,8 +47,22 @@ export const ProjectsAutocomplete = ({
 }: Props): ReactElement => {
   const classes = useStyles();
 
+  const removeFromPlugin = (projectUid: string) =>
+    setPlugin((prevPlugin) => ({
+      ...prevPlugin,
+      collection_uids: prevPlugin.collection_uids.filter(
+        (uid) => uid !== projectUid
+      ),
+    }));
+
+  const addToPlugin = (projectUid: string) =>
+    setPlugin((p) => ({
+      ...p,
+      collection_uids: [...p.collection_uids, projectUid],
+    }));
+
   const updateProjects = async (
-    e: ChangeEvent<HTMLSelectElement>,
+    event: ChangeEvent<HTMLSelectElement>,
     value: Project[]
   ) => {
     const newUids = value.map(({ uid }) => uid);
@@ -94,20 +108,6 @@ export const ProjectsAutocomplete = ({
       }));
     }
   };
-
-  const removeFromPlugin = (projectUid: string) =>
-    setPlugin((prevPlugin) => ({
-      ...prevPlugin,
-      collection_uids: prevPlugin.collection_uids.filter(
-        (uid) => uid !== projectUid
-      ),
-    }));
-
-  const addToPlugin = (projectUid: string) =>
-    setPlugin((p) => ({
-      ...p,
-      collection_uids: [...p.collection_uids, projectUid],
-    }));
 
   const removeFromProject = async (project: Project) => {
     let canRemove = true;
