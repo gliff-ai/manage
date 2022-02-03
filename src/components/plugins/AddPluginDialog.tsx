@@ -340,23 +340,25 @@ export function AddPluginDialog({
         renderTags={(option) => null}
         options={projects}
         getOptionLabel={(option) => option.name}
-        renderOption={(option) => (
-          <FormControlLabel
-            label={option.name}
-            control={
-              <Checkbox
-                style={{ padding: "10px" }}
-                icon={<div className={classes.checkboxIcon} />}
-                checkedIcon={
-                  <SVG
-                    className={classes.checkboxIcon}
-                    src={icons.multipleImageSelection}
-                  />
-                }
-                checked={addedToProjects.includes(option)}
-              />
-            }
-          />
+        renderOption={(props, option) => (
+          <li {...props}>
+            <FormControlLabel
+              label={option.name}
+              control={
+                <Checkbox
+                  style={{ padding: "10px" }}
+                  icon={<div className={classes.checkboxIcon} />}
+                  checkedIcon={
+                    <SVG
+                      className={classes.checkboxIcon}
+                      src={icons.multipleImageSelection}
+                    />
+                  }
+                  checked={addedToProjects.includes(option)}
+                />
+              }
+            />
+          </li>
         )}
         renderInput={(params) => (
           <TextField

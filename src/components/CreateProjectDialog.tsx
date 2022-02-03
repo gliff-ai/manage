@@ -85,28 +85,6 @@ export function CreateProjectDialog({
   const classes = useStyles();
   return (
     <>
-      <List style={{ paddingBottom: "0px" }}>
-        <ListItem
-          divider
-          style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
-          onClick={() => {
-            setDialogOpen(!dialogOpen);
-          }}
-        >
-          <div
-            style={{
-              margin: "10px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Add style={{ marginRight: "10px", color: "grey" }} />
-            <Typography style={{ color: "grey" }}>
-              Create New Project
-            </Typography>
-          </div>
-        </ListItem>
-      </List>
       <IconButton
         className={classes.addButton}
         onClick={() => setDialogOpen(true)}

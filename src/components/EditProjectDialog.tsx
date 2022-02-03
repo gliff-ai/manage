@@ -202,7 +202,7 @@ export function EditProjectDialog({
         onChange={handleSelectChange}
         getOptionLabel={(option) => option.name}
         classes={{ option: classes.option }}
-        renderOption={(props, option, { selected }) => (
+        renderOption={(props, option) => (
           <li {...props}>
             <Checkbox
               icon={
