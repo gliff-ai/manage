@@ -12,10 +12,10 @@ import {
   Chip,
   Checkbox,
   Divider,
+  Autocomplete,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import Autocomplete from "@mui/material/Autocomplete";
 import { theme, icons } from "@gliff-ai/style";
 import { Profile, ProjectUsers } from "@/interfaces";
 
@@ -56,8 +56,8 @@ const useStyles = makeStyles({
   },
   currentChip: { borderColor: "black", color: "black" },
   pendingChip: {
-    borderColor: theme.palette.text.hint,
-    color: theme.palette.text.hint,
+    borderColor: "grey",
+    color: "grey",
   },
   selectedOptions: {
     overflow: "hidden",
