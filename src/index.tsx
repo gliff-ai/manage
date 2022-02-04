@@ -65,6 +65,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: "white",
     height: "90px",
     paddingTop: "9px",
+    width: "100% !important",
   },
   logo: {
     marginBottom: "5px",

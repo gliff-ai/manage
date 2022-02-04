@@ -15,7 +15,7 @@ const useStyle = makeStyles({
   progressBar: {
     height: "13px",
     borderRadius: 3,
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: `${theme.palette.primary.light} !important`,
   },
 });
 
