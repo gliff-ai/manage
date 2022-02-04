@@ -102,6 +102,7 @@ export function AddPluginDialog({
   const [creating, setCreating] = useState(false);
   const [dialogPage, setDialogPage] = useState(DialogPage.pickPluginType);
   const [newPlugin, setNewPlugin] = useState<IPlugin>(defaultPlugin);
+  const [validUrl, setValidUrl] = useState<boolean>(true);
 
   const classes = useStyles();
 
@@ -117,6 +118,7 @@ export function AddPluginDialog({
       setDialogPage(DialogPage.pickPluginType);
       setKey(null);
       setError(null);
+      setValidUrl(true);
     }, 500);
   }, [open, setError]);
 
@@ -187,6 +189,19 @@ export function AddPluginDialog({
     </Box>
   );
 
+  const isValidURL = (url: string): boolean => {
+    const pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
+    return !!pattern.test(url);
+  };
+
   const enterValuesDialog = dialogPage === DialogPage.enterValues && (
     <>
       <TextField
@@ -203,7 +218,9 @@ export function AddPluginDialog({
         variant="outlined"
         placeholder="Plug-in URL"
         type="url"
+        error={!validUrl}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          setValidUrl(isValidURL(e.target.value));
           setNewPlugin((p) => ({ ...p, url: e.target.value } as IPlugin));
         }}
       />
@@ -231,6 +248,8 @@ export function AddPluginDialog({
           className={classes.greenButton}
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={() => {
+            if (!validUrl) return;
+
             setCreating(true);
             void createPlugin().then((result: boolean) => {
               setCreating(false);
