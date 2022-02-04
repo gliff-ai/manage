@@ -270,16 +270,14 @@ export const ProjectsView = ({
               <TableBody>
                 {projects.map(({ name, uid }) => (
                   <TableRow key={uid}>
-                    <TableCell className={classes.tableCell}>{name}</TableCell>
+                    <TableCell>{name}</TableCell>
                     {isOwnerOrMember() && (
-                      <TableCell className={classes.tableCell}>
-                        {listAssignees(projectUsers, uid)}
-                      </TableCell>
+                      <TableCell>{listAssignees(projectUsers, uid)}</TableCell>
                     )}
-                    <TableCell className={classes.tableCell}>
+                    <TableCell>
                       {progress && <ProgressBar progress={progress[uid]} />}
                     </TableCell>
-                    <TableCell className={classes.tableCell} align="right">
+                    <TableCell align="right">
                       {isOwnerOrMember() &&
                         projectUsers &&
                         projectUsers[uid] !== undefined && (
