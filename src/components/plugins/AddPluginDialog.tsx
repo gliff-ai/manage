@@ -23,7 +23,7 @@ import {
 import makeStyles from "@mui/styles/makeStyles";
 import { Add } from "@mui/icons-material";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
+import { theme, icons, darkGrey } from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
@@ -74,7 +74,7 @@ const useStyles = makeStyles({
   dialogActions: { justifyContent: "space-between", marginTop: "30px" },
   checkboxIcon: { width: "18px", height: "auto" },
   radioName: { fontSize: "16px", lineHeight: 0 },
-  radioDescription: { fontSize: "14px", color: theme.palette.text.hint },
+  radioDescription: { fontSize: "14px", color: darkGrey },
   chipLabel: {
     margin: "5px 5px 0 0",
     borderColor: "black",
@@ -197,7 +197,7 @@ export function AddPluginDialog({
   const getPluginFormLabelControl = (
     value: unknown,
     name: string,
-    description: string,
+    qq: string,
     nameStyling?: string,
     descriptionStyling?: string
   ): ReactElement => (
@@ -224,9 +224,7 @@ export function AddPluginDialog({
       label={
         <>
           <h3 className={nameStyling || classes.radioName}>{name}</h3>
-          <p className={descriptionStyling || classes.radioDescription}>
-            {description}
-          </p>
+          <p className={descriptionStyling || classes.radioDescription}>{qq}</p>
         </>
       }
     />

@@ -63,7 +63,7 @@ interface Props {
 const useStyles = makeStyles(() => ({
   appBar: {
     backgroundColor: "white",
-    height: "90px",
+    height: "90px !important",
     paddingTop: "9px",
     width: "100% !important",
   },

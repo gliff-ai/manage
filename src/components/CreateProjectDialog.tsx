@@ -43,7 +43,7 @@ const useStyles = makeStyles({
   },
   tableCell: {
     padding: "0px 16px 0px 25px",
-    fontSize: "16px",
+    fontSize: "16px !important",
     maxHeight: "28px",
   },
   chipLabel: {
