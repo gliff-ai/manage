@@ -22,10 +22,12 @@ import { ServiceFunctions } from "@/api";
 
 const useStyles = makeStyles({
   paperHeader: {
-    padding: "10px",
+    padding: "10px 20px",
     backgroundColor: theme.palette.secondary.main,
+    display: "flex",
+    flexDirection: "row",
   },
-  paperBody: { width: "25vw", margin: "20px" },
+  paperBody: { width: "25vw", margin: "20px", fontSize: "16px" },
   topography: {
     color: "#FFFFFF",
     display: "inline",
@@ -39,12 +41,14 @@ const useStyles = makeStyles({
   },
   closeIcon: { width: "15px", height: "auto", fill: "#FFFFFF" },
   warningIcon: {
-    width: "20px",
+    width: "25px",
     height: "auto",
-    marginRight: "10px",
     fill: "#FFFFFF",
   },
-  dialogActions: { justifyContent: "space-between", marginTop: "30px" },
+  dialogActions: {
+    justifyContent: "space-between",
+    margin: "5px 10px",
+  },
   whiteButton: {
     textTransform: "none",
     backgroundColor: "transparent",
@@ -118,8 +122,8 @@ export function DeletePluginDialog({
             variant="outlined"
             square
           >
+            <SVG src={icons.warning} className={classes.warningIcon} />
             <Typography className={classes.topography}>
-              <SVG src={icons.warning} className={classes.warningIcon} />
               Are You Sure?
             </Typography>
             <IconButton
@@ -139,25 +143,25 @@ export function DeletePluginDialog({
               &nbsp;projects.
             </span>
             <p>Do you want to delete this plug-in or cancel?</p>
-            <DialogActions className={classes.dialogActions}>
-              <Button
-                variant="outlined"
-                className={classes.whiteButton}
-                onClick={() => setOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="outlined"
-                className={classes.purpleButton}
-                onClick={() => {
-                  setCanDelete(true);
-                }}
-              >
-                Confirm
-              </Button>
-            </DialogActions>
           </Paper>
+          <DialogActions className={classes.dialogActions}>
+            <Button
+              variant="outlined"
+              className={classes.whiteButton}
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="outlined"
+              className={classes.purpleButton}
+              onClick={() => {
+                setCanDelete(true);
+              }}
+            >
+              Confirm
+            </Button>
+          </DialogActions>
         </Card>
       </Dialog>
     </>
