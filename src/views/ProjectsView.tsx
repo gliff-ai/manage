@@ -9,6 +9,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  TableHead,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { theme, LoadingSpinner } from "@gliff-ai/style";
@@ -48,17 +49,6 @@ const useStyles = makeStyles({
     '.MuiAutocomplete-option[data-focus="true"]': {
       background: "#01dbff",
     },
-  },
-  tableCell: {
-    padding: "0 20px",
-    fontSize: "16px",
-    maxHeight: "28px",
-    maxWidth: "250px",
-  },
-  tableHeader: {
-    fontSize: "16px",
-    paddingLeft: "20px",
-    fontWeight: 500,
   },
 });
 
@@ -268,19 +258,16 @@ export const ProjectsView = ({
         ) : (
           <TableContainer>
             <Table aria-label="simple table">
-              <TableBody>
+              <TableHead>
                 <TableRow key="tab-header">
-                  <TableCell className={classes.tableHeader}>Name</TableCell>
-                  {isOwnerOrMember() && (
-                    <TableCell className={classes.tableHeader}>
-                      Assignees
-                    </TableCell>
-                  )}
-                  <TableCell className={classes.tableHeader}>
-                    Annotation Progress
-                  </TableCell>
-                  <TableCell className={classes.tableHeader} />
+                  <TableCell>Name</TableCell>
+                  {isOwnerOrMember() && <TableCell>Assignees</TableCell>}
+                  <TableCell>Annotation Progress</TableCell>
+                  <TableCell />
                 </TableRow>
+              </TableHead>
+
+              <TableBody>
                 {projects.map(({ name, uid }) => (
                   <TableRow key={uid}>
                     <TableCell className={classes.tableCell}>{name}</TableCell>

@@ -13,7 +13,7 @@ const useStyle = makeStyles({
   },
   boxCount: { marginLeft: "10px" },
   progressBar: {
-    height: "13px",
+    height: "13px !important",
     borderRadius: 3,
     backgroundColor: `${theme.palette.primary.light} !important`,
   },

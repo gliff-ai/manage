@@ -41,11 +41,7 @@ const useStyles = makeStyles({
       backgroundColor: theme.palette.info.main,
     },
   },
-  tableCell: {
-    padding: "0px 16px 0px 25px",
-    fontSize: "16px !important",
-    maxHeight: "28px",
-  },
+
   chipLabel: {
     margin: "5px 5px 0 0",
     borderColor: "black",
