@@ -44,7 +44,7 @@ wrapper(() => {
         .wait(
           until.elementLocated(
             By.xpath(
-              '//*[@id="react-container"]/div/div[2]/div[2]/div/table/tbody/tr[2]/td[1]'
+              '//*[@id="react-container"]/div/div[2]/div[2]/div/table/tbody/tr[1]/td[1]'
             )
           ),
           10000
