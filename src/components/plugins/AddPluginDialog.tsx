@@ -197,7 +197,7 @@ export function AddPluginDialog({
   const getPluginFormLabelControl = (
     value: unknown,
     name: string,
-    qq: string,
+    description: string,
     nameStyling?: string,
     descriptionStyling?: string
   ): ReactElement => (
@@ -224,7 +224,9 @@ export function AddPluginDialog({
       label={
         <>
           <h3 className={nameStyling || classes.radioName}>{name}</h3>
-          <p className={descriptionStyling || classes.radioDescription}>{qq}</p>
+          <p className={descriptionStyling || classes.radioDescription}>
+            {description}
+          </p>
         </>
       }
     />
