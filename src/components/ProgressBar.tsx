@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
-import { LinearProgress, Typography, Box, makeStyles } from "@material-ui/core";
+import { LinearProgress, Typography, Box } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { theme } from "@gliff-ai/style";
 
 const useStyle = makeStyles({
@@ -12,9 +13,9 @@ const useStyle = makeStyles({
   },
   boxCount: { marginLeft: "10px" },
   progressBar: {
-    height: "13px",
+    height: "13px !important",
     borderRadius: 3,
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: `${theme.palette.primary.light} !important`,
   },
 });
 

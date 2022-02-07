@@ -4,7 +4,6 @@ import {
   Card,
   Dialog,
   IconButton,
-  makeStyles,
   Paper,
   TextField,
   Typography,
@@ -19,11 +18,12 @@ import {
   Chip,
   List,
   Divider,
-} from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import { Add, PeopleRounded } from "@material-ui/icons";
+  Autocomplete,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Add } from "@mui/icons-material";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
+import { theme, icons, darkGrey } from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
@@ -74,7 +74,7 @@ const useStyles = makeStyles({
   dialogActions: { justifyContent: "space-between", marginTop: "30px" },
   checkboxIcon: { width: "18px", height: "auto" },
   radioName: { fontSize: "16px", lineHeight: 0 },
-  radioDescription: { fontSize: "14px", color: theme.palette.text.hint },
+  radioDescription: { fontSize: "14px", color: darkGrey },
   chipLabel: {
     margin: "5px 5px 0 0",
     borderColor: "black",
@@ -261,12 +261,12 @@ export function AddPluginDialog({
         </RadioGroup>
       </FormControl>
       <DialogActions className={classes.dialogActions}>
-        <Button variant="outlined" className={classes.whiteButton}>
+        <Button variant="text" className={classes.whiteButton}>
           {/* TODO: add onClick with link to docs */}
           Learn more
         </Button>
         <Button
-          variant="outlined"
+          variant="text"
           className={classes.greenButton}
           onClick={() => setDialogPage((page) => page + 1)}
         >
@@ -340,23 +340,25 @@ export function AddPluginDialog({
         renderTags={(option) => null}
         options={projects}
         getOptionLabel={(option) => option.name}
-        renderOption={(option) => (
-          <FormControlLabel
-            label={option.name}
-            control={
-              <Checkbox
-                style={{ padding: "10px" }}
-                icon={<div className={classes.checkboxIcon} />}
-                checkedIcon={
-                  <SVG
-                    className={classes.checkboxIcon}
-                    src={icons.multipleImageSelection}
-                  />
-                }
-                checked={addedToProjects.includes(option)}
-              />
-            }
-          />
+        renderOption={(props, option) => (
+          <li {...props}>
+            <FormControlLabel
+              label={option.name}
+              control={
+                <Checkbox
+                  style={{ padding: "10px" }}
+                  icon={<div className={classes.checkboxIcon} />}
+                  checkedIcon={
+                    <SVG
+                      className={classes.checkboxIcon}
+                      src={icons.multipleImageSelection}
+                    />
+                  }
+                  checked={addedToProjects.includes(option)}
+                />
+              }
+            />
+          </li>
         )}
         renderInput={(params) => (
           <TextField
@@ -396,14 +398,14 @@ export function AddPluginDialog({
 
       <DialogActions className={classes.dialogActions}>
         <Button
-          variant="outlined"
+          variant="text"
           onClick={() => setDialogPage((page) => page - 1)}
           className={classes.whiteButton}
         >
           Back
         </Button>
         <Button
-          variant="outlined"
+          variant="text"
           className={classes.greenButton}
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={createPlugin}
@@ -436,7 +438,11 @@ export function AddPluginDialog({
 
   return (
     <>
-      <IconButton className={classes.addButton} onClick={() => setOpen(true)}>
+      <IconButton
+        className={classes.addButton}
+        onClick={() => setOpen(true)}
+        size="small"
+      >
         <Add />
       </IconButton>
       <Dialog open={open} onClose={() => setOpen(false)}>
@@ -451,6 +457,7 @@ export function AddPluginDialog({
             <IconButton
               className={classes.closeButton}
               onClick={() => setOpen(false)}
+              size="small"
             >
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>

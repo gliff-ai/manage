@@ -11,12 +11,14 @@ import {
   TextField,
   DialogActions,
   Button,
-  makeStyles,
-} from "@material-ui/core";
+  ListItem,
+} from "@mui/material";
 import SVG from "react-inlinesvg";
 
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Add } from "@material-ui/icons";
+import makeStyles from "@mui/styles/makeStyles";
+
+import Autocomplete from "@mui/material/Autocomplete";
+import { Add } from "@mui/icons-material";
 import { theme, icons } from "@gliff-ai/style";
 import { Profile, Project } from "@/interfaces";
 
@@ -39,11 +41,7 @@ const useStyles = makeStyles({
       backgroundColor: theme.palette.info.main,
     },
   },
-  tableCell: {
-    padding: "0px 16px 0px 25px",
-    fontSize: "16px",
-    maxHeight: "28px",
-  },
+
   chipLabel: {
     margin: "5px 5px 0 0",
     borderColor: "black",
@@ -114,6 +112,7 @@ export function CreateProjectDialog({
               onChange={(event) => {
                 setNewProjectName(event.target.value);
               }}
+              variant="standard"
             />
             {/* eslint-disable react/jsx-props-no-spreading */}
             <Autocomplete

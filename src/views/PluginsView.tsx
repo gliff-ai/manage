@@ -3,7 +3,6 @@ import {
   Paper,
   Typography,
   Card,
-  makeStyles,
   TableContainer,
   Table,
   TableBody,
@@ -11,13 +10,15 @@ import {
   TableCell,
   Box,
   Switch,
-} from "@material-ui/core";
+} from "@mui/material";
 
-import { LoadingSpinner, theme } from "@gliff-ai/style";
+import makeStyles from "@mui/styles/makeStyles";
+
+import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
-import { AddPluginDialog, MessageAlert } from "@/components";
+import { AddPluginDialog } from "@/components";
 import { IPlugin, PluginType, Project, JsPlugin } from "@/interfaces";
 
 const useStyles = () =>
@@ -191,7 +192,12 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           </Box>
         )}
       </Card>
-      {error ? <MessageAlert message={error} severity="error" /> : null}
+
+      <WarningSnackbar
+        open={Boolean(error)}
+        onClose={() => setError("")}
+        messageText={error}
+      />
     </>
   );
 };
