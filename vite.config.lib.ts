@@ -19,8 +19,11 @@ export default defineConfig({
         "react-router-dom",
         "@mui/material",
         "@mui/icons-material",
-        "@mui/lab",
-        "@gliff-ai/style"
+        "@mui/styles",
+        "@mui/system",
+        "@emotion/react",
+        "@emotion/styled",
+        "@gliff-ai/style",
       ],
       output: {
         globals: {},
