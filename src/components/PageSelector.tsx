@@ -1,4 +1,4 @@
-import { ButtonGroup } from "@material-ui/core";
+import { ButtonGroup } from "@mui/material";
 import { ReactElement } from "react";
 import { Link, useLocation, useResolvedPath } from "react-router-dom";
 import { IconButton, icons } from "@gliff-ai/style";
@@ -55,7 +55,7 @@ export function PageSelector({ user }: { user: User }): ReactElement {
         marginRight: "20px",
       }}
     >
-      <ButtonGroup orientation="vertical">
+      <ButtonGroup orientation="vertical" variant="text">
         {links.map((name) => (
           <NavLink name={name} key={name} />
         ))}

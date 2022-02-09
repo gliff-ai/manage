@@ -6,11 +6,11 @@ import {
   DialogActions,
   Divider,
   IconButton,
-  makeStyles,
   Paper,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
 import { theme, icons } from "@gliff-ai/style";
 import { IPlugin, Project } from "@/interfaces";

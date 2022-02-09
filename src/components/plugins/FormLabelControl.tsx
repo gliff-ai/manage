@@ -1,14 +1,15 @@
 import { ReactElement } from "react";
-import { makeStyles, FormControlLabel, Radio } from "@material-ui/core";
+import { FormControlLabel, Radio } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
+import { theme, icons, darkGrey } from "@gliff-ai/style";
 
 const useStyles = makeStyles({
   formControl: { alignItems: "flex-start" },
   radio: { marginRight: "15px" },
   checkboxIcon: { width: "18px", height: "auto" },
   radioName: { fontSize: "16px", lineHeight: 0 },
-  radioDescription: { fontSize: "14px", color: theme.palette.text.hint },
+  radioDescription: { fontSize: "14px", color: darkGrey },
   marginTop: { marginTop: "15px" },
   checkedIcon: {
     fill: "white",

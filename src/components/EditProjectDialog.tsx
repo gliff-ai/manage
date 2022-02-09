@@ -12,16 +12,16 @@ import {
   Dialog,
   IconButton,
   Typography,
-  makeStyles,
   TextField,
   DialogActions,
   List,
   Chip,
   Checkbox,
   Divider,
-} from "@material-ui/core";
+  Autocomplete,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import { theme, icons } from "@gliff-ai/style";
 import { Profile, ProjectUsers } from "@/interfaces";
 
@@ -62,8 +62,8 @@ const useStyles = makeStyles({
   },
   currentChip: { borderColor: "black", color: "black" },
   pendingChip: {
-    borderColor: theme.palette.text.hint,
-    color: theme.palette.text.hint,
+    borderColor: "grey",
+    color: "grey",
   },
   selectedOptions: {
     overflow: "hidden",
@@ -211,8 +211,8 @@ export function EditProjectDialog({
         onChange={handleSelectChange}
         getOptionLabel={(option) => option.name}
         classes={{ option: classes.option }}
-        renderOption={(option) => (
-          <>
+        renderOption={(props, option) => (
+          <li {...props}>
             <Checkbox
               icon={
                 <SVG
@@ -228,8 +228,8 @@ export function EditProjectDialog({
               }
               checked={selectedInvitees.includes(option)}
             />
-            {option.name} — {option.email}
-          </>
+            {option.name} - {option.email}
+          </li>
         )}
         renderInput={(params) => (
           <TextField
@@ -270,6 +270,7 @@ export function EditProjectDialog({
       <IconButton
         data-testid={`edit-${projectUid}`}
         onClick={() => setOpen(!open)}
+        size="small"
       >
         <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />
       </IconButton>
@@ -287,6 +288,7 @@ export function EditProjectDialog({
             <IconButton
               className={classes.closeButton}
               onClick={() => setOpen(false)}
+              size="small"
             >
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>

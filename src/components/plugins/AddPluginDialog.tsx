@@ -4,7 +4,6 @@ import {
   Card,
   Dialog,
   IconButton,
-  makeStyles,
   Paper,
   TextField,
   Typography,
@@ -13,8 +12,9 @@ import {
   FormControl,
   Box,
   Divider,
-} from "@material-ui/core";
-import { Add } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Add } from "@mui/icons-material";
 import SVG from "react-inlinesvg";
 import { theme, icons } from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
@@ -174,12 +174,12 @@ export function AddPluginDialog({
         </RadioGroup>
       </FormControl>
       <DialogActions className={classes.dialogActions}>
-        <Button variant="outlined" className={classes.whiteButton}>
+        <Button variant="text" className={classes.whiteButton}>
           {/* TODO: add onClick with link to docs */}
           Learn more
         </Button>
         <Button
-          variant="outlined"
+          variant="text"
           className={classes.greenButton}
           onClick={() => setDialogPage((page) => page + 1)}
         >
@@ -237,14 +237,14 @@ export function AddPluginDialog({
 
       <DialogActions className={classes.dialogActions}>
         <Button
-          variant="outlined"
+          variant="text"
           onClick={() => setDialogPage((page) => page - 1)}
           className={classes.whiteButton}
         >
           Back
         </Button>
         <Button
-          variant="outlined"
+          variant="text"
           className={classes.greenButton}
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={() => {
@@ -287,7 +287,7 @@ export function AddPluginDialog({
 
   return (
     <>
-      <IconButton color="inherit" onClick={() => setOpen(true)}>
+      <IconButton color="inherit" size="small" onClick={() => setOpen(true)}>
         <Add />
       </IconButton>
       <Dialog open={open} onClose={() => setOpen(false)}>
@@ -302,6 +302,7 @@ export function AddPluginDialog({
             <IconButton
               className={classes.closeButton}
               onClick={() => setOpen(false)}
+              size="small"
             >
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>

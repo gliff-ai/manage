@@ -11,10 +11,10 @@ import {
   Dialog,
   DialogActions,
   IconButton,
-  makeStyles,
   Paper,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
 import { theme, icons } from "@gliff-ai/style";
 import { IPlugin } from "@/interfaces";

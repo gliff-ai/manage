@@ -3,7 +3,6 @@ import {
   Paper,
   Typography,
   Card,
-  makeStyles,
   TableContainer,
   Table,
   TableBody,
@@ -12,7 +11,9 @@ import {
   Box,
   Switch,
   TableHead,
-} from "@material-ui/core";
+} from "@mui/material";
+
+import makeStyles from "@mui/styles/makeStyles";
 
 import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";

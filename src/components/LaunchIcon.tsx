@@ -1,6 +1,6 @@
 import { HtmlTooltip } from "@gliff-ai/style";
-import Button, { ButtonProps } from "@material-ui/core/Button";
-import { Launch } from "@material-ui/icons";
+import Button, { ButtonProps } from "@mui/material/Button";
+import { Launch } from "@mui/icons-material";
 import { ReactElement } from "react";
 
 interface Props extends ButtonProps {

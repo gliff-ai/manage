@@ -1,5 +1,6 @@
 import { ReactElement, ChangeEvent, Dispatch, SetStateAction } from "react";
-import { makeStyles, RadioGroup, FormControl } from "@material-ui/core";
+import { RadioGroup, FormControl } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { FormLabelControl } from "./FormLabelControl";
 import { IPlugin, Product } from "@/interfaces";
 

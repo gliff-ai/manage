@@ -6,11 +6,11 @@ import {
   List,
   TextField,
   Chip,
-  makeStyles,
-} from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
+  Autocomplete,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
+import { icons, darkGrey } from "@gliff-ai/style";
 import { IPlugin, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   option: {
     backgroundColor: `#FFFFFF !important`,
     fontSize: "16px",
-    "&:hover": { backgroundColor: `${theme.palette.grey[100]} !important` },
+    "&:hover": { backgroundColor: `${darkGrey} !important` },
   },
   checkboxIcon: { width: "18px", height: "auto" },
   chipLabel: {
@@ -148,23 +148,25 @@ export const ProjectsAutocomplete = ({
         renderTags={(option) => null}
         options={allProjects}
         getOptionLabel={(option) => option.name}
-        renderOption={(option) => (
-          <FormControlLabel
-            label={option.name}
-            control={
-              <Checkbox
-                style={{ padding: "10px" }}
-                icon={<div className={classes.checkboxIcon} />}
-                checkedIcon={
-                  <SVG
-                    className={classes.checkboxIcon}
-                    src={icons.multipleImageSelection}
-                  />
-                }
-                checked={plugin.collection_uids.includes(option.uid)}
-              />
-            }
-          />
+        renderOption={(props, option) => (
+          <li {...props}>
+            <FormControlLabel
+              label={option.name}
+              control={
+                <Checkbox
+                  style={{ padding: "10px" }}
+                  icon={<div className={classes.checkboxIcon} />}
+                  checkedIcon={
+                    <SVG
+                      className={classes.checkboxIcon}
+                      src={icons.multipleImageSelection}
+                    />
+                  }
+                  checked={plugin.collection_uids.includes(option.uid)}
+                />
+              }
+            />
+          </li>
         )}
         renderInput={(params) => (
           <TextField
