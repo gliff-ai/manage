@@ -4,7 +4,6 @@ import {
   IconButton,
   Typography,
   Card,
-  makeStyles,
   List,
   ListItem,
   TableContainer,
@@ -16,11 +15,12 @@ import {
   TextField,
   ListSubheader,
   Box,
-} from "@material-ui/core";
-import { Send } from "@material-ui/icons";
-import { LoadingSpinner, theme } from "@gliff-ai/style";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Send } from "@mui/icons-material";
+import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 
-import { Project, Team } from "@/interfaces";
+import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
@@ -82,9 +82,9 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
   const [team, setTeam] = useState<Team | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
-  const [collaboratorProjects, setCollaboratorProjects] = useState([]);
   const classes = useStyles();
   const isMounted = useRef(false);
+  const [open, setOpen] = useState(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
@@ -95,15 +95,15 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
     event.preventDefault();
     setInviteMessage("");
 
-    const result = await props.services.inviteCollaborator({
-      email: inviteEmail,
-    });
-
-    if (result) {
+    try {
+      await props.services.inviteCollaborator({
+        email: inviteEmail,
+      });
       setInviteEmail("");
       setInviteMessage("Invite was sent");
-    } else {
-      setInviteMessage("An error happened with the invite");
+    } catch (e: any) {
+      setOpen(true);
+      console.error(`${(e as Error).message}`);
     }
   };
 
@@ -125,43 +125,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
         });
     }
   }, [auth, props.services, isMounted]);
-
-  useEffect(() => {
-    if (!team?.profiles) return;
-
-    const getCollaboratingProject = async (
-      collaboratorEmail: string
-    ): Promise<string> => {
-      const result: string = await props.services
-        .getCollaboratorProject(
-          {
-            email: collaboratorEmail,
-          },
-          auth.user.authToken
-        )
-        .then((p: Project[]): string => {
-          if (p.length > 1) {
-            return "Error!";
-          }
-          return p[0].name;
-        });
-
-      if (result) {
-        return result;
-      }
-      return "";
-    };
-
-    const collaboratorProjectsPromises = [];
-    for (let i = 0; i < team.profiles.length; i += 1) {
-      collaboratorProjectsPromises[i] = getCollaboratingProject(
-        team.profiles[i].email
-      );
-    }
-    void Promise.all(collaboratorProjectsPromises).then((result) => {
-      setStateIfMounted(result, setCollaboratorProjects, isMounted.current);
-    });
-  }, [team, props.services, auth, isMounted]);
 
   let pendingInvites;
   if (team?.pending_invites?.length > 0) {
@@ -205,7 +168,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
             className={classes.textField}
             variant="filled"
           />
-          <IconButton type="submit">
+          <IconButton type="submit" size="large">
             <Send />
           </IconButton>
         </div>
@@ -213,7 +176,7 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
     </>
   );
 
-  if (!auth || !auth?.user?.isOwner) return null;
+  if (!auth) return null;
 
   return (
     <>
@@ -237,7 +200,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
                 <TableRow>
                   <TableCell className={classes.tableText}>Name</TableCell>
                   <TableCell className={classes.tableText}>Email</TableCell>
-                  <TableCell className={classes.tableText}>Project</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -251,7 +213,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
                         <TableCell className={classes.tableText}>
                           {email}
                         </TableCell>
-                        <TableCell>{collaboratorProjects[index]}</TableCell>
                       </TableRow>
                     )
                 )}
@@ -338,6 +299,11 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </div>
+      <WarningSnackbar
+        open={open}
+        onClose={() => setOpen(false)}
+        messageText="Cant invite new user"
+      />
     </>
   );
 };

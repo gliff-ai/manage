@@ -1,8 +1,21 @@
 export interface User {
   email: string;
   authToken: string;
-  isOwner: boolean;
+  userAccess: UserAccess;
   tierID: number;
+}
+
+export type Progress = {
+  [uid: string]: {
+    total: number; // number of assigned images
+    complete: number; // number of images with a complete annotation
+  };
+};
+
+export enum UserAccess {
+  Owner = "owner",
+  Member = "member",
+  Collaborator = "collaborator",
 }
 
 export type Project = {
@@ -10,16 +23,16 @@ export type Project = {
   name: string;
 };
 
-export type TrustedService = {
-  name: string;
-  base_url: string;
+export type ProjectsUsers = {
+  [uid: string]: ProjectUsers;
 };
 
+export type ProjectUsers = { usernames: string[]; pendingUsernames: string[] };
 export interface Profile {
   email: string;
   name: string;
-  is_collaborator: boolean;
-  is_trusted_service: boolean;
+  is_collaborator?: boolean;
+  is_trusted_service?: boolean;
 }
 
 export interface Team {
@@ -29,4 +42,33 @@ export interface Team {
     sent_date: string;
     is_collaborator: boolean;
   }>;
+}
+
+export enum Product {
+  "CURATE" = "CURATE",
+  "ANNOTATE" = "ANNOTATE",
+  "ALL" = "ALL",
+}
+
+export enum PluginType {
+  "Javascript" = "Javascript",
+  "Python" = "Python",
+  "AI" = "AI",
+}
+
+export interface IPlugin {
+  type: PluginType;
+  name: string;
+  url: string;
+  products: Product;
+  enabled: boolean;
+}
+
+export interface TrustedService extends Omit<IPlugin, "type" | "products"> {
+  type: "Python" | "AI";
+  products: "CURATE" | "ANNOTATE" | "ALL";
+}
+
+export interface JsPlugin extends Omit<IPlugin, "type" | "products"> {
+  products: "CURATE" | "ANNOTATE" | "ALL";
 }

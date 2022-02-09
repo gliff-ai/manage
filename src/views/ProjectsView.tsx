@@ -1,90 +1,140 @@
-import { useEffect, useState, ChangeEvent, ReactElement, useRef } from "react";
+import { useEffect, useState, ReactElement, useRef, useCallback } from "react";
 import {
   Paper,
   Box,
-  IconButton,
   Typography,
   Card,
-  makeStyles,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  Dialog,
-  TextField,
-  DialogActions,
-  Button,
   TableContainer,
   Table,
   TableBody,
   TableRow,
   TableCell,
-} from "@material-ui/core";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Clear, Add } from "@material-ui/icons";
+  TableHead,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { theme, LoadingSpinner } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { Project, Profile, Team } from "@/interfaces";
-import { InviteDialog, LaunchIcon } from "@/components";
+import {
+  Project,
+  Profile,
+  Team,
+  UserAccess,
+  Progress,
+  ProjectsUsers,
+} from "@/interfaces";
+import {
+  EditProjectDialog,
+  LaunchIcon,
+  CreateProjectDialog,
+  ProgressBar,
+} from "@/components";
 import { setStateIfMounted } from "@/helpers";
 
-const useStyles = () =>
-  makeStyles(() => ({
-    paperHeader: {
-      padding: "10px",
-      backgroundColor: theme.palette.primary.main,
+const useStyles = makeStyles({
+  paperHeader: {
+    padding: "2px",
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  topography: {
+    color: "#000000",
+    fontSize: "21px",
+    marginLeft: "20px",
+  },
+  // eslint-disable-next-line mui-unused-classes/unused-classes
+  "@global": {
+    '.MuiAutocomplete-option[data-focus="true"]': {
+      background: "#01dbff",
     },
-    projectsTopography: {
-      color: "#000000",
-      display: "inline",
-      fontSize: "21px",
-      marginRight: "125px",
-    },
-    cancelButton: {
-      textTransform: "none",
-    },
-    OKButton: {
-      "&:hover": {
-        backgroundColor: theme.palette.info.main,
-      },
-    },
-
-    // eslint-disable-next-line mui-unused-classes/unused-classes
-    "@global": {
-      '.MuiAutocomplete-option[data-focus="true"]': {
-        background: "#01dbff",
-      },
-    },
-    tableCell: {
-      padding: "0px 16px 0px 25px",
-      fontSize: "16px",
-      maxHeight: "28px",
-    },
-  }));
+  },
+});
 
 interface Props {
   services: ServiceFunctions;
   launchCurateCallback?: (projectUid: string) => void | null;
   launchAuditCallback?: (projectUid: string) => void | null;
+  getAnnotationProgress: (
+    username: string,
+    projectId?: string
+  ) => Promise<Progress>;
 }
 
-export const ProjectsView = (props: Props): ReactElement => {
+export const ProjectsView = ({
+  services,
+  getAnnotationProgress,
+  launchCurateCallback,
+  launchAuditCallback,
+}: Props): ReactElement => {
   const auth = useAuth();
-  const [newProjectName, setNewProjectName] = useState<string>(""); // string entered in text field in New Project dialog
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
-  const [projectInvitee, setInvitee] = useState<string>(""); // currently selected team member (email of) in invite popover
-  const [projectInvitees, setInvitees] = useState<Profile[] | null>(null); // all team members except the logged in user
-  const [dialogOpen, setDialogOpen] = useState(false); // New Project dialog
-  const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>(null); // team members selected in the New Project dialog
-  const classes = useStyles()();
+  const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
+  const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
+  const [projectUsers, setProjectUsers] = useState<ProjectsUsers | null>(null); // users in each project
+
+  const classes = useStyles();
   const isMounted = useRef(false);
 
-  const handleSelectChange = (
-    event: ChangeEvent<HTMLSelectElement>,
-    value: Profile
-  ): void => {
-    setInvitee(value.email);
+  const isOwnerOrMember = useCallback(
+    (): boolean =>
+      auth.user.userAccess === UserAccess.Owner ||
+      auth.user.userAccess === UserAccess.Member,
+    [auth.user.userAccess]
+  );
+
+  const updateProjectUsers = useCallback(
+    (projectUid: string): void => {
+      void services
+        .getCollectionMembers({ collectionUid: projectUid })
+        .then(
+          (newUsers: { usernames: string[]; pendingUsernames: string[] }) => {
+            if (newUsers && isMounted.current) {
+              setProjectUsers((users) => {
+                const newProjectsUsers = { ...users };
+                newProjectsUsers[projectUid] = newUsers;
+                return newProjectsUsers;
+              });
+            }
+          }
+        );
+    },
+    [services, isMounted]
+  );
+
+  const updateProject = useCallback(
+    (projectUid: string) => {
+      void services.getProject({ projectUid }).then((newProject: Project) => {
+        if (isMounted.current) {
+          setProjects((prevProjects: Project[]) =>
+            prevProjects.map((p) => (p.uid === newProject.uid ? newProject : p))
+          );
+        }
+      });
+    },
+    [services, isMounted]
+  );
+
+  const updateAnnotationProgress = useCallback(
+    (projectId: string): void => {
+      if (!auth?.user?.email) return;
+
+      void getAnnotationProgress(auth.user.email, projectId).then(
+        (newProgress) => {
+          if (newProgress && isMounted.current) {
+            setProgress((p) => ({ ...p, ...newProgress }));
+          }
+        }
+      );
+    },
+    [getAnnotationProgress, isMounted, auth]
+  );
+
+  const triggerRefetch = (projectId: string) => {
+    updateProject(projectId);
+    updateProjectUsers(projectId);
+    updateAnnotationProgress(projectId);
   };
 
   useEffect(() => {
@@ -97,246 +147,173 @@ export const ProjectsView = (props: Props): ReactElement => {
   }, []);
 
   useEffect(() => {
-    if (!auth?.user?.email) return;
+    if (!isMounted?.current || !isOwnerOrMember()) return;
+    void services.getCollectionsMembers().then((newUsers) => {
+      if (newUsers) {
+        setStateIfMounted(newUsers, setProjectUsers, isMounted.current);
+      }
+    });
+  }, [isMounted, services, isOwnerOrMember]);
 
-    void props.services
+  useEffect(() => {
+    if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
+
+    void services
+      .queryTeam(null, auth.user.authToken)
+      .then(({ profiles }: Team) => {
+        setStateIfMounted(profiles, setInvitees, isMounted.current);
+      });
+  }, [auth, services, isMounted, isOwnerOrMember]);
+
+  useEffect(() => {
+    if (!isMounted.current || !auth?.user?.email) return;
+
+    void services
       .getProjects(null, auth.user.authToken)
       .then((p: Project[]) =>
         setStateIfMounted(p, setProjects, isMounted.current)
       );
+  }, [auth, services, isMounted]);
 
-    if (auth.user.isOwner) {
-      void props.services
-        .queryTeam(null, auth.user.authToken)
-        .then((team: Team) => {
-          const invitees = team.profiles.filter(
-            ({ email }) => email !== auth?.user?.email
-          );
-          setStateIfMounted(invitees, setInvitees, isMounted.current);
-          if (invitees.length > 0) {
-            setStateIfMounted(invitees[0].email, setInvitee, isMounted.current);
-          }
-        });
-    }
-  }, [auth, props.services, isMounted]);
+  useEffect(() => {
+    if (!isMounted.current || !auth?.user?.email) return;
 
-  const inviteToProject = (projectId: string, inviteeEmail: string) =>
-    props.services
-      .inviteToProject({ projectId, email: inviteeEmail })
-      .then(() => {
-        console.log(`invite complete!: ${inviteeEmail}`);
-      });
+    void getAnnotationProgress(auth.user.email).then((newProgress) => {
+      if (newProgress) {
+        setStateIfMounted(newProgress, setProgress, isMounted.current);
+      }
+    });
+  }, [isMounted, auth, getAnnotationProgress]);
 
-  const createProject = async (): Promise<string> => {
-    await props.services.createProject({ name: newProjectName });
-    const p = (await props.services.getProjects()) as Project[];
-    setProjects(p);
-    // TODO: would be nice if services.createProject could return the uid of the new project
-    return p.find((project) => project.name === newProjectName).uid;
+  const inviteToProject = async (
+    projectId: string,
+    inviteeEmail: string
+  ): Promise<void> => {
+    await services.inviteToProject({ projectId, email: inviteeEmail });
+
+    console.log(`${inviteeEmail} invited to project ${projectId}`);
   };
 
-  const project = ({ name, uid }: Project) => (
-    <TableRow key={uid}>
-      <TableCell className={classes.tableCell}>{name}</TableCell>
-      <TableCell className={classes.tableCell} align="right">
-        {auth.user.isOwner && (
-          <InviteDialog
-            projectUid={uid}
-            projectInvitees={projectInvitees}
-            handleSelectChange={handleSelectChange}
-            inviteToProject={() => inviteToProject(uid, projectInvitee)}
-          />
-        )}
-        <LaunchIcon
-          launchCallback={() => props.launchCurateCallback(uid)}
-          tooltip={`Open ${name} in CURATE`}
-        />
-        {auth.user.isOwner && props.launchAuditCallback !== null && (
-          <LaunchIcon
-            data-testid={`audit-${uid}`}
-            launchCallback={() => props.launchAuditCallback(uid)}
-            tooltip={`Open ${name} in AUDIT`}
-          />
-        )}
-      </TableCell>
-    </TableRow>
-  );
+  const removeFromProject = async (
+    projectId: string,
+    username: string
+  ): Promise<void> => {
+    await services.removeFromProject({ uid: projectId, username });
+
+    console.log(`${username} removed from project ${projectId}.`);
+  };
+
+  const createProject = async (name: string): Promise<string> => {
+    const projectId = (await services.createProject({
+      name,
+    })) as string;
+    const p = (await services.getProjects()) as Project[];
+    setProjects(p);
+
+    triggerRefetch(projectId);
+
+    return projectId;
+  };
+
+  const listAssignees = (
+    users: ProjectsUsers,
+    uid: string
+  ): ReactElement | null => {
+    if (!users || users[uid] === undefined) return null;
+
+    const assignees = users[uid].usernames;
+    return (
+      <p>
+        {assignees.slice(0, 3).join(", ")}
+        {assignees.length > 3 && <b> + {assignees.length - 3} others</b>}
+      </p>
+    );
+  };
 
   if (!auth?.user) return null;
 
   return (
-    <>
-      <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
-        <Paper
-          elevation={0}
-          variant="outlined"
-          square
-          className={classes.paperHeader}
-        >
-          <Typography
-            className={classes.projectsTopography}
-            style={{ marginLeft: "14px" }}
-          >
-            Projects
-          </Typography>
-        </Paper>
+    <Card style={{ width: "100%", height: "85vh", marginRight: "20px" }}>
+      <Paper
+        elevation={0}
+        variant="outlined"
+        square
+        className={classes.paperHeader}
+      >
+        <Typography className={classes.topography}>Projects</Typography>
+        {isOwnerOrMember() && projects !== null && (
+          <CreateProjectDialog
+            projects={projects}
+            invitees={invitees}
+            createProject={createProject}
+            inviteToProject={inviteToProject}
+          />
+        )}
+      </Paper>
+      <Paper elevation={0} square style={{ height: "100%" }}>
+        {projects === null ? (
+          <Box display="flex" height="100%">
+            <LoadingSpinner />
+          </Box>
+        ) : (
+          <TableContainer>
+            <Table aria-label="simple table">
+              <TableHead>
+                <TableRow key="tab-header">
+                  <TableCell>Name</TableCell>
+                  {isOwnerOrMember() && <TableCell>Assignees</TableCell>}
+                  <TableCell>Annotation Progress</TableCell>
+                  <TableCell />
+                </TableRow>
+              </TableHead>
 
-        <Paper elevation={0} square style={{ height: "100%" }}>
-          {auth.user.isOwner && (
-            <List style={{ paddingBottom: "0px" }}>
-              <ListItem
-                divider
-                style={{ padding: "0px 0px 0px 10px", cursor: "pointer" }}
-                onClick={() => {
-                  setDialogOpen(!dialogOpen);
-                }}
-              >
-                <div
-                  style={{
-                    margin: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <Add
-                    fontSize="large"
-                    style={{ marginRight: "10px", color: "grey" }}
-                  />
-                  <Typography style={{ color: "grey" }}>
-                    Create New Project
-                  </Typography>
-                </div>
-              </ListItem>
-            </List>
-          )}
-
-          {projects === null ? (
-            <Box display="flex" height="100%">
-              <LoadingSpinner />
-            </Box>
-          ) : (
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableBody>{projects.map(project)}</TableBody>
-              </Table>
-            </TableContainer>
-          )}
-
-          <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-            <Card>
-              <Paper
-                elevation={0}
-                variant="outlined"
-                square
-                className={classes.paperHeader}
-              >
-                <Typography className={classes.projectsTopography}>
-                  New Project
-                </Typography>
-              </Paper>
-
-              <Paper
-                elevation={0}
-                square
-                style={{ width: "20vw", margin: "20px" }}
-              >
-                <TextField
-                  placeholder="Project Name"
-                  style={{ width: "100%" }}
-                  onChange={(event) => {
-                    setNewProjectName(event.target.value);
-                  }}
-                />
-
-                {/* eslint-disable react/jsx-props-no-spreading */}
-                <Autocomplete
-                  options={projectInvitees}
-                  getOptionLabel={(option) => option.name}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Add Team Members"
-                      variant="outlined"
-                    />
-                  )}
-                  style={{ marginTop: "26px" }}
-                  onChange={(event, value) => {
-                    // add the selected user profile to dialogInvitees if it's not already there:
-                    setDialogInvitees(
-                      dialogInvitees.includes(value as Profile)
-                        ? dialogInvitees
-                        : dialogInvitees.concat(value as Profile)
-                    );
-                  }}
-                />
-                {/* eslint-enable react/jsx-props-no-spreading */}
-
-                <List>
-                  {dialogInvitees?.map((profile) => (
-                    <ListItem key={profile.email}>
-                      <ListItemText>{profile.name}</ListItemText>
-                      <ListItemSecondaryAction>
-                        <IconButton
-                          onClick={() => {
-                            // remove `email` from dialogInvitees:
-                            setDialogInvitees(
-                              dialogInvitees.filter(
-                                (_profile) => _profile.email !== profile.email
-                              )
-                            );
-                          }}
-                        >
-                          <Clear />
-                        </IconButton>
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  ))}
-                </List>
-
-                <DialogActions>
-                  <Button
-                    onClick={() => {
-                      setDialogOpen(false);
-                    }}
-                    className={classes.cancelButton}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    className={classes.OKButton}
-                    variant="contained"
-                    color="primary"
-                    disabled={
-                      newProjectName === "" ||
-                      projects.map((p) => p.name).includes(newProjectName)
-                    }
-                    onClick={() => {
-                      createProject().then(
-                        (newProjectUid) => {
-                          for (const profile of dialogInvitees) {
-                            inviteToProject(newProjectUid, profile.email).catch(
-                              (err) => {
-                                console.error(err);
-                              }
-                            );
-                          }
-                        },
-                        (err) => {
-                          console.error(err);
-                        }
-                      );
-                      setDialogOpen(false);
-                    }}
-                  >
-                    OK
-                  </Button>
-                </DialogActions>
-              </Paper>
-            </Card>
-          </Dialog>
-        </Paper>
-      </Card>
-    </>
+              <TableBody>
+                {projects.map(({ name, uid }) => (
+                  <TableRow key={uid}>
+                    <TableCell>{name}</TableCell>
+                    {isOwnerOrMember() && (
+                      <TableCell>{listAssignees(projectUsers, uid)}</TableCell>
+                    )}
+                    <TableCell>
+                      {progress && <ProgressBar progress={progress[uid]} />}
+                    </TableCell>
+                    <TableCell align="right">
+                      {isOwnerOrMember() &&
+                        projectUsers &&
+                        projectUsers[uid] !== undefined && (
+                          <EditProjectDialog
+                            projectUid={uid}
+                            projectName={name}
+                            projectUsers={projectUsers[uid]}
+                            invitees={invitees}
+                            updateProjectName={services.updateProjectName}
+                            inviteToProject={inviteToProject}
+                            removeFromProject={removeFromProject}
+                            triggerRefetch={triggerRefetch}
+                          />
+                        )}
+                      <LaunchIcon
+                        launchCallback={() => launchCurateCallback(uid)}
+                        tooltip={`Open ${name} in CURATE`}
+                      />
+                      {isOwnerOrMember() &&
+                        auth.user.tierID > 1 &&
+                        launchAuditCallback !== null && (
+                          <LaunchIcon
+                            data-testid={`audit-${uid}`}
+                            launchCallback={() => launchAuditCallback(uid)}
+                            tooltip={`Open ${name} in AUDIT`}
+                          />
+                        )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Paper>
+    </Card>
   );
 };
 

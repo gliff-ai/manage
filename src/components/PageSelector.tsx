@@ -1,14 +1,14 @@
-import { ButtonGroup } from "@material-ui/core";
+import { ButtonGroup } from "@mui/material";
 import { ReactElement } from "react";
 import { Link, useLocation, useResolvedPath } from "react-router-dom";
 import { IconButton, icons } from "@gliff-ai/style";
-import { User } from "@/interfaces";
+import { User, UserAccess } from "@/interfaces";
 
 const pageIcons: { [name: string]: string } = {
   projects: icons.projectsPage,
   team: icons.usersPage,
   collaborators: icons.collaborators,
-  services: icons.trustedServices,
+  plugins: icons.plugins,
 };
 
 function NavLink({ name }: { name: string }): ReactElement {
@@ -33,9 +33,14 @@ function NavLink({ name }: { name: string }): ReactElement {
 
 export function PageSelector({ user }: { user: User }): ReactElement {
   let links;
-  if (user.isOwner && user.tierID > 1) {
-    links = ["Projects", "Team", "Collaborators", "Services"] as const;
-  } else if (user.isOwner) {
+
+  const isOwnerOrMember =
+    user.userAccess === UserAccess.Owner ||
+    user.userAccess === UserAccess.Member;
+
+  if (isOwnerOrMember && user.tierID > 1) {
+    links = ["Projects", "Team", "Collaborators", "Plugins"] as const;
+  } else if (isOwnerOrMember) {
     links = ["Projects", "Team", "Collaborators"] as const;
   } else {
     links = ["Projects"] as const;
@@ -50,7 +55,7 @@ export function PageSelector({ user }: { user: User }): ReactElement {
         marginRight: "20px",
       }}
     >
-      <ButtonGroup orientation="vertical">
+      <ButtonGroup orientation="vertical" variant="text">
         {links.map((name) => (
           <NavLink name={name} key={name} />
         ))}

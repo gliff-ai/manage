@@ -4,7 +4,6 @@ import {
   IconButton,
   Typography,
   Card,
-  makeStyles,
   List,
   ListItem,
   TableContainer,
@@ -16,9 +15,10 @@ import {
   TextField,
   ListSubheader,
   Box,
-} from "@material-ui/core";
-import { Send } from "@material-ui/icons";
-import { LoadingSpinner, theme } from "@gliff-ai/style";
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import { Send } from "@mui/icons-material";
+import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
@@ -83,6 +83,7 @@ export const TeamView = (props: Props): JSX.Element => {
   const [inviteMessage, setInviteMessage] = useState("");
   const classes = useStyles();
   const isMounted = useRef(false);
+  const [open, setOpen] = useState(false);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
@@ -93,18 +94,17 @@ export const TeamView = (props: Props): JSX.Element => {
     event.preventDefault();
     setInviteMessage("");
 
-    const result = await props.services.inviteUser({
-      email: inviteEmail,
-    });
-
-    if (result) {
+    try {
+      await props.services.inviteUser({
+        email: inviteEmail,
+      });
       setInviteEmail("");
       setInviteMessage("Invite was sent");
-    } else {
-      setInviteMessage("An error happened with the invite");
+    } catch (e: any) {
+      setOpen(true);
+      console.error(`${(e as Error).message}`);
     }
   };
-
   useEffect(() => {
     // runs at mount
     isMounted.current = true;
@@ -167,7 +167,7 @@ export const TeamView = (props: Props): JSX.Element => {
             className={classes.textField}
             variant="filled"
           />
-          <IconButton type="submit">
+          <IconButton type="submit" size="large">
             <Send />
           </IconButton>
         </div>
@@ -175,7 +175,7 @@ export const TeamView = (props: Props): JSX.Element => {
     </>
   );
 
-  if (!auth || !auth?.user?.isOwner) return null;
+  if (!auth) return null;
 
   return (
     <>
@@ -298,6 +298,11 @@ export const TeamView = (props: Props): JSX.Element => {
           </Paper>
         </Card>
       </div>
+      <WarningSnackbar
+        open={open}
+        onClose={() => setOpen(false)}
+        messageText="Cant invite new user"
+      />
     </>
   );
 };

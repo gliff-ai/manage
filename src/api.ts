@@ -17,12 +17,17 @@ interface Services {
   inviteUser: APIRoute | ServiceFunction;
   inviteCollaborator: APIRoute | ServiceFunction;
   getProjects: APIRoute | ServiceFunction;
+  updateProjectName: APIRoute | ServiceFunction;
   getProject: APIRoute | ServiceFunction;
-  getCollaboratorProject: APIRoute | ServiceFunction;
+  getCollectionMembers: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
   inviteToProject: APIRoute | ServiceFunction;
   createTrustedService: APIRoute | ServiceFunction;
   getTrustedServices: APIRoute | ServiceFunction;
+  createJsPlugin: APIRoute | ServiceFunction;
+  getJsPlugins: APIRoute | ServiceFunction;
+  getCollectionsMembers: APIRoute | ServiceFunction;
+  removeFromProject: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {

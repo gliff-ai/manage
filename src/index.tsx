@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
   AppBar,
@@ -6,21 +6,30 @@ import {
   Grid,
   Toolbar,
   ThemeProvider,
-} from "@material-ui/core";
-import { makeStyles, StylesProvider } from "@material-ui/core/styles";
+  Theme,
+  StyledEngineProvider,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
+import StylesProvider from "@mui/styles/StylesProvider";
 import { theme, generateClassName, Logo } from "@gliff-ai/style";
 
-import { initApiRequest } from "@/api";
+import { initApiRequest, ServiceFunctions } from "@/api";
 import { TeamView } from "@/views/TeamView";
 import { ProjectsView } from "@/views/ProjectsView";
-import { TrustedServiceView } from "./views/TrustedServiceView";
+import { PluginsView } from "./views/PluginsView";
 
 import { useAuth } from "@/hooks/use-auth";
 import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 import type { Services } from "@/api";
 import { PageSelector } from "./components/PageSelector";
-import { User } from "./interfaces";
+import { Progress, User } from "./interfaces";
+import { setStateIfMounted } from "./helpers";
+
+declare module "@mui/styles/defaultTheme" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 const defaultServices = {
   queryTeam: "GET /team",
@@ -28,12 +37,17 @@ const defaultServices = {
   inviteUser: "POST /user/invite",
   inviteCollaborator: "POST /user/invite/collaborator",
   getProjects: "GET /projects",
+  updateProjectName: "POST /project/uid",
   getProject: "GET /project", // TODO: Support named params for GET? Body works tho...
-  getCollaboratorProject: "GET /team/collaboratorprojects",
+  getCollectionMembers: "GET /team/collectionmembers",
   createProject: "POST /projects",
   inviteToProject: "POST /projects/invite",
   createTrustedService: "POST /trusted_service",
   getTrustedServices: "GET /trusted_service",
+  createJsPlugin: "POST /plugin",
+  getJsPlugins: "GET /plugin",
+  getCollectionsMembers: "GET /projects/collectionsmembers",
+  removeFromProject: "POST /user/delete/collaborator",
 } as Services;
 
 interface Props {
@@ -43,13 +57,15 @@ interface Props {
   showAppBar: boolean;
   launchCurateCallback?: (projectUid: string) => void;
   launchAuditCallback?: (projectUid: string) => void;
+  getAnnotationProgress: (username: string) => Promise<Progress>;
 }
 
 const useStyles = makeStyles(() => ({
   appBar: {
     backgroundColor: "white",
-    height: "90px",
+    height: "90px !important",
     paddingTop: "9px",
+    width: "100% !important",
   },
   logo: {
     marginBottom: "5px",
@@ -59,10 +75,25 @@ const useStyles = makeStyles(() => ({
 
 export function UserInterface(props: Props): JSX.Element {
   const classes = useStyles();
+  const [services, setServices] = useState<ServiceFunctions | null>(null);
   const auth = useAuth();
 
-  // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
-  const services = initApiRequest(props.apiUrl, props.services);
+  const isMounted = useRef(false);
+
+  useEffect(() => {
+    // runs at mount
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // This loads all the services we use, which are either API requests, or functions that allow us to mock etc.
+    const newServices = initApiRequest(props.apiUrl, props.services);
+    setStateIfMounted(newServices, setServices, isMounted.current);
+  }, [props.apiUrl, props.services, isMounted]);
 
   useEffect(() => {
     if (!auth) return;
@@ -70,7 +101,7 @@ export function UserInterface(props: Props): JSX.Element {
     if (props.user) {
       auth?.saveUser(props.user);
     }
-  }, [auth]);
+  }, [auth, props.user]);
 
   if (!auth?.user) return null;
 
@@ -88,42 +119,46 @@ export function UserInterface(props: Props): JSX.Element {
 
   return (
     <StylesProvider generateClassName={generateClassName("manage")}>
-      <ThemeProvider theme={theme}>
-        {appbar}
-        <CssBaseline />
-        <div
-          style={{
-            marginTop: props.showAppBar ? "108px" : "20px",
-            display: "flex",
-          }}
-        >
-          <PageSelector user={auth.user} />
-          <Routes>
-            <Route path="/">
-              <Navigate to="projects" />
-            </Route>
-            <Route path="team" element={<TeamView services={services} />} />
-            <Route
-              path="services"
-              element={<TrustedServiceView services={services} />}
-            />
-            <Route
-              path="collaborators"
-              element={<CollaboratorsView services={services} />}
-            />
-            <Route
-              path="projects"
-              element={
-                <ProjectsView
-                  services={services}
-                  launchCurateCallback={props.launchCurateCallback}
-                  launchAuditCallback={props.launchAuditCallback}
-                />
-              }
-            />
-          </Routes>
-        </div>
-      </ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {appbar}
+          <div
+            style={{
+              marginTop: props.showAppBar ? "108px" : "20px",
+              display: "flex",
+            }}
+          >
+            <PageSelector user={auth.user} />
+            <Routes>
+              <Route path="/" element={<Navigate to="projects" />} />
+
+              <Route path="team" element={<TeamView services={services} />} />
+
+              <Route
+                path="plugins"
+                element={<PluginsView services={services} />}
+              />
+
+              <Route
+                path="collaborators"
+                element={<CollaboratorsView services={services} />}
+              />
+              <Route
+                path="projects"
+                element={
+                  <ProjectsView
+                    services={services}
+                    launchCurateCallback={props.launchCurateCallback}
+                    launchAuditCallback={props.launchAuditCallback}
+                    getAnnotationProgress={props.getAnnotationProgress}
+                  />
+                }
+              />
+            </Routes>
+          </div>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </StylesProvider>
   );
 }
