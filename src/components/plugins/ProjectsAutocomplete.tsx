@@ -10,16 +10,16 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { icons, darkGrey } from "@gliff-ai/style";
+import { icons, lightGrey } from "@gliff-ai/style";
 import { IPlugin, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
 const useStyles = makeStyles({
   marginTop: { marginTop: "15px" },
   option: {
-    backgroundColor: `#FFFFFF !important`,
     fontSize: "16px",
-    "&:hover": { backgroundColor: `${darkGrey} !important` },
+    backgroundColor: `#FFFFFF !important`,
+    "&:hover": { backgroundColor: `${lightGrey} !important` },
   },
   checkboxIcon: { width: "18px", height: "auto" },
   chipLabel: {

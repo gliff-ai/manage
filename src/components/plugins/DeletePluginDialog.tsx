@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
+import { theme, icons, middleGrey } from "@gliff-ai/style";
 import { IPlugin } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
@@ -52,9 +52,14 @@ const useStyles = makeStyles({
   whiteButton: {
     textTransform: "none",
     backgroundColor: "transparent",
+    borderColor: middleGrey,
+    "&:hover": {
+      borderColor: middleGrey,
+    },
   },
   purpleButton: {
     backgroundColor: theme.palette.secondary.main,
+    borderColor: theme.palette.secondary.main,
     textTransform: "none",
     color: "#FFFFFF",
     "&:hover": {

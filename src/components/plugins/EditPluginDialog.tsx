@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
+import { theme, icons, lightGrey } from "@gliff-ai/style";
 import { IPlugin, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
@@ -29,7 +29,7 @@ const useStyles = makeStyles({
     fontSize: "21px",
     marginLeft: "8px",
   },
-  paperBody: { width: "25vw", margin: "10px 20px" },
+  paperBody: { width: "350px", margin: "10px 20px" },
   settingsIcon: { width: "20px", height: "auto" },
   closeButton: {
     position: "absolute",
@@ -42,7 +42,7 @@ const useStyles = makeStyles({
   greenButton: {
     backgroundColor: theme.palette.primary.main,
     "&:disabled": {
-      backgroundColor: theme.palette.grey[300],
+      backgroundColor: lightGrey,
     },
     textTransform: "none",
     "&:hover": {

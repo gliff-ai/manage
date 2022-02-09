@@ -16,7 +16,7 @@ import {
 import makeStyles from "@mui/styles/makeStyles";
 import { Add } from "@mui/icons-material";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
+import { theme, icons, lightGrey, middleGrey } from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { FormLabelControl } from "./FormLabelControl";
@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     padding: "10px",
     backgroundColor: theme.palette.primary.main,
   },
-  paperBody: { width: "25vw", margin: "10px 20px" },
+  paperBody: { width: "350px", margin: "10px 20px" },
   topography: {
     color: "#000000",
     display: "inline",
@@ -51,11 +51,15 @@ const useStyles = makeStyles({
   whiteButton: {
     textTransform: "none",
     backgroundColor: "transparent",
+    borderColor: middleGrey,
+    "&:hover": {
+      borderColor: middleGrey,
+    },
   },
   greenButton: {
     backgroundColor: theme.palette.primary.main,
     "&:disabled": {
-      backgroundColor: theme.palette.grey[300],
+      backgroundColor: lightGrey,
     },
     textTransform: "none",
     "&:hover": {
@@ -174,12 +178,12 @@ export function AddPluginDialog({
         </RadioGroup>
       </FormControl>
       <DialogActions className={classes.dialogActions}>
-        <Button variant="text" className={classes.whiteButton}>
+        <Button variant="outlined" className={classes.whiteButton}>
           {/* TODO: add onClick with link to docs */}
           Learn more
         </Button>
         <Button
-          variant="text"
+          variant="outlined"
           className={classes.greenButton}
           onClick={() => setDialogPage((page) => page + 1)}
         >
@@ -229,14 +233,14 @@ export function AddPluginDialog({
 
       <DialogActions className={classes.dialogActions}>
         <Button
-          variant="text"
+          variant="outlined"
           onClick={() => setDialogPage((page) => page - 1)}
           className={classes.whiteButton}
         >
           Back
         </Button>
         <Button
-          variant="text"
+          variant="outlined"
           className={classes.greenButton}
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={() => {
