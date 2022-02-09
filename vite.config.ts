@@ -16,9 +16,6 @@ export default defineConfig({
       },
     },
   },
-  optimizeDeps: {
-    exclude: ["@gliff-ai/style"]
-  },
   esbuild: {
     jsxInject: `import React from 'react'`,
   },
@@ -26,7 +23,7 @@ export default defineConfig({
   server: {
     port: parseInt(process.env.PORT) || 3000,
     hmr: {
-      port: process.env.PORT || process.env.CODESPACES ? 443 : 3000
-    }
-  }
+      port: process.env.PORT || process.env.CODESPACES ? 443 : 3000,
+    },
+  },
 });
