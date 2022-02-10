@@ -33,16 +33,23 @@ import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles({
   paperHeader: {
-    padding: "2px",
-    backgroundColor: `${theme.palette.primary.main} !important`,
+    backgroundColor: theme.palette.primary.main,
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
   },
   topography: {
     color: "#000000",
     fontSize: "21px",
     marginLeft: "20px",
+  },
+  tableText: {
+    fontSize: "16px",
+    paddingLeft: "20px",
+    margin: 0,
+  },
+  text: {
+    lineHeight: 0,
   },
   // eslint-disable-next-line mui-unused-classes/unused-classes
   "@global": {
@@ -223,7 +230,7 @@ export const ProjectsView = ({
 
     const assignees = users[uid].usernames;
     return (
-      <p>
+      <p className={classes.text}>
         {assignees.slice(0, 3).join(", ")}
         {assignees.length > 3 && <b> + {assignees.length - 3} others</b>}
       </p>
@@ -257,12 +264,18 @@ export const ProjectsView = ({
           </Box>
         ) : (
           <TableContainer>
-            <Table aria-label="simple table">
+            <Table>
               <TableHead>
-                <TableRow key="tab-header">
-                  <TableCell>Name</TableCell>
-                  {isOwnerOrMember() && <TableCell>Assignees</TableCell>}
-                  <TableCell>Annotation Progress</TableCell>
+                <TableRow>
+                  <TableCell className={classes.tableText}>Name</TableCell>
+                  {isOwnerOrMember() && (
+                    <TableCell className={classes.tableText}>
+                      Assignees
+                    </TableCell>
+                  )}
+                  <TableCell className={classes.tableText}>
+                    Annotation Progress
+                  </TableCell>
                   <TableCell />
                 </TableRow>
               </TableHead>
@@ -270,14 +283,16 @@ export const ProjectsView = ({
               <TableBody>
                 {projects.map(({ name, uid }) => (
                   <TableRow key={uid}>
-                    <TableCell>{name}</TableCell>
+                    <TableCell className={classes.tableText}>{name}</TableCell>
                     {isOwnerOrMember() && (
-                      <TableCell>{listAssignees(projectUsers, uid)}</TableCell>
+                      <TableCell className={classes.tableText}>
+                        {listAssignees(projectUsers, uid)}
+                      </TableCell>
                     )}
-                    <TableCell>
+                    <TableCell className={classes.tableText}>
                       {progress && <ProgressBar progress={progress[uid]} />}
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell className={classes.tableText} align="right">
                       {isOwnerOrMember() &&
                         projectUsers &&
                         projectUsers[uid] !== undefined && (

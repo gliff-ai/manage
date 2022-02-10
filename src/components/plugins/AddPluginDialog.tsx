@@ -288,7 +288,7 @@ export function AddPluginDialog({
   return (
     <>
       <GliffIconButton
-        tooltip={{ name: "Add Plugin" }}
+        tooltip={{ name: "Add New Plug-in" }}
         icon={icons.add}
         onClick={() => setOpen(true)}
         tooltipPlacement="top"

@@ -177,7 +177,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
         <TableCell className={classes.tableText}>
           {collectionUids.length}&nbsp;projects
         </TableCell>
-        <TableCell>
+        <TableCell align="right">
           <div className={classes.hiddenButtons}>
             <EditPluginDialog
               plugin={currPlugin}
