@@ -11,11 +11,19 @@ import {
   Box,
   Switch,
   TableHead,
+  ButtonGroup,
 } from "@mui/material";
 
 import makeStyles from "@mui/styles/makeStyles";
-
-import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
+import SVG from "react-inlinesvg";
+import {
+  LoadingSpinner,
+  theme,
+  WarningSnackbar,
+  IconButton,
+  lightGrey,
+  icons,
+} from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
@@ -29,15 +37,15 @@ import { IPlugin, Project } from "@/interfaces";
 const useStyles = () =>
   makeStyles(() => ({
     paperHeader: {
-      padding: "10px",
       backgroundColor: theme.palette.primary.main,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
     },
-    paperBody: {},
-    projectsTopography: {
+    topography: {
       color: "#000000",
-      display: "inline",
       fontSize: "21px",
-      marginRight: "125px",
+      marginLeft: "20px",
     },
     // eslint-disable-next-line mui-unused-classes/unused-classes
     "@global": {
@@ -49,10 +57,9 @@ const useStyles = () =>
       fontSize: "16px",
       paddingLeft: "20px",
     },
-    buttonsContainer: { position: "relative", float: "right", top: "-8px" },
     tableRow: {
       "&:hover": {
-        backgroundColor: theme.palette.grey[200],
+        backgroundColor: lightGrey,
       },
       "&:hover td div": {
         visibility: "visible",
@@ -62,6 +69,12 @@ const useStyles = () =>
       visibility: "hidden",
       float: "right",
       marginRight: "20px",
+    },
+    boxButtons: { display: "flex", alignItems: "center" },
+    buttonGroup: {
+      backgroundColor: "transparent",
+      border: "none",
+      marginLeft: "10px",
     },
   }));
 
@@ -139,12 +152,13 @@ export const PluginsView = ({ services }: Props): ReactElement => {
       <TableCell className={classes.tableText}>URL</TableCell>
       <TableCell className={classes.tableText}>Products</TableCell>
       <TableCell className={classes.tableText}>Enabled</TableCell>
+      <TableCell className={classes.tableText}>Added to</TableCell>
       <TableCell className={classes.tableText} />
     </TableRow>
   );
 
   const fillTableRow = (currPlugin: IPlugin) => {
-    const { name, url, type, products, enabled } = currPlugin;
+    const { name, url, type, products, enabled, collection_uids } = currPlugin;
     return (
       <TableRow key={`${name}-${url}`} className={classes.tableRow}>
         <TableCell className={classes.tableText}>{name}</TableCell>
@@ -158,6 +172,9 @@ export const PluginsView = ({ services }: Props): ReactElement => {
             checked={enabled}
             onChange={(e) => updateEnabled(currPlugin)}
           />
+        </TableCell>
+        <TableCell className={classes.tableText}>
+          {collection_uids.length}&nbsp;projects
         </TableCell>
         <TableCell>
           <div className={classes.hiddenButtons}>
@@ -190,20 +207,32 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           square
           className={classes.paperHeader}
         >
-          <Typography
-            className={classes.projectsTopography}
-            style={{ marginLeft: "14px" }}
-          >
-            Plugins
-          </Typography>
-          <div className={classes.buttonsContainer}>
-            <AddPluginDialog
-              services={services}
-              setError={setError}
-              projects={projects}
-              getPlugins={getPlugins}
-            />
-          </div>
+          <Typography className={classes.topography}>Plugins</Typography>
+          <Box className={classes.boxButtons}>
+            <SVG src={icons.betaStatus} width="auto" height="25px" />
+            <ButtonGroup
+              className={classes.buttonGroup}
+              orientation="horizontal"
+              size="small"
+              variant="text"
+            >
+              <IconButton
+                tooltip={{ name: "Docs" }}
+                icon={icons.documentHelp}
+                onClick={() => {
+                  // TODO: add link to docs
+                }}
+                tooltipPlacement="top"
+                size="small"
+              />
+              <AddPluginDialog
+                services={services}
+                setError={setError}
+                projects={projects}
+                getPlugins={getPlugins}
+              />
+            </ButtonGroup>
+          </Box>
         </Paper>
         {plugins ? (
           <TableContainer>

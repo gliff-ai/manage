@@ -121,7 +121,7 @@ export function EditPluginDialog({
   return (
     <>
       <IconButton onClick={() => setOpen(true)}>
-        <SVG src={icons.removeLabel} className={classes.settingsIcon} />
+        <SVG src={icons.cog} className={classes.settingsIcon} />
       </IconButton>
       <Dialog
         open={open}

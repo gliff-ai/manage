@@ -14,9 +14,14 @@ import {
   Divider,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { Add } from "@mui/icons-material";
 import SVG from "react-inlinesvg";
-import { theme, icons, lightGrey, middleGrey } from "@gliff-ai/style";
+import {
+  theme,
+  icons,
+  lightGrey,
+  middleGrey,
+  IconButton as GliffIconButton,
+} from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { FormLabelControl } from "./FormLabelControl";
@@ -283,9 +288,13 @@ export function AddPluginDialog({
 
   return (
     <>
-      <IconButton color="inherit" size="small" onClick={() => setOpen(true)}>
-        <Add />
-      </IconButton>
+      <GliffIconButton
+        tooltip={{ name: "Add Plugin" }}
+        icon={icons.add}
+        onClick={() => setOpen(true)}
+        tooltipPlacement="top"
+        size="small"
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Card>
           <Paper
