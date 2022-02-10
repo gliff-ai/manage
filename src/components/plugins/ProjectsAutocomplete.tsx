@@ -145,7 +145,7 @@ export const ProjectsAutocomplete = ({
           plugin.collection_uids.includes(uid)
         )}
         onChange={updateProjects}
-        renderTags={(option) => null}
+        renderTags={() => null}
         options={allProjects}
         getOptionLabel={(option) => option.name}
         renderOption={(props, option) => (

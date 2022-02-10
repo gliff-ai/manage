@@ -158,7 +158,14 @@ export const PluginsView = ({ services }: Props): ReactElement => {
   );
 
   const fillTableRow = (currPlugin: IPlugin) => {
-    const { name, url, type, products, enabled, collection_uids } = currPlugin;
+    const {
+      name,
+      url,
+      type,
+      products,
+      enabled,
+      collection_uids: collectionUids,
+    } = currPlugin;
     return (
       <TableRow key={`${name}-${url}`} className={classes.tableRow}>
         <TableCell className={classes.tableText}>{name}</TableCell>
@@ -174,7 +181,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           />
         </TableCell>
         <TableCell className={classes.tableText}>
-          {collection_uids.length}&nbsp;projects
+          {collectionUids.length}&nbsp;projects
         </TableCell>
         <TableCell>
           <div className={classes.hiddenButtons}>

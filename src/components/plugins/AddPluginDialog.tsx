@@ -235,7 +235,6 @@ export function AddPluginDialog({
         services={services}
         setError={setError}
       />
-
       <DialogActions className={classes.dialogActions}>
         <Button
           variant="outlined"
