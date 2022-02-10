@@ -11,11 +11,6 @@ const useStyles = makeStyles({
   radioName: { fontSize: "16px", lineHeight: 0 },
   radioDescription: { fontSize: "14px", color: darkGrey },
   marginTop: { marginTop: "15px" },
-  checkedIcon: {
-    fill: "white",
-    borderRadius: "3px",
-    backgroundColor: theme.palette.primary.main,
-  },
 });
 
 interface Props {
@@ -46,8 +41,9 @@ export const FormLabelControl = ({
           }
           checkedIcon={
             <SVG
-              className={`${classes.checkboxIcon} ${classes.checkedIcon}`}
-              src={icons.multipleImageSelection}
+              className={classes.checkboxIcon}
+              src={icons.selectedTickbox}
+              fill={theme.palette.primary.main}
             />
           }
           className={classes.radio}
