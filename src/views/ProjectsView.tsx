@@ -33,7 +33,7 @@ import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles({
   paperHeader: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
