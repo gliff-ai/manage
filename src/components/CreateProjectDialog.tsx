@@ -11,14 +11,11 @@ import {
   TextField,
   DialogActions,
   Button,
+  Autocomplete,
 } from "@mui/material";
-import SVG from "react-inlinesvg";
-
 import makeStyles from "@mui/styles/makeStyles";
-
-import Autocomplete from "@mui/material/Autocomplete";
-import { Add } from "@mui/icons-material";
-import { theme, icons } from "@gliff-ai/style";
+import SVG from "react-inlinesvg";
+import { theme, icons, IconButton as GliffIconButton } from "@gliff-ai/style";
 import { Profile, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
@@ -78,14 +75,16 @@ export function CreateProjectDialog({
   const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]);
 
   const classes = useStyles();
+
   return (
     <>
-      <IconButton
-        className={classes.addButton}
+      <GliffIconButton
+        tooltip={{ name: "Add New Project" }}
+        icon={icons.add}
         onClick={() => setDialogOpen(true)}
-      >
-        <Add />
-      </IconButton>
+        tooltipPlacement="top"
+        size="small"
+      />
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <Card>
           <Paper
