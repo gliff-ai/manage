@@ -23,7 +23,7 @@ import { ServiceFunctions } from "@/api";
 const useStyles = makeStyles({
   paperHeader: {
     padding: "10px 20px",
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.info.light,
     display: "flex",
     flexDirection: "row",
   },
@@ -58,16 +58,16 @@ const useStyles = makeStyles({
     },
   },
   purpleButton: {
-    backgroundColor: theme.palette.secondary.main,
-    borderColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.info.light,
+    borderColor: theme.palette.info.light,
     textTransform: "none",
     color: "#FFFFFF",
     "&:hover": {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.info.light,
     },
   },
   purpleText: {
-    color: theme.palette.secondary.main,
+    color: theme.palette.info.light,
     fontWeight: 500,
     display: "inline",
   },
