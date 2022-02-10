@@ -47,12 +47,6 @@ const useStyles = () =>
       fontSize: "21px",
       marginLeft: "20px",
     },
-    // eslint-disable-next-line mui-unused-classes/unused-classes
-    "@global": {
-      '.MuiAutocomplete-option[data-focus="true"]': {
-        background: "#01dbff",
-      },
-    },
     tableText: {
       fontSize: "16px",
       paddingLeft: "20px",
