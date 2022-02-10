@@ -69,12 +69,14 @@ export function CreateProjectDialog({
   invitees,
   createProject,
   inviteToProject,
-}: Props): ReactElement {
+}: Props): ReactElement | null {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [newProjectName, setNewProjectName] = useState<string>("");
   const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]);
 
   const classes = useStyles();
+
+  if (!invitees || !projects) return null;
 
   return (
     <>

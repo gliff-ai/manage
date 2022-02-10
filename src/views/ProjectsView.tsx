@@ -248,7 +248,7 @@ export const ProjectsView = ({
         className={classes.paperHeader}
       >
         <Typography className={classes.topography}>Projects</Typography>
-        {isOwnerOrMember() && projects !== null && (
+        {isOwnerOrMember() && (
           <CreateProjectDialog
             projects={projects}
             invitees={invitees}
