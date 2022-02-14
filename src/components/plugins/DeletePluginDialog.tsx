@@ -26,8 +26,9 @@ const useStyles = makeStyles({
     backgroundColor: theme.palette.info.light,
     display: "flex",
     flexDirection: "row",
+    alignItems: "center",
   },
-  paperBody: { width: "25vw", margin: "20px", fontSize: "16px" },
+  paperBody: { width: "450px", margin: "20px", fontSize: "16px" },
   topography: {
     color: "#FFFFFF",
     display: "inline",
@@ -42,7 +43,7 @@ const useStyles = makeStyles({
   closeIcon: { width: "15px", height: "auto", fill: "#FFFFFF" },
   warningIcon: {
     width: "25px",
-    height: "auto",
+    height: "25px",
     fill: "#FFFFFF",
   },
   dialogActions: {
