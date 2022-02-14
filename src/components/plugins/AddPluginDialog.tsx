@@ -32,7 +32,7 @@ const useStyles = makeStyles({
     padding: "10px",
     backgroundColor: theme.palette.primary.main,
   },
-  paperBody: { width: "25vw", margin: "10px 20px" },
+  paperBody: { margin: "10px 20px" },
   addButton: {
     color: "black",
   },
