@@ -11,15 +11,11 @@ import {
   TextField,
   DialogActions,
   Button,
-  ListItem,
+  Autocomplete,
 } from "@mui/material";
-import SVG from "react-inlinesvg";
-
 import makeStyles from "@mui/styles/makeStyles";
-
-import Autocomplete from "@mui/material/Autocomplete";
-import { Add } from "@mui/icons-material";
-import { theme, icons } from "@gliff-ai/style";
+import SVG from "react-inlinesvg";
+import { theme, icons, IconButton as GliffIconButton } from "@gliff-ai/style";
 import { Profile, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
@@ -64,8 +60,8 @@ const useStyles = makeStyles({
 interface Props {
   projects: Project[] | null;
   invitees: Profile[] | null;
-  createProject: (newName: string) => Promise<string>;
-  inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
+  createProject: (name: string) => Promise<string>;
+  inviteToProject: (uid: string, email: string) => Promise<void>;
 }
 
 export function CreateProjectDialog({
@@ -73,20 +69,24 @@ export function CreateProjectDialog({
   invitees,
   createProject,
   inviteToProject,
-}: Props): ReactElement {
+}: Props): ReactElement | null {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [newProjectName, setNewProjectName] = useState<string>("");
   const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]);
 
   const classes = useStyles();
+
+  if (!invitees || !projects) return null;
+
   return (
     <>
-      <IconButton
-        className={classes.addButton}
+      <GliffIconButton
+        tooltip={{ name: "Add New Project" }}
+        icon={icons.add}
         onClick={() => setDialogOpen(true)}
-      >
-        <Add />
-      </IconButton>
+        tooltipPlacement="top"
+        size="small"
+      />
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <Card>
           <Paper

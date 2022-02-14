@@ -10,45 +10,66 @@ import {
   TableCell,
   Box,
   Switch,
+  TableHead,
+  ButtonGroup,
 } from "@mui/material";
 
 import makeStyles from "@mui/styles/makeStyles";
-
-import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
+import SVG from "react-inlinesvg";
+import {
+  LoadingSpinner,
+  theme,
+  WarningSnackbar,
+  IconButton,
+  lightGrey,
+  icons,
+} from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
-import { AddPluginDialog } from "@/components";
-import { IPlugin, PluginType, Project, JsPlugin } from "@/interfaces";
+import {
+  AddPluginDialog,
+  DeletePluginDialog,
+  EditPluginDialog,
+} from "@/components";
+import { IPlugin, Project } from "@/interfaces";
 
 const useStyles = () =>
   makeStyles(() => ({
     paperHeader: {
-      padding: "10px",
       backgroundColor: theme.palette.primary.main,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
     },
-    projectsTopography: {
+    topography: {
       color: "#000000",
-      display: "inline",
       fontSize: "21px",
-      marginRight: "125px",
+      marginLeft: "20px",
     },
-    // eslint-disable-next-line mui-unused-classes/unused-classes
-    "@global": {
-      '.MuiAutocomplete-option[data-focus="true"]': {
-        background: "#01dbff",
+    tableText: {
+      fontSize: "16px",
+      paddingLeft: "20px",
+    },
+    tableRow: {
+      "&:hover": {
+        backgroundColor: lightGrey,
+      },
+      "&:hover td div": {
+        visibility: "visible",
       },
     },
-    tableHeader: {
-      paddingLeft: "20px",
-      fontSize: "16px",
-      fontWeight: 700,
+    hiddenButtons: {
+      visibility: "hidden",
+      float: "right",
+      marginRight: "20px",
     },
-    tableCell: {
-      paddingLeft: "20px",
-      fontSize: "16px",
+    boxButtons: { display: "flex", alignItems: "center" },
+    buttonGroup: {
+      backgroundColor: "transparent",
+      border: "none",
+      marginLeft: "10px",
     },
-    buttonsContainer: { position: "relative", float: "right", top: "-8px" },
   }));
 
 interface Props {
@@ -59,7 +80,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [plugins, setPlugins] = useState<IPlugin[] | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const isMounted = useRef(false);
 
@@ -82,73 +103,99 @@ export const PluginsView = ({ services }: Props): ReactElement => {
       .then((p: Project[]) =>
         setStateIfMounted(p, setProjects, isMounted.current)
       );
-  }, [isMounted, services]);
+  }, [isMounted, services, auth]);
 
-  const fetchPlugins = useCallback(async () => {
-    const trustedService = (await services.getTrustedServices(
-      null,
-      auth.user.authToken
-    )) as IPlugin[];
+  const getPlugins = useCallback(async () => {
+    if (!auth?.user?.email) return;
+    const newPlugins = await services.getPlugins();
 
-    const jsplugins = (await services.getJsPlugins(
-      null,
-      auth.user.authToken
-    )) as JsPlugin[];
+    setStateIfMounted(newPlugins, setPlugins, isMounted.current);
+  }, [auth, services]);
 
-    const allPlugins = trustedService.concat(
-      jsplugins.map((p) => ({ ...p, type: PluginType.Javascript } as IPlugin))
+  const updatePlugins = (prevPlugin: IPlugin, plugin: IPlugin) => {
+    void services.updatePlugin({ ...plugin }).then((result) => {
+      if (result) {
+        setPlugins((prevPlugins) =>
+          prevPlugins.map((p) => (prevPlugin === p ? plugin : p))
+        );
+      }
+    });
+  };
+
+  const updateEnabled = (plugin: IPlugin) => {
+    const newPlugin: IPlugin = plugins.find(
+      (p) => p.name === plugin.name && p.url === plugin.url
     );
+    newPlugin.enabled = !newPlugin.enabled;
 
-    setStateIfMounted(allPlugins, setPlugins, isMounted.current);
-  }, []);
+    if (newPlugin) {
+      updatePlugins(plugin, newPlugin);
+    }
+  };
 
   useEffect(() => {
-    if (auth?.user?.email) {
-      void fetchPlugins();
+    if (!plugins) {
+      void getPlugins();
     }
-  }, [auth, services, isMounted]);
+  }, [auth, isMounted, plugins, getPlugins]);
 
   const tableHeader = (
     <TableRow>
-      <TableCell className={classes.tableHeader}>Name</TableCell>
-      <TableCell className={classes.tableHeader}>Type</TableCell>
-      <TableCell className={classes.tableHeader}>URL</TableCell>
-      <TableCell className={classes.tableHeader}>Products</TableCell>
-      <TableCell className={classes.tableHeader}>Enabled</TableCell>
-      <TableCell className={classes.tableHeader} align="right" />
+      <TableCell className={classes.tableText}>Name</TableCell>
+      <TableCell className={classes.tableText}>Type</TableCell>
+      <TableCell className={classes.tableText}>URL</TableCell>
+      <TableCell className={classes.tableText}>Products</TableCell>
+      <TableCell className={classes.tableText}>Enabled</TableCell>
+      <TableCell className={classes.tableText}>Added to</TableCell>
+      <TableCell className={classes.tableText} />
     </TableRow>
   );
 
-  const fillTableRow = ({ name, url, type, enabled, products }: IPlugin) => (
-    <TableRow key={`${name}-${url}`}>
-      <TableCell className={classes.tableCell}>{name}</TableCell>
-      <TableCell className={classes.tableCell}>{type}</TableCell>
-      <TableCell className={classes.tableCell}>{url}</TableCell>
-      <TableCell className={classes.tableCell}>{products}</TableCell>
-      <TableCell className={classes.tableCell}>
-        <Switch
-          color="primary"
-          checked={enabled}
-          onChange={
-            () =>
-              setPlugins((prevPlugins) =>
-                prevPlugins.map((p) =>
-                  p.name === name && p.url === url
-                    ? {
-                        ...p,
-                        enabled: !enabled,
-                      }
-                    : p
-                )
-              )
-            // TODO: save changes
-          }
-          size="small"
-        />
-      </TableCell>
-      <TableCell className={classes.tableCell} align="right" />
-    </TableRow>
-  );
+  const fillTableRow = (currPlugin: IPlugin) => {
+    const {
+      name,
+      url,
+      type,
+      products,
+      enabled,
+      collection_uids: collectionUids,
+    } = currPlugin;
+    return (
+      <TableRow key={`${name}-${url}`} className={classes.tableRow}>
+        <TableCell className={classes.tableText}>{name}</TableCell>
+        <TableCell className={classes.tableText}>{type}</TableCell>
+        <TableCell className={classes.tableText}>{url}</TableCell>
+        <TableCell className={classes.tableText}>{products}</TableCell>
+        <TableCell className={classes.tableText}>
+          <Switch
+            size="small"
+            color="primary"
+            checked={enabled}
+            onChange={(e) => updateEnabled(currPlugin)}
+          />
+        </TableCell>
+        <TableCell className={classes.tableText}>
+          {collectionUids.length}&nbsp;projects
+        </TableCell>
+        <TableCell align="right">
+          <div className={classes.hiddenButtons}>
+            <EditPluginDialog
+              plugin={currPlugin}
+              allProjects={projects}
+              updatePlugins={updatePlugins}
+              services={services}
+              setError={setError}
+            />
+            <DeletePluginDialog
+              plugin={currPlugin}
+              setPlugins={setPlugins}
+              services={services}
+            />
+          </div>
+        </TableCell>
+      </TableRow>
+    );
+  };
 
   if (!auth) return null;
 
@@ -161,41 +208,49 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           square
           className={classes.paperHeader}
         >
-          <Typography
-            className={classes.projectsTopography}
-            style={{ marginLeft: "14px" }}
-          >
-            Plugins
-          </Typography>
-          <div className={classes.buttonsContainer}>
-            <AddPluginDialog
-              services={services}
-              setError={setError}
-              projects={projects}
-            />
-          </div>
+          <Typography className={classes.topography}>Plugins</Typography>
+          <Box className={classes.boxButtons}>
+            <SVG src={icons.betaStatus} width="auto" height="25px" />
+            <ButtonGroup
+              className={classes.buttonGroup}
+              orientation="horizontal"
+              size="small"
+              variant="text"
+            >
+              <IconButton
+                tooltip={{ name: "Docs" }}
+                icon={icons.documentHelp}
+                onClick={() => {
+                  // TODO: add link to docs
+                }}
+                tooltipPlacement="top"
+                size="small"
+              />
+              <AddPluginDialog
+                services={services}
+                setError={setError}
+                projects={projects}
+                getPlugins={getPlugins}
+              />
+            </ButtonGroup>
+          </Box>
         </Paper>
         {plugins ? (
-          <Paper elevation={0} square>
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableBody>
-                  {tableHeader}
-                  {plugins.map(fillTableRow)}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+          <TableContainer>
+            <Table>
+              <TableHead>{tableHeader}</TableHead>
+              <TableBody>{plugins.map(fillTableRow)}</TableBody>
+            </Table>
+          </TableContainer>
         ) : (
           <Box display="flex" height="100%">
             <LoadingSpinner />
           </Box>
         )}
       </Card>
-
       <WarningSnackbar
-        open={Boolean(error)}
-        onClose={() => setError("")}
+        open={error !== null}
+        onClose={() => setError(null)}
         messageText={error}
       />
     </>
