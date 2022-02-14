@@ -87,7 +87,7 @@ export const config = {
           url: "https://ts.gliff.app",
           products: Product.ALL,
           enabled: false,
-          collection_uids: [],
+          collection_uids: ["1"],
         } as IPlugin,
         {
           type: PluginType.Javascript,
