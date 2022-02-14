@@ -1,4 +1,10 @@
-import { useState, ChangeEvent, ReactElement, useEffect } from "react";
+import {
+  useState,
+  ChangeEvent,
+  ReactElement,
+  useEffect,
+  useCallback,
+} from "react";
 import {
   Paper,
   Button,
@@ -94,8 +100,8 @@ interface Props {
     projectUid: string;
     projectName: string;
   }) => Promise<unknown>;
-  inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
-  removeFromProject: (uid: string, username: string) => Promise<void>;
+  inviteToProject: (uid: string, email: string) => Promise<void>;
+  removeFromProject: (uid: string, email: string) => Promise<void>;
   triggerRefetch: (uid: string) => void;
 }
 
@@ -116,15 +122,18 @@ export function EditProjectDialog({
     otherProps.projectName
   );
 
-  const alreadyInvited = (user: Profile): boolean =>
-    projectUsers.usernames.includes(user.email) ||
-    projectUsers.pendingUsernames.includes(user.email);
+  const alreadyInvited = useCallback(
+    (user: Profile): boolean =>
+      projectUsers.usernames.includes(user.email) ||
+      projectUsers.pendingUsernames.includes(user.email),
+    [projectUsers]
+  );
 
   useEffect(() => {
     if (!projectUsers) return;
 
     setSelectedInvitees(invitees.filter(alreadyInvited));
-  }, [projectUsers]);
+  }, [projectUsers, invitees, alreadyInvited]);
 
   if (!invitees || !projectUsers || !selectedInvitees) return null;
 
