@@ -11,8 +11,7 @@ import {
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
 import { icons, lightGrey } from "@gliff-ai/style";
-import { IPlugin, PluginType, Project } from "@/interfaces";
-import { ServiceFunctions } from "@/api";
+import { IPlugin, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
   marginTop: { marginTop: "15px" },
@@ -34,20 +33,16 @@ interface Props {
   allProjects: Project[];
   plugin: IPlugin;
   setPlugin: Dispatch<SetStateAction<IPlugin>>;
-  services: ServiceFunctions;
-  setError: (error: string) => void;
 }
 
 export const ProjectsAutocomplete = ({
   allProjects,
   plugin,
   setPlugin,
-  services,
-  setError,
 }: Props): ReactElement => {
   const classes = useStyles();
 
-  const removeFromPlugin = (projectUid: string) =>
+  const removePluginFromProject = (projectUid: string) =>
     setPlugin((prevPlugin) => ({
       ...prevPlugin,
       collection_uids: prevPlugin.collection_uids.filter(
@@ -55,82 +50,14 @@ export const ProjectsAutocomplete = ({
       ),
     }));
 
-  const addToPlugin = (projectUid: string) =>
-    setPlugin((p) => ({
-      ...p,
-      collection_uids: [...p.collection_uids, projectUid],
-    }));
-
-  const updateProjects = async (
+  const updatePluginProjects = (
     event: ChangeEvent<HTMLSelectElement>,
     value: Project[]
-  ) => {
-    const newUids = value.map(({ uid }) => uid);
-
-    if (plugin.type !== PluginType.Javascript) {
-      await Promise.all(
-        allProjects.map(async ({ uid, name }) => {
-          if (!plugin.collection_uids.includes(uid) && newUids.includes(uid)) {
-            try {
-              await services.inviteToProject({
-                projectUid: uid,
-                email: plugin.username,
-              });
-              addToPlugin(uid);
-            } catch (e) {
-              console.log(e);
-              setError(
-                `Cannot add ${plugin.name} to ${name}: the invitation is pending.`
-              );
-            }
-          }
-
-          if (plugin?.collection_uids.includes(uid) && !newUids.includes(uid)) {
-            try {
-              await services.removeFromProject({
-                projectUid: uid,
-                email: plugin.username,
-              });
-              removeFromPlugin(uid);
-            } catch (e) {
-              setError(
-                `Cannot remove ${plugin.name} from ${name}: the invitation is pending.`
-              );
-              console.log(e);
-            }
-          }
-        })
-      );
-    } else {
-      setPlugin((prevPlugin) => ({
-        ...prevPlugin,
-        collection_uids: newUids,
-      }));
-    }
-  };
-
-  const removeFromProject = async (project: Project) => {
-    let canRemove = true;
-    if (
-      plugin?.type !== PluginType.Javascript &&
-      plugin?.username !== undefined
-    ) {
-      try {
-        await services.removeFromProject({
-          projectUid: project.uid,
-          email: plugin.username,
-        });
-      } catch (e) {
-        canRemove = false;
-        setError(
-          `Cannot remove ${plugin.name} from ${project.name}: the invitation is pending.`
-        );
-        console.log(e);
-      }
-    }
-    if (!canRemove) return;
-    removeFromPlugin(project.uid);
-  };
+  ) =>
+    setPlugin((p) => ({
+      ...p,
+      collection_uids: value.map(({ uid }) => uid),
+    }));
 
   return (
     <>
@@ -144,7 +71,7 @@ export const ProjectsAutocomplete = ({
         value={allProjects.filter(({ uid }) =>
           plugin.collection_uids.includes(uid)
         )}
-        onChange={updateProjects}
+        onChange={updatePluginProjects}
         renderTags={() => null}
         options={allProjects}
         getOptionLabel={(option) => option.name}
@@ -189,7 +116,7 @@ export const ProjectsAutocomplete = ({
                 <Avatar
                   variant="circular"
                   style={{ cursor: "pointer" }}
-                  onClick={() => removeFromProject(project)}
+                  onClick={() => removePluginFromProject(project.uid)}
                 >
                   <SVG
                     fill="inherit"

@@ -85,7 +85,7 @@ enum DialogPage {
 }
 
 interface Props {
-  projects: Project[];
+  projects: Project[] | null;
   services: ServiceFunctions;
   setError: (error: string) => void;
   getPlugins: () => Promise<void>;
@@ -131,21 +131,43 @@ export function AddPluginDialog({
     }, 500);
   }, [open, setError]);
 
+  if (!projects) return null;
+
+  const addPluginToProjects = async (plugin: IPlugin, email: string) => {
+    await Promise.allSettled(
+      plugin.collection_uids.map(async (projectUid) => {
+        try {
+          await services.inviteToProject({
+            projectUid,
+            email,
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      })
+    );
+  };
+
   const createPlugin = async (): Promise<boolean> => {
     try {
-      const result = await services.createPlugin({ ...newPlugin });
+      const result = (await services.createPlugin({ ...newPlugin })) as {
+        key: string;
+        email: string;
+      } | null;
 
       if (newPlugin.type === PluginType.Javascript) {
         setOpen(false);
         return true;
       }
 
-      if (!result) {
+      if (!result?.key) {
         setError("Couldn't create plugin");
         return false;
       }
 
-      setKey(result as string);
+      setKey(result.key);
+      void addPluginToProjects(newPlugin, result.email);
+
       setDialogPage((page) => page + 1);
       return true;
     } catch (e) {
@@ -232,8 +254,6 @@ export function AddPluginDialog({
         allProjects={projects}
         plugin={newPlugin}
         setPlugin={setNewPlugin}
-        services={services}
-        setError={setError}
       />
       <DialogActions className={classes.dialogActions}>
         <Button

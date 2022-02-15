@@ -114,7 +114,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
 
   const updatePlugins = (prevPlugin: IPlugin, plugin: IPlugin) => {
     void services.updatePlugin({ ...plugin }).then((result) => {
-      if (result) {
+      if (result && isMounted.current) {
         setPlugins((prevPlugins) =>
           prevPlugins.map((p) => (prevPlugin === p ? plugin : p))
         );
