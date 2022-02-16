@@ -77,7 +77,11 @@ export const config = {
           pendingUsernames: ["user3@gliff.app"],
         },
       }),
-    createPlugin: (data): Promise<string> => Promise.resolve("key key key"),
+    createPlugin: (data): Promise<{ key: string; email: string }> =>
+      Promise.resolve({
+        key: "key key key",
+        email: "1234@trustedservice.gliff.app",
+      }),
     getPlugins: (data): Promise<IPlugin[]> =>
       Promise.resolve([
         {

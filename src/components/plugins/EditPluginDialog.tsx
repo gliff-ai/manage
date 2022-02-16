@@ -13,7 +13,7 @@ import {
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
 import { theme, icons, lightGrey } from "@gliff-ai/style";
-import { IPlugin, Project } from "@/interfaces";
+import { IPlugin, PluginType, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ServiceFunctions } from "../../api";
@@ -55,7 +55,7 @@ const useStyles = makeStyles({
 
 interface Props {
   plugin: IPlugin;
-  allProjects: Project[];
+  allProjects: Project[] | null;
   updatePlugins: (prevPlugin: IPlugin, plugin: IPlugin) => void;
   services: ServiceFunctions;
   setError: (error: string) => void;
@@ -79,6 +79,56 @@ export function EditPluginDialog({
       setNewPlugin(plugin);
     }
   }, [open, plugin]);
+
+  if (!allProjects) return null;
+
+  const updatePluginProjects = async (): Promise<string[]> => {
+    const finalColUids = [...newPlugin.collection_uids];
+
+    if (newPlugin.type !== PluginType.Javascript) {
+      // invite or remove plugin user to join the selected projects
+      await Promise.all(
+        allProjects.map(async ({ uid, name }) => {
+          if (
+            !plugin.collection_uids.includes(uid) &&
+            newPlugin.collection_uids.includes(uid)
+          ) {
+            try {
+              await services.inviteToProject({
+                projectUid: uid,
+                email: newPlugin.username,
+              });
+            } catch (e) {
+              console.log(e);
+              setError(
+                `Cannot add ${plugin.name} to ${name}: the invitation is pending.`
+              );
+              finalColUids.splice(finalColUids.indexOf(uid), 1);
+            }
+          }
+
+          if (
+            plugin.collection_uids.includes(uid) &&
+            !newPlugin.collection_uids.includes(uid)
+          ) {
+            try {
+              await services.removeFromProject({
+                projectUid: uid,
+                email: newPlugin.username,
+              });
+            } catch (e) {
+              console.log(e);
+              setError(
+                `Cannot remove ${plugin.name} from ${name}: the invitation is pending.`
+              );
+              finalColUids.push(uid);
+            }
+          }
+        })
+      );
+    }
+    return finalColUids;
+  };
 
   const editDialogSection = (
     <>
@@ -112,8 +162,6 @@ export function EditPluginDialog({
         allProjects={allProjects}
         plugin={newPlugin}
         setPlugin={setNewPlugin}
-        services={services}
-        setError={setError}
       />
     </>
   );
@@ -151,7 +199,14 @@ export function EditPluginDialog({
                 variant="outlined"
                 className={classes.greenButton}
                 disabled={JSON.stringify(newPlugin) === JSON.stringify(plugin)}
-                onClick={() => updatePlugins(plugin, newPlugin)}
+                onClick={async () => {
+                  const finalColUids = await updatePluginProjects();
+
+                  updatePlugins(plugin, {
+                    ...newPlugin,
+                    collection_uids: finalColUids,
+                  });
+                }}
               >
                 Confirm
               </Button>
