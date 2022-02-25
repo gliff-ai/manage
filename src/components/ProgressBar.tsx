@@ -17,9 +17,6 @@ const useStyle = makeStyles({
     borderRadius: 3,
     backgroundColor: `${theme.palette.primary.light} !important`,
   },
-  text: {
-    lineHeight: 0,
-  },
 });
 
 interface Props {
@@ -45,6 +42,6 @@ export function ProgressBar({ progress }: Props): ReactElement | null {
       </Box>
     </Box>
   ) : (
-    <p className={classes.text}>No assigned images.</p>
+    <span>No assigned images.</span>
   );
 }
