@@ -48,9 +48,6 @@ const useStyles = makeStyles({
     paddingLeft: "20px",
     margin: 0,
   },
-  text: {
-    lineHeight: 0,
-  },
   // eslint-disable-next-line mui-unused-classes/unused-classes
   "@global": {
     '.MuiAutocomplete-option[data-focus="true"]': {
@@ -230,10 +227,10 @@ export const ProjectsView = ({
 
     const assignees = users[uid].usernames;
     return (
-      <p className={classes.text}>
+      <span>
         {assignees.slice(0, 3).join(", ")}
         {assignees.length > 3 && <b> + {assignees.length - 3} others</b>}
-      </p>
+      </span>
     );
   };
 
