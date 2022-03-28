@@ -55,8 +55,8 @@ const useStyles = makeStyles({
     },
   },
   buttonGroup: {
-    backgroundColor: "transparent",
-    border: "none",
+    backgroundColor: "transparent !important",
+    border: "none !important",
   },
 });
 
