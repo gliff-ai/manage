@@ -188,19 +188,22 @@ export function AddPluginDialog({
           <FormLabelControl
             value={PluginType.Javascript}
             name="Javascript Plug-in"
-            description="These plugins are client-side and run in each user's own browser with data decrypted locally."
+            description="These plugins are client-side and run in the logged in users browser. The data is decrypted locally."
           />
           <FormLabelControl
             value={PluginType.Python}
             name="Python Plug-in"
-            description={`These plugins are server-side and run by your team on your own remote compute capacity.
-            Security issue responsabilities become the server's team.`}
+            description={`These plugins are server-side, hosted and run by your team. 
+            
+            The data is decrypted on your server and the security of the decrypted data is your responsibility.
+            `}
           />
           <FormLabelControl
             value={PluginType.AI}
             name="AI Plug-in"
-            description={`These plugins are server-side and run by your team on your own remote compute capacity.
-            Security issue responsabilities become the server's team.`}
+            description={`These plugins are server-side, hosted and run by your team. 
+            
+            The data is decrypted on your server and the security of the decrypted data is your responsibility.`}
           />
         </RadioGroup>
       </FormControl>

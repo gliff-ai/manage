@@ -31,7 +31,6 @@
     "@gliff-ai/jest-browserstack-automate": "^5.0.0",
     "@gliff-ai/style": "^8.2.0",
     "@mui/icons-material": "^5.2.5",
-    "@mui/lab": "^5.0.0-alpha.64",
     "@mui/material": "^5.2.8",
     "@mui/styles": "^5.2.3",
     "@testing-library/react": "^12.1.2",
