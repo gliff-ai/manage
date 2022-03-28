@@ -22,7 +22,7 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
+import { IconButton as GliffIconButton, theme, icons } from "@gliff-ai/style";
 import { Profile, ProjectUsers } from "@/interfaces";
 
 const useStyles = makeStyles({
@@ -267,13 +267,12 @@ export function EditProjectDialog({
 
   return (
     <>
-      <IconButton
+      <GliffIconButton
         data-testid={`edit-${projectUid}`}
         onClick={() => setOpen(!open)}
-        size="small"
-      >
-        <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />
-      </IconButton>
+        icon={icons.edit}
+        tooltip={{ name: "Edit" }}
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Card className={classes.card}>
           <Paper

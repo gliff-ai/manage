@@ -10,9 +10,10 @@ import {
   TableRow,
   TableCell,
   TableHead,
+  ButtonGroup,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { theme, LoadingSpinner } from "@gliff-ai/style";
+import { theme, IconButton, LoadingSpinner, icons } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -25,7 +26,6 @@ import {
 } from "@/interfaces";
 import {
   EditProjectDialog,
-  LaunchIcon,
   CreateProjectDialog,
   ProgressBar,
 } from "@/components";
@@ -53,6 +53,10 @@ const useStyles = makeStyles({
     '.MuiAutocomplete-option[data-focus="true"]': {
       background: "#01dbff",
     },
+  },
+  buttonGroup: {
+    backgroundColor: "transparent",
+    border: "none",
   },
 });
 
@@ -290,33 +294,43 @@ export const ProjectsView = ({
                       {progress && <ProgressBar progress={progress[uid]} />}
                     </TableCell>
                     <TableCell className={classes.tableText} align="right">
-                      {isOwnerOrMember() &&
-                        projectUsers &&
-                        projectUsers[uid] !== undefined && (
-                          <EditProjectDialog
-                            projectUid={uid}
-                            projectName={name}
-                            projectUsers={projectUsers[uid]}
-                            invitees={invitees}
-                            updateProjectName={services.updateProjectName}
-                            inviteToProject={inviteToProject}
-                            removeFromProject={removeFromProject}
-                            triggerRefetch={triggerRefetch}
-                          />
-                        )}
-                      <LaunchIcon
-                        launchCallback={() => launchCurateCallback(uid)}
-                        tooltip={`Open ${name} in CURATE`}
-                      />
-                      {isOwnerOrMember() &&
-                        auth.user.tierID > 1 &&
-                        launchAuditCallback !== null && (
-                          <LaunchIcon
-                            data-testid={`audit-${uid}`}
-                            launchCallback={() => launchAuditCallback(uid)}
-                            tooltip={`Open ${name} in AUDIT`}
-                          />
-                        )}
+                      <ButtonGroup
+                        className={classes.buttonGroup}
+                        orientation="horizontal"
+                        variant="outlined"
+                      >
+                        {isOwnerOrMember() &&
+                          projectUsers &&
+                          projectUsers[uid] !== undefined && (
+                            <EditProjectDialog
+                              projectUid={uid}
+                              projectName={name}
+                              projectUsers={projectUsers[uid]}
+                              invitees={invitees}
+                              updateProjectName={services.updateProjectName}
+                              inviteToProject={inviteToProject}
+                              removeFromProject={removeFromProject}
+                              triggerRefetch={triggerRefetch}
+                            />
+                          )}
+                        <IconButton
+                          icon={icons.navigationCURATE}
+                          tooltip={{ name: "Open in CURATE" }}
+                          onClick={() => launchCurateCallback(uid)}
+                          tooltipPlacement="top"
+                        />
+                        {isOwnerOrMember() &&
+                          auth.user.tierID > 1 &&
+                          launchAuditCallback !== null && (
+                            <IconButton
+                              data-testid={`audit-${uid}`}
+                              tooltip={{ name: "Open in AUDIT" }}
+                              icon={icons.navigationAUDIT}
+                              onClick={() => launchAuditCallback(uid)}
+                              tooltipPlacement="top"
+                            />
+                          )}
+                      </ButtonGroup>
                     </TableCell>
                   </TableRow>
                 ))}
