@@ -22,7 +22,12 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { IconButton as GliffIconButton, theme, icons } from "@gliff-ai/style";
+import {
+  IconButton as GliffIconButton,
+  theme,
+  icons,
+  lightGrey,
+} from "@gliff-ai/style";
 import { Profile, ProjectUsers } from "@/interfaces";
 
 const useStyles = makeStyles({
@@ -30,7 +35,7 @@ const useStyles = makeStyles({
   card: {
     display: "flex",
     flexDirection: "column",
-    width: "300px",
+    width: "350px",
   },
   confirmButton: {
     textTransform: "none",
@@ -86,8 +91,9 @@ const useStyles = makeStyles({
   closeIcon: { width: "15px" },
   option: {
     backgroundColor: `#FFFFFF !important`,
-    fontSize: "16px",
-    "&:hover": { backgroundColor: `${theme.palette.grey[100]} !important` },
+    fontSize: "14px",
+    "&:hover": { backgroundColor: `${lightGrey} !important` },
+    padding: "5px",
   },
 });
 
@@ -210,25 +216,36 @@ export function EditProjectDialog({
         value={selectedInvitees}
         onChange={handleSelectChange}
         getOptionLabel={(option) => option.name}
-        classes={{ option: classes.option }}
         renderOption={(props, option) => (
-          <li {...props}>
-            <Checkbox
-              icon={
-                <SVG
-                  className={classes.checkboxIcon}
-                  src={icons.notSelectedTickbox}
-                />
-              }
-              checkedIcon={
-                <SVG
-                  className={classes.checkboxIcon}
-                  src={icons.multipleImageSelection}
-                />
-              }
-              checked={selectedInvitees.includes(option)}
-            />
-            {option.name} - {option.email}
+          <li {...props} className={classes.option}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Checkbox
+                icon={
+                  <SVG
+                    className={classes.checkboxIcon}
+                    src={icons.notSelectedTickbox}
+                  />
+                }
+                checkedIcon={
+                  <SVG
+                    className={classes.checkboxIcon}
+                    src={icons.multipleImageSelection}
+                  />
+                }
+                checked={selectedInvitees.includes(option)}
+              />
+              <div
+                style={{ display: "flex", marginLeft: "5px", flexWrap: "wrap" }}
+              >
+                {option.name} - {option.email}
+              </div>
+            </div>
           </li>
         )}
         renderInput={(params) => (
