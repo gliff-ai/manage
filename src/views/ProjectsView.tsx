@@ -47,6 +47,7 @@ const useStyles = makeStyles({
     fontSize: "16px",
     paddingLeft: "20px",
     margin: 0,
+    maxWidth: "unset",
   },
   // eslint-disable-next-line mui-unused-classes/unused-classes
   "@global": {
