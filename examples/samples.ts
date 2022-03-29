@@ -74,14 +74,24 @@ export const config = {
     removeFromProject: (data): Promise<void> => Promise.resolve(),
     getCollectionsMembers: () =>
       Promise.resolve({
-        1: {
-          usernames: ["user1@gliff.app", "user2@gliff.app", "user3@gliff.app"],
-          pendingUsernames: [],
-        },
-        2: {
-          usernames: ["user1@gliff.app", "user2@gliff.app"],
-          pendingUsernames: ["user3@gliff.app"],
-        },
+        1: [
+          {
+            username: "user1@gliff.app",
+            isPending: false,
+          },
+          {
+            username: "user2@gliff.app",
+            isPending: false,
+          },
+          { username: "user3@gliff.app", isPending: true },
+        ],
+        2: [
+          {
+            username: "user1@gliff.app",
+            isPending: false,
+          },
+          { username: "user3@gliff.app", isPending: true },
+        ],
       }),
     createPlugin: (data): Promise<{ key: string; email: string }> =>
       Promise.resolve({
