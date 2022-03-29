@@ -65,15 +65,10 @@ interface Props {
   services: ServiceFunctions;
   launchCurateCallback?: (projectUid: string) => void | null;
   launchAuditCallback?: (projectUid: string) => void | null;
-  getAnnotationProgress: (
-    username: string,
-    projectId?: string
-  ) => Promise<Progress>;
 }
 
 export const ProjectsView = ({
   services,
-  getAnnotationProgress,
   launchCurateCallback,
   launchAuditCallback,
 }: Props): ReactElement => {
@@ -126,18 +121,18 @@ export const ProjectsView = ({
   );
 
   const updateAnnotationProgress = useCallback(
-    (projectId: string): void => {
+    (projectUid: string): void => {
       if (!auth?.user?.email) return;
 
-      void getAnnotationProgress(auth.user.email, projectId).then(
-        (newProgress) => {
+      void services
+        .getAnnotationProgress({ username: auth.user.email, projectUid })
+        .then((newProgress: Progress) => {
           if (newProgress && isMounted.current) {
             setProgress((p) => ({ ...p, ...newProgress }));
           }
-        }
-      );
+        });
     },
-    [getAnnotationProgress, isMounted, auth]
+    [services, isMounted, auth]
   );
 
   const triggerRefetch = (projectId: string) => {
@@ -187,12 +182,14 @@ export const ProjectsView = ({
   useEffect(() => {
     if (!isMounted.current || !auth?.user?.email) return;
 
-    void getAnnotationProgress(auth.user.email).then((newProgress) => {
-      if (newProgress) {
-        setStateIfMounted(newProgress, setProgress, isMounted.current);
-      }
-    });
-  }, [isMounted, auth, getAnnotationProgress]);
+    void services
+      .getAnnotationProgress({ username: auth.user.email })
+      .then((newProgress) => {
+        if (newProgress) {
+          setStateIfMounted(newProgress, setProgress, isMounted.current);
+        }
+      });
+  }, [isMounted, auth, services]);
 
   const inviteToProject = async (
     projectUid: string,

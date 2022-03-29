@@ -48,6 +48,7 @@ const defaultServices = {
   getPlugins: "GET /plugin",
   deletePlugin: "DELETE /plugin",
   updatePlugin: "PUT /plugin",
+  getAnnotationProgress: "GET /progress",
 } as Services;
 
 interface Props {
@@ -57,7 +58,6 @@ interface Props {
   showAppBar: boolean;
   launchCurateCallback?: (projectUid: string) => void;
   launchAuditCallback?: (projectUid: string) => void;
-  getAnnotationProgress: (username: string) => Promise<Progress>;
 }
 
 const useStyles = makeStyles(() => ({
@@ -151,7 +151,6 @@ export function UserInterface(props: Props): JSX.Element {
                     services={services}
                     launchCurateCallback={props.launchCurateCallback}
                     launchAuditCallback={props.launchAuditCallback}
-                    getAnnotationProgress={props.getAnnotationProgress}
                   />
                 }
               />

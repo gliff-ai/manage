@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserInterface, ProvideAuth } from "../src";
-import { user, config, getAnnotationProgress } from "./samples";
+import { user, config } from "./samples";
 
 // We render it here under another route as this is how it will typically be used
 ReactDOM.render(
@@ -17,7 +17,6 @@ ReactDOM.render(
               user={user}
               services={config.services}
               showAppBar
-              getAnnotationProgress={getAnnotationProgress}
             />
           }
         />

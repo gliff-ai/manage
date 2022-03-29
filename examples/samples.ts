@@ -1,4 +1,10 @@
-import { UserAccess, IPlugin, PluginType, Product } from "@/interfaces";
+import {
+  UserAccess,
+  IPlugin,
+  PluginType,
+  Product,
+  Progress,
+} from "@/interfaces";
 import type { Services } from "../src";
 
 export const user = {
@@ -104,14 +110,10 @@ export const config = {
       ]),
     updatePlugin: (data): Promise<number> => Promise.resolve(1),
     deletePlugin: (data): Promise<number> => Promise.resolve(1),
+    getAnnotationProgress: (data): Promise<Progress> =>
+      Promise.resolve({
+        1: { total: 12, complete: 1 },
+        2: { total: 0, complete: 0 },
+      }),
   } as Services,
 };
-
-export const getAnnotationProgress = (
-  username: string,
-  projectId?: string
-): Promise<any> =>
-  Promise.resolve({
-    1: { total: 12, complete: 1 },
-    2: { total: 0, complete: 0 },
-  });

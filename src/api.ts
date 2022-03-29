@@ -28,6 +28,7 @@ interface Services {
   removeFromProject: APIRoute | ServiceFunction;
   deletePlugin: APIRoute | ServiceFunction;
   updatePlugin: APIRoute | ServiceFunction;
+  getAnnotationProgress: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {
