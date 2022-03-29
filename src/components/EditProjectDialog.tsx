@@ -28,7 +28,7 @@ import {
   icons,
   lightGrey,
 } from "@gliff-ai/style";
-import { Profile, ProjectUsers } from "@/interfaces";
+import { Profile, ProjectUser } from "@/interfaces";
 
 const useStyles = makeStyles({
   paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
@@ -64,6 +64,8 @@ const useStyles = makeStyles({
   chipLabel: {
     margin: "5px 5px 0 0",
     borderRadius: "9px",
+    maxWidth: "300px",
+    fontSize: "14px",
   },
   currentChip: { borderColor: "black", color: "black" },
   pendingChip: {
@@ -82,7 +84,10 @@ const useStyles = makeStyles({
     margin: "0",
     lineHeight: "1px",
   },
-  checkboxIcon: { width: "18px", height: "auto" },
+  checkboxIcon: {
+    width: "18px",
+    height: "auto",
+  },
   closeButton: {
     position: "absolute",
     top: "7px",
@@ -100,7 +105,7 @@ const useStyles = makeStyles({
 interface Props {
   projectUid: string;
   projectName: string;
-  projectUsers: ProjectUsers;
+  projectUsers: ProjectUser[];
   invitees: Profile[];
   updateProjectName: (data: {
     projectUid: string;
@@ -129,16 +134,21 @@ export function EditProjectDialog({
   );
 
   const alreadyInvited = useCallback(
-    (user: Profile): boolean =>
-      projectUsers.usernames.includes(user.email) ||
-      projectUsers.pendingUsernames.includes(user.email),
+    (username: string): boolean =>
+      projectUsers.filter((user) => user.username === username).length > 0,
+    [projectUsers]
+  );
+
+  const pendingInvite = useCallback(
+    (username: string): boolean =>
+      projectUsers.find((user) => user.username === username)?.isPending,
     [projectUsers]
   );
 
   useEffect(() => {
     if (!projectUsers) return;
 
-    setSelectedInvitees(invitees.filter(alreadyInvited));
+    setSelectedInvitees(invitees.filter(({ email }) => alreadyInvited(email)));
   }, [projectUsers, invitees, alreadyInvited]);
 
   if (!invitees || !projectUsers || !selectedInvitees) return null;
@@ -154,13 +164,16 @@ export function EditProjectDialog({
     if (!selectedInvitees) return;
     await Promise.all(
       invitees.map(async (profile) => {
-        if (selectedInvitees.includes(profile) && !alreadyInvited(profile)) {
+        if (
+          selectedInvitees.includes(profile) &&
+          !alreadyInvited(profile.email)
+        ) {
           await inviteToProject(projectUid, profile.email);
         }
 
         if (
           !selectedInvitees.includes(profile) &&
-          projectUsers.usernames.includes(profile.email) // can only remove users that have already accepted or rejected invite
+          alreadyInvited(profile.email) // can only remove users that have already accepted or rejected invite
         ) {
           await removeFromProject(projectUid, profile.email);
         }
@@ -180,17 +193,16 @@ export function EditProjectDialog({
     setOpen(false);
   };
 
-  const getChips = (usernames: string[], isPending = false) =>
-    usernames.map((username) => (
-      <Chip
-        key={username}
-        className={`${classes.chipLabel} ${
-          isPending ? classes.pendingChip : classes.currentChip
-        }`}
-        label={username}
-        variant="outlined"
-      />
-    ));
+  const getChips = ({ name, username, isPending }: ProjectUser) => (
+    <Chip
+      key={username}
+      className={`${classes.chipLabel} ${
+        isPending ? classes.pendingChip : classes.currentChip
+      }`}
+      label={name}
+      variant="outlined"
+    />
+  );
 
   const editProjectSection = (
     <Paper elevation={0} square className={classes.editProjectSection}>
@@ -216,6 +228,9 @@ export function EditProjectDialog({
         value={selectedInvitees}
         onChange={handleSelectChange}
         getOptionLabel={(option) => option.name}
+        filterOptions={(options) =>
+          options.filter((profile) => !pendingInvite(profile.email))
+        }
         renderOption={(props, option) => (
           <li {...props} className={classes.option}>
             <div
@@ -241,7 +256,11 @@ export function EditProjectDialog({
                 checked={selectedInvitees.includes(option)}
               />
               <div
-                style={{ display: "flex", marginLeft: "5px", flexWrap: "wrap" }}
+                style={{
+                  display: "flex",
+                  marginLeft: "5px",
+                  flexWrap: "wrap",
+                }}
               >
                 {option.name} - {option.email}
               </div>
@@ -275,10 +294,7 @@ export function EditProjectDialog({
 
   const listUsersSection = (
     <Paper elevation={0} square className={classes.listUsersSection}>
-      <List className={classes.usersList}>
-        {getChips(projectUsers.usernames)}
-        {getChips(projectUsers.pendingUsernames, true)}
-      </List>
+      <List className={classes.usersList}>{projectUsers.map(getChips)}</List>
     </Paper>
   );
 

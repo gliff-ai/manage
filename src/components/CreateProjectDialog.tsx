@@ -46,6 +46,8 @@ const useStyles = makeStyles({
     margin: "5px 5px 0 0",
     borderColor: "black",
     borderRadius: "9px",
+    maxWidth: "300px",
+    fontSize: "14px",
   },
   iconSize: {
     width: "15px",
@@ -182,7 +184,7 @@ export function CreateProjectDialog({
                     </Avatar>
                   }
                   className={classes.chipLabel}
-                  label={profile.email}
+                  label={profile.name}
                   variant="outlined"
                 />
               ))}

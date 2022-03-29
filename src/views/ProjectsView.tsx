@@ -22,7 +22,8 @@ import {
   Team,
   UserAccess,
   Progress,
-  ProjectsUsers,
+  ProjectUsers,
+  ProjectUser,
 } from "@/interfaces";
 import {
   EditProjectDialog,
@@ -76,7 +77,7 @@ export const ProjectsView = ({
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
   const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
-  const [projectUsers, setProjectUsers] = useState<ProjectsUsers | null>(null); // users in each project
+  const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null); // users in each project
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -92,19 +93,24 @@ export const ProjectsView = ({
     (projectUid: string): void => {
       void services
         .getCollectionMembers({ collectionUid: projectUid })
-        .then(
-          (newUsers: { usernames: string[]; pendingUsernames: string[] }) => {
-            if (newUsers && isMounted.current) {
-              setProjectUsers((users) => {
-                const newProjectsUsers = { ...users };
-                newProjectsUsers[projectUid] = newUsers;
-                return newProjectsUsers;
-              });
-            }
+        .then((newUsers: ProjectUser[]) => {
+          if (newUsers && isMounted.current) {
+            setProjectUsers((prevUsers) => {
+              const newProjectsUsers = { ...prevUsers };
+
+              newProjectsUsers[projectUid] = newUsers.map(
+                ({ username, isPending }) => ({
+                  name: invitees.find(({ email }) => email === username).name,
+                  username,
+                  isPending,
+                })
+              );
+              return newProjectsUsers;
+            });
           }
-        );
+        });
     },
-    [services, isMounted]
+    [services, isMounted, invitees]
   );
 
   const updateProject = useCallback(
@@ -151,13 +157,22 @@ export const ProjectsView = ({
   }, []);
 
   useEffect(() => {
-    if (!isMounted?.current || !isOwnerOrMember()) return;
-    void services.getCollectionsMembers().then((newUsers) => {
+    if (!isMounted?.current || !isOwnerOrMember() || !invitees) return;
+    void services.getCollectionsMembers().then((newUsers: ProjectUsers) => {
       if (newUsers) {
+        // add users' names
+        for (const key of Object.keys(newUsers)) {
+          newUsers[key] = newUsers[key].map(({ username, isPending }) => ({
+            name: invitees.find(({ email }) => email === username).name,
+            username,
+            isPending,
+          }));
+        }
+
         setStateIfMounted(newUsers, setProjectUsers, isMounted.current);
       }
     });
-  }, [isMounted, services, isOwnerOrMember]);
+  }, [isMounted, services, isOwnerOrMember, invitees]);
 
   useEffect(() => {
     if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
@@ -222,12 +237,12 @@ export const ProjectsView = ({
   };
 
   const listAssignees = (
-    users: ProjectsUsers,
-    uid: string
+    projectUid: string,
+    users: ProjectUsers
   ): ReactElement | null => {
-    if (!users || users[uid] === undefined) return null;
+    if (!users || users[projectUid] === undefined) return null;
 
-    const assignees = users[uid].usernames;
+    const assignees = users[projectUid].map(({ name }) => name);
     return (
       <span>
         {assignees.slice(0, 3).join(", ")}
@@ -285,7 +300,7 @@ export const ProjectsView = ({
                     <TableCell className={classes.tableText}>{name}</TableCell>
                     {isOwnerOrMember() && (
                       <TableCell className={classes.tableText}>
-                        {listAssignees(projectUsers, uid)}
+                        {listAssignees(uid, projectUsers)}
                       </TableCell>
                     )}
                     <TableCell className={classes.tableText}>
