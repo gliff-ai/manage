@@ -150,9 +150,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
             <IconButton
               tooltip={{ name: "Docs" }}
               icon={icons.documentHelp}
-              onClick={() => {
-                // TODO: add link to docs
-              }}
+              onClick={() => services.launchDocs()}
               tooltipPlacement="top"
             />
             <AddPluginDialog

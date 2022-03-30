@@ -49,6 +49,7 @@ const defaultServices = {
   deletePlugin: "DELETE /plugin",
   updatePlugin: "PUT /plugin",
   getAnnotationProgress: "GET /progress",
+  launchDocs: "GET /docs",
 } as Services;
 
 interface Props {

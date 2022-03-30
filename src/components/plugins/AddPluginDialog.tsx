@@ -205,8 +205,11 @@ export function AddPluginDialog({
         </RadioGroup>
       </FormControl>
       <DialogActions className={classes.dialogActions}>
-        <Button variant="outlined" className={classes.whiteButton}>
-          {/* TODO: add onClick with link to docs */}
+        <Button
+          className={classes.whiteButton}
+          variant="outlined"
+          onClick={() => services.launchDocs()}
+        >
           Learn more
         </Button>
         <Button

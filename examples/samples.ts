@@ -125,5 +125,6 @@ export const config = {
         1: { total: 12, complete: 1 },
         2: { total: 0, complete: 0 },
       }),
+    launchDocs: (): Promise<void> => Promise.resolve(),
   } as Services,
 };
