@@ -31,6 +31,7 @@ export type ProjectUser = {
   name?: string;
   username: string;
   isPending: boolean;
+  accessLevel: number;
 };
 
 export interface Profile {

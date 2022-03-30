@@ -139,11 +139,10 @@ export function EditProjectDialog({
     [projectUsers]
   );
 
-  const pendingInvite = useCallback(
-    (username: string): boolean =>
-      projectUsers.find((user) => user.username === username)?.isPending,
-    [projectUsers]
-  );
+  const filterInviteesOptions = ({ email }: Profile): boolean => {
+    const user = projectUsers.find(({ username }) => username === email);
+    return !user?.isPending && user?.accessLevel !== 1;
+  };
 
   useEffect(() => {
     if (!projectUsers) return;
@@ -228,9 +227,7 @@ export function EditProjectDialog({
         value={selectedInvitees}
         onChange={handleSelectChange}
         getOptionLabel={(option) => option.name}
-        filterOptions={(options) =>
-          options.filter((profile) => !pendingInvite(profile.email))
-        }
+        filterOptions={(options) => options.filter(filterInviteesOptions)}
         renderOption={(props, option) => (
           <li {...props} className={classes.option}>
             <div

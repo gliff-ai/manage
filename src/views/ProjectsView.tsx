@@ -98,13 +98,11 @@ export const ProjectsView = ({
             setProjectUsers((prevUsers) => {
               const newProjectsUsers = { ...prevUsers };
 
-              newProjectsUsers[projectUid] = newUsers.map(
-                ({ username, isPending }) => ({
-                  name: invitees.find(({ email }) => email === username).name,
-                  username,
-                  isPending,
-                })
-              );
+              newProjectsUsers[projectUid] = newUsers.map((user) => ({
+                name: invitees.find(({ email }) => email === user.username)
+                  .name,
+                ...user,
+              }));
               return newProjectsUsers;
             });
           }
@@ -162,10 +160,9 @@ export const ProjectsView = ({
       if (newUsers) {
         // add users' names
         for (const key of Object.keys(newUsers)) {
-          newUsers[key] = newUsers[key].map(({ username, isPending }) => ({
-            name: invitees.find(({ email }) => email === username).name,
-            username,
-            isPending,
+          newUsers[key] = newUsers[key].map((user) => ({
+            name: invitees.find(({ email }) => email === user.username).name,
+            ...user,
           }));
         }
 
