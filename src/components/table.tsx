@@ -11,6 +11,25 @@ import {
 } from "@mui/material";
 import { lightGrey } from "@gliff-ai/style";
 
+const StyledTableCell = styled(TableCell)({
+  fontSize: "16px",
+  paddingLeft: "20px",
+  margin: 0,
+  maxWidth: "unset",
+});
+
+const StyledTableRow = styled(TableRow)({
+  height: "50px",
+  "&:hover": {
+    backgroundColor: lightGrey,
+  },
+  "&:hover td div": {
+    visibility: "visible",
+    backgroundColor: "transparent !important",
+    // TODO: change IconButton backgroundColor from inherit to transparent
+  },
+});
+
 interface Props {
   header: string[];
   children: JSX.Element | JSX.Element[];
@@ -21,23 +40,21 @@ const StyledTable = ({
   header,
   children,
   hasButtonsCell,
-}: Props): ReactElement => {
-  return (
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
-            {header.map((name) => (
-              <StyledTableCell key={name}>{name}</StyledTableCell>
-            ))}
-            {hasButtonsCell && <StyledTableCell />}
-          </TableRow>
-        </TableHead>
-        <TableBody>{children}</TableBody>
-      </Table>
-    </TableContainer>
-  );
-};
+}: Props): ReactElement => (
+  <TableContainer>
+    <Table>
+      <TableHead>
+        <TableRow>
+          {header.map((name) => (
+            <StyledTableCell key={name}>{name}</StyledTableCell>
+          ))}
+          {hasButtonsCell && <StyledTableCell />}
+        </TableRow>
+      </TableHead>
+      <TableBody>{children}</TableBody>
+    </Table>
+  </TableContainer>
+);
 
 StyledTable.defaultProps = {
   hasButtonsCell: true,
@@ -63,25 +80,6 @@ const TableButtonsCell = ({
     </TableCell>
   );
 };
-
-const StyledTableCell = styled(TableCell)({
-  fontSize: "16px",
-  paddingLeft: "20px",
-  margin: 0,
-  maxWidth: "unset",
-});
-
-const StyledTableRow = styled(TableRow)({
-  height: "50px",
-  "&:hover": {
-    backgroundColor: lightGrey,
-  },
-  "&:hover td div": {
-    visibility: "visible",
-    backgroundColor: "transparent !important",
-    // TODO: change IconButton backgroundColor from inherit to transparent
-  },
-});
 
 export {
   StyledTable as Table,

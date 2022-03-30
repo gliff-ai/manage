@@ -17,9 +17,12 @@ import {
   EditProjectDialog,
   CreateProjectDialog,
   ProgressBar,
+  Table,
+  TableCell,
+  TableRow,
+  TableButtonsCell,
 } from "@/components";
 import { setStateIfMounted } from "@/helpers";
-import { Table, TableCell, TableRow, TableButtonsCell } from "@/components";
 
 const useStyles = makeStyles({
   paperHeader: {

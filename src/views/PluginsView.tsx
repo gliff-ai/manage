@@ -24,9 +24,12 @@ import {
   AddPluginDialog,
   DeletePluginDialog,
   EditPluginDialog,
+  Table,
+  TableCell,
+  TableRow,
+  TableButtonsCell,
 } from "@/components";
 import { IPlugin, Project } from "@/interfaces";
-import { Table, TableCell, TableRow, TableButtonsCell } from "@/components";
 
 const useStyles = () =>
   makeStyles(() => ({
