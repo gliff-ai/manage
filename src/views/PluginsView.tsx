@@ -57,18 +57,28 @@ const useStyles = () =>
       },
       "&:hover td div": {
         visibility: "visible",
+        backgroundColor: "transparent !important",
+        // TODO: change IconButton backgroundColor from inherit to transparent
       },
     },
     hiddenButtons: {
       visibility: "hidden",
       float: "right",
       marginRight: "20px",
+      backgroundColor: "transparent !important",
+      border: "none !important",
     },
-    boxButtons: { display: "flex", alignItems: "center" },
     buttonGroup: {
-      backgroundColor: "transparent",
+      backgroundColor: "transparent !important",
       border: "none",
-      marginLeft: "10px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-evenly",
+      marginRight: "15px",
+      "& span button div": {
+        backgroundColor: "transparent !important",
+        // TODO: change IconButton backgroundColor from inherit to transparent
+      },
     },
   }));
 
@@ -178,7 +188,12 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           {collectionUids.length}&nbsp;projects
         </TableCell>
         <TableCell align="right">
-          <div className={classes.hiddenButtons}>
+          <ButtonGroup
+            className={classes.hiddenButtons}
+            orientation="horizontal"
+            variant="text"
+            size="medium"
+          >
             <EditPluginDialog
               plugin={currPlugin}
               allProjects={projects}
@@ -191,7 +206,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
               setPlugins={setPlugins}
               services={services}
             />
-          </div>
+          </ButtonGroup>
         </TableCell>
       </TableRow>
     );
@@ -209,31 +224,31 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           className={classes.paperHeader}
         >
           <Typography className={classes.topography}>Plugins</Typography>
-          <Box className={classes.boxButtons}>
-            <SVG src={icons.betaStatus} width="auto" height="25px" />
-            <ButtonGroup
-              className={classes.buttonGroup}
-              orientation="horizontal"
-              size="small"
-              variant="text"
-            >
-              <IconButton
-                tooltip={{ name: "Docs" }}
-                icon={icons.documentHelp}
-                onClick={() => {
-                  // TODO: add link to docs
-                }}
-                tooltipPlacement="top"
-                size="small"
-              />
-              <AddPluginDialog
-                services={services}
-                setError={setError}
-                projects={projects}
-                getPlugins={getPlugins}
-              />
-            </ButtonGroup>
-          </Box>
+          <ButtonGroup
+            className={classes.buttonGroup}
+            orientation="horizontal"
+            size="small"
+            variant="text"
+          >
+            <SVG
+              src={icons.betaStatus}
+              style={{ width: "auto", height: "25px", marginRight: "10px" }}
+            />
+            <IconButton
+              tooltip={{ name: "Docs" }}
+              icon={icons.documentHelp}
+              onClick={() => {
+                // TODO: add link to docs
+              }}
+              tooltipPlacement="top"
+            />
+            <AddPluginDialog
+              services={services}
+              setError={setError}
+              projects={projects}
+              getPlugins={getPlugins}
+            />
+          </ButtonGroup>
         </Paper>
         {plugins ? (
           <TableContainer>
