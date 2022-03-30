@@ -3,14 +3,8 @@ import {
   Paper,
   Typography,
   Card,
-  TableContainer,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
   Box,
   Switch,
-  TableHead,
   ButtonGroup,
 } from "@mui/material";
 
@@ -21,7 +15,6 @@ import {
   theme,
   WarningSnackbar,
   IconButton,
-  lightGrey,
   icons,
 } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
@@ -33,6 +26,7 @@ import {
   EditPluginDialog,
 } from "@/components";
 import { IPlugin, Project } from "@/interfaces";
+import { Table, TableCell, TableRow, TableButtonsCell } from "@/components";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -46,27 +40,6 @@ const useStyles = () =>
       color: "#000000",
       fontSize: "21px",
       marginLeft: "20px",
-    },
-    tableText: {
-      fontSize: "16px",
-      paddingLeft: "20px",
-    },
-    tableRow: {
-      "&:hover": {
-        backgroundColor: lightGrey,
-      },
-      "&:hover td div": {
-        visibility: "visible",
-        backgroundColor: "transparent !important",
-        // TODO: change IconButton backgroundColor from inherit to transparent
-      },
-    },
-    hiddenButtons: {
-      visibility: "hidden",
-      float: "right",
-      marginRight: "20px",
-      backgroundColor: "transparent !important",
-      border: "none !important",
     },
     buttonGroup: {
       backgroundColor: "transparent !important",
@@ -149,69 +122,6 @@ export const PluginsView = ({ services }: Props): ReactElement => {
     }
   }, [auth, isMounted, plugins, getPlugins]);
 
-  const tableHeader = (
-    <TableRow>
-      <TableCell className={classes.tableText}>Name</TableCell>
-      <TableCell className={classes.tableText}>Type</TableCell>
-      <TableCell className={classes.tableText}>URL</TableCell>
-      <TableCell className={classes.tableText}>Products</TableCell>
-      <TableCell className={classes.tableText}>Enabled</TableCell>
-      <TableCell className={classes.tableText}>Added to</TableCell>
-      <TableCell className={classes.tableText} />
-    </TableRow>
-  );
-
-  const fillTableRow = (currPlugin: IPlugin) => {
-    const {
-      name,
-      url,
-      type,
-      products,
-      enabled,
-      collection_uids: collectionUids,
-    } = currPlugin;
-    return (
-      <TableRow key={`${name}-${url}`} className={classes.tableRow}>
-        <TableCell className={classes.tableText}>{name}</TableCell>
-        <TableCell className={classes.tableText}>{type}</TableCell>
-        <TableCell className={classes.tableText}>{url}</TableCell>
-        <TableCell className={classes.tableText}>{products}</TableCell>
-        <TableCell className={classes.tableText}>
-          <Switch
-            size="small"
-            color="primary"
-            checked={enabled}
-            onChange={(e) => updateEnabled(currPlugin)}
-          />
-        </TableCell>
-        <TableCell className={classes.tableText}>
-          {collectionUids.length}&nbsp;projects
-        </TableCell>
-        <TableCell align="right">
-          <ButtonGroup
-            className={classes.hiddenButtons}
-            orientation="horizontal"
-            variant="text"
-            size="medium"
-          >
-            <EditPluginDialog
-              plugin={currPlugin}
-              allProjects={projects}
-              updatePlugins={updatePlugins}
-              services={services}
-              setError={setError}
-            />
-            <DeletePluginDialog
-              plugin={currPlugin}
-              setPlugins={setPlugins}
-              services={services}
-            />
-          </ButtonGroup>
-        </TableCell>
-      </TableRow>
-    );
-  };
-
   if (!auth) return null;
 
   return (
@@ -251,12 +161,58 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           </ButtonGroup>
         </Paper>
         {plugins ? (
-          <TableContainer>
-            <Table>
-              <TableHead>{tableHeader}</TableHead>
-              <TableBody>{plugins.map(fillTableRow)}</TableBody>
-            </Table>
-          </TableContainer>
+          <Table
+            header={[
+              "Name",
+              "Type",
+              "Product",
+              "Products",
+              "Enabled",
+              "Added To",
+            ]}
+          >
+            {plugins.map((iplugin) => {
+              const {
+                name,
+                url,
+                type,
+                products,
+                enabled,
+                collection_uids: collectionUids,
+              } = iplugin;
+              return (
+                <TableRow key={`${name}-${url}`}>
+                  <TableCell>{name}</TableCell>
+                  <TableCell>{type}</TableCell>
+                  <TableCell>{url}</TableCell>
+                  <TableCell>{products}</TableCell>
+                  <TableCell>
+                    <Switch
+                      size="small"
+                      color="primary"
+                      checked={enabled}
+                      onChange={(e) => updateEnabled(iplugin)}
+                    />
+                  </TableCell>
+                  <TableCell>{collectionUids.length}&nbsp;projects</TableCell>
+                  <TableButtonsCell>
+                    <EditPluginDialog
+                      plugin={iplugin}
+                      allProjects={projects}
+                      updatePlugins={updatePlugins}
+                      services={services}
+                      setError={setError}
+                    />
+                    <DeletePluginDialog
+                      plugin={iplugin}
+                      setPlugins={setPlugins}
+                      services={services}
+                    />
+                  </TableButtonsCell>
+                </TableRow>
+              );
+            })}
+          </Table>
         ) : (
           <Box display="flex" height="100%">
             <LoadingSpinner />

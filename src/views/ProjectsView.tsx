@@ -1,17 +1,5 @@
 import { useEffect, useState, ReactElement, useRef, useCallback } from "react";
-import {
-  Paper,
-  Box,
-  Typography,
-  Card,
-  TableContainer,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableHead,
-  ButtonGroup,
-} from "@mui/material";
+import { Paper, Box, Typography, Card } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { theme, IconButton, LoadingSpinner, icons } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
@@ -31,6 +19,7 @@ import {
   ProgressBar,
 } from "@/components";
 import { setStateIfMounted } from "@/helpers";
+import { Table, TableCell, TableRow, TableButtonsCell } from "@/components";
 
 const useStyles = makeStyles({
   paperHeader: {
@@ -44,21 +33,11 @@ const useStyles = makeStyles({
     fontSize: "21px",
     marginLeft: "20px",
   },
-  tableText: {
-    fontSize: "16px",
-    paddingLeft: "20px",
-    margin: 0,
-    maxWidth: "unset",
-  },
   // eslint-disable-next-line mui-unused-classes/unused-classes
   "@global": {
     '.MuiAutocomplete-option[data-focus="true"]': {
       background: "#01dbff",
     },
-  },
-  buttonGroup: {
-    backgroundColor: "transparent !important",
-    border: "none !important",
   },
 });
 
@@ -274,79 +253,58 @@ export const ProjectsView = ({
             <LoadingSpinner />
           </Box>
         ) : (
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell className={classes.tableText}>Name</TableCell>
-                  {isOwnerOrMember() && (
-                    <TableCell className={classes.tableText}>
-                      Assignees
-                    </TableCell>
-                  )}
-                  <TableCell className={classes.tableText}>
-                    Annotation Progress
-                  </TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {projects.map(({ name, uid }) => (
-                  <TableRow key={uid}>
-                    <TableCell className={classes.tableText}>{name}</TableCell>
-                    {isOwnerOrMember() && (
-                      <TableCell className={classes.tableText}>
-                        {listAssignees(uid, projectUsers)}
-                      </TableCell>
+          <Table
+            header={
+              isOwnerOrMember()
+                ? ["Name", "Assignees", "Annotation Progress"]
+                : ["Name", "Annotation Progress"]
+            }
+          >
+            {projects.map(({ name, uid }) => (
+              <TableRow key={uid}>
+                <TableCell>{name}</TableCell>
+                {isOwnerOrMember() && (
+                  <TableCell>{listAssignees(uid, projectUsers)}</TableCell>
+                )}
+                <TableCell>
+                  {progress && <ProgressBar progress={progress[uid]} />}
+                </TableCell>
+                <TableButtonsCell>
+                  {isOwnerOrMember() &&
+                    projectUsers &&
+                    projectUsers[uid] !== undefined && (
+                      <EditProjectDialog
+                        projectUid={uid}
+                        projectName={name}
+                        projectUsers={projectUsers[uid]}
+                        invitees={invitees}
+                        updateProjectName={services.updateProjectName}
+                        inviteToProject={inviteToProject}
+                        removeFromProject={removeFromProject}
+                        triggerRefetch={triggerRefetch}
+                      />
                     )}
-                    <TableCell className={classes.tableText}>
-                      {progress && <ProgressBar progress={progress[uid]} />}
-                    </TableCell>
-                    <TableCell className={classes.tableText} align="right">
-                      <ButtonGroup
-                        className={classes.buttonGroup}
-                        orientation="horizontal"
-                        variant="outlined"
-                      >
-                        {isOwnerOrMember() &&
-                          projectUsers &&
-                          projectUsers[uid] !== undefined && (
-                            <EditProjectDialog
-                              projectUid={uid}
-                              projectName={name}
-                              projectUsers={projectUsers[uid]}
-                              invitees={invitees}
-                              updateProjectName={services.updateProjectName}
-                              inviteToProject={inviteToProject}
-                              removeFromProject={removeFromProject}
-                              triggerRefetch={triggerRefetch}
-                            />
-                          )}
-                        <IconButton
-                          icon={icons.navigationCURATE}
-                          tooltip={{ name: "Open in CURATE" }}
-                          onClick={() => launchCurateCallback(uid)}
-                          tooltipPlacement="top"
-                        />
-                        {isOwnerOrMember() &&
-                          auth.user.tierID > 1 &&
-                          launchAuditCallback !== null && (
-                            <IconButton
-                              data-testid={`audit-${uid}`}
-                              tooltip={{ name: "Open in AUDIT" }}
-                              icon={icons.navigationAUDIT}
-                              onClick={() => launchAuditCallback(uid)}
-                              tooltipPlacement="top"
-                            />
-                          )}
-                      </ButtonGroup>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                  <IconButton
+                    icon={icons.navigationCURATE}
+                    tooltip={{ name: "Open in CURATE" }}
+                    onClick={() => launchCurateCallback(uid)}
+                    tooltipPlacement="top"
+                  />
+                  {isOwnerOrMember() &&
+                    auth.user.tierID > 1 &&
+                    launchAuditCallback !== null && (
+                      <IconButton
+                        data-testid={`audit-${uid}`}
+                        tooltip={{ name: "Open in AUDIT" }}
+                        icon={icons.navigationAUDIT}
+                        onClick={() => launchAuditCallback(uid)}
+                        tooltipPlacement="top"
+                      />
+                    )}
+                </TableButtonsCell>
+              </TableRow>
+            ))}
+          </Table>
         )}
       </Paper>
     </Card>
