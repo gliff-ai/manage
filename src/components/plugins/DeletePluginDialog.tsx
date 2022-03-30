@@ -16,7 +16,12 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons, middleGrey } from "@gliff-ai/style";
+import {
+  theme,
+  IconButton as GliffIconButton,
+  icons,
+  middleGrey,
+} from "@gliff-ai/style";
 import { IPlugin } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
@@ -72,7 +77,6 @@ const useStyles = makeStyles({
     fontWeight: 500,
     display: "inline",
   },
-  deleteIcon: { width: "20px", height: "auto" },
 });
 
 interface Props {
@@ -117,9 +121,12 @@ export function DeletePluginDialog({
 
   return (
     <>
-      <IconButton onClick={triggerDelete}>
-        <SVG className={classes.deleteIcon} src={icons.delete} />
-      </IconButton>
+      <GliffIconButton
+        icon={icons.delete}
+        tooltip={{ name: "Delete" }}
+        onClick={triggerDelete}
+        tooltipPlacement="top"
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Card>
           <Paper

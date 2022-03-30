@@ -12,7 +12,12 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons, lightGrey } from "@gliff-ai/style";
+import {
+  theme,
+  IconButton as GliffIconButton,
+  icons,
+  lightGrey,
+} from "@gliff-ai/style";
 import { IPlugin, PluginType, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
@@ -30,7 +35,6 @@ const useStyles = makeStyles({
     marginLeft: "8px",
   },
   paperBody: { width: "350px", margin: "10px 20px" },
-  settingsIcon: { width: "20px", height: "auto" },
   closeButton: {
     position: "absolute",
     top: "7px",
@@ -168,9 +172,12 @@ export function EditPluginDialog({
 
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
-        <SVG src={icons.cog} className={classes.settingsIcon} />
-      </IconButton>
+      <GliffIconButton
+        icon={icons.cog}
+        tooltip={{ name: "Settings" }}
+        onClick={() => setOpen(true)}
+        tooltipPlacement="top"
+      />
       <Dialog
         open={open}
         onClose={() => {
