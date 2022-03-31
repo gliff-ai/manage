@@ -31,7 +31,12 @@ import {
 import { Profile, ProjectUser } from "@/interfaces";
 
 const useStyles = makeStyles({
-  paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
+  paperHeader: {
+    padding: "10px",
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    justifyContent: "space-between",
+  },
   card: {
     display: "flex",
     flexDirection: "column",
@@ -39,8 +44,8 @@ const useStyles = makeStyles({
   },
   confirmButton: {
     textTransform: "none",
-    marginTop: "15px",
-    backgroundColor: theme.palette.primary.main,
+    marginTop: "15px !important",
+    backgroundColor: `${theme.palette.primary.main} !important`,
     "&:hover": {
       backgroundColor: theme.palette.info.main,
     },
@@ -55,7 +60,7 @@ const useStyles = makeStyles({
     margin: "20px 15px 15px",
   },
   editUsersSection: {
-    margin: "20px 15px 15px",
+    margin: "20px 15px 15px !important",
   },
   listUsersSection: {
     margin: "10px 15px 30px",
@@ -80,18 +85,13 @@ const useStyles = makeStyles({
     height: "30",
   },
   divider: {
-    width: "100%",
+    width: "100% !important",
     margin: "0",
     lineHeight: "1px",
   },
   checkboxIcon: {
     width: "18px",
     height: "auto",
-  },
-  closeButton: {
-    position: "absolute",
-    top: "7px",
-    right: "5px",
   },
   closeIcon: { width: "15px" },
   option: {
@@ -298,10 +298,10 @@ export function EditProjectDialog({
   return (
     <>
       <GliffIconButton
-        data-testid={`edit-${projectUid}`}
+        id={`edit-project-${projectUid}`}
         onClick={() => setOpen(!open)}
         icon={icons.edit}
-        tooltip={{ name: "Edit" }}
+        tooltip={{ name: "Edit Project" }}
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Card className={classes.card}>
@@ -314,11 +314,7 @@ export function EditProjectDialog({
             <Typography className={classes.userInviteTopography}>
               Edit Project
             </Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={() => setOpen(false)}
-              size="small"
-            >
+            <IconButton onClick={() => setOpen(false)} size="small">
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>

@@ -26,7 +26,9 @@ import { Profile, Project } from "@/interfaces";
 const useStyles = makeStyles({
   paperHeader: {
     padding: "10px",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    justifyContent: "space-between",
   },
   projectsTopography: {
     color: "#000000",
@@ -54,11 +56,6 @@ const useStyles = makeStyles({
   },
   addButton: {
     color: "#000000",
-  },
-  closeButton: {
-    position: "absolute",
-    top: "7px",
-    right: "5px",
   },
   closeIcon: { width: "15px" },
   option: {
@@ -93,11 +90,11 @@ export function CreateProjectDialog({
   return (
     <>
       <GliffIconButton
+        id="create-project"
         tooltip={{ name: "Add New Project" }}
         icon={icons.add}
         onClick={() => setDialogOpen(true)}
         tooltipPlacement="top"
-        size="small"
       />
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <Card>
@@ -110,10 +107,7 @@ export function CreateProjectDialog({
             <Typography className={classes.projectsTopography}>
               Create Project
             </Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={() => setDialogOpen(false)}
-            >
+            <IconButton onClick={() => setDialogOpen(false)}>
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>
