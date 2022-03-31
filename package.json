@@ -24,6 +24,7 @@
   },
   "license": "AGPL-3.0-only",
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.4",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
@@ -38,6 +39,7 @@
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.1",
+    "chromedriver": "^100.0.0",
     "eslint": "^7.25.0",
     "history": "==5.0.1",
     "jest": "^27.0.4",
