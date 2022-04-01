@@ -34,7 +34,7 @@ import { IPlugin, Project } from "@/interfaces";
 const useStyles = () =>
   makeStyles(() => ({
     paperHeader: {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: `${theme.palette.primary.main} !important`,
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
@@ -46,7 +46,7 @@ const useStyles = () =>
     },
     buttonGroup: {
       backgroundColor: "transparent !important",
-      border: "none",
+      border: "none !important",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-evenly",
