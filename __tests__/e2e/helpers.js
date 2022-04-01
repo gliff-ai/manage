@@ -22,9 +22,9 @@ const findElementByText = async (driver, text, tag = "*", timeout = 1000) => {
 };
 
 const moveMouseAndClick = async (driver, element) => {
-  const actions = await driver.actions({ async: true });
+  const actions = await driver.actions();
 
-  await actions.move({ origin: element }).click().perform().clear();
+  await actions.move({ origin: element }).click().perform();
 };
 
 export {
