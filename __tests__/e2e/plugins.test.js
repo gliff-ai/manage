@@ -3,7 +3,6 @@ const {
   findElementById,
   findElementByText,
   moveMouseAndClick,
-  moveMouseOver,
   sleep,
 } = require("./helpers");
 
@@ -30,12 +29,6 @@ wrapper(() => {
       const targetEl = await findElementByText(driver, text, "p");
 
       expect(await targetEl.getText()).toEqual(text);
-
-      const el2 = await findElementById(driver, "edit-plugin-python-plugin");
-
-      await moveMouseOver(driver, el2);
-
-      await sleep();
 
       await percySnapshot(driver, "Plugins Page");
     });

@@ -4,7 +4,6 @@ const {
   findElementById,
   findElementByText,
   moveMouseAndClick,
-  moveMouseOver,
 } = require("./helpers");
 
 const { wrapper, test, webdriver } =
@@ -24,12 +23,6 @@ wrapper(() => {
       const el = await findElementById(driver, "projects");
 
       await el.click();
-
-      const el2 = await findElementById(driver, "edit-project-1");
-
-      await moveMouseOver(driver, el2);
-
-      await sleep();
 
       const text = "Projects";
 
