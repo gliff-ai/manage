@@ -8,7 +8,7 @@ const openApp = async (driver, webdriver, TARGET_URL) => {
   await driver.wait(webdriver.until.titleMatches(/Manage/i), 60000);
 };
 
-const findElementById = async (driver, id, timeout = 1000) => {
+const findElementById = async (driver, id, timeout = 2000) => {
   const el = await driver.wait(until.elementLocated(By.id(id)), timeout);
   return el;
 };
