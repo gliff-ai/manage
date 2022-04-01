@@ -2,7 +2,7 @@ const {
   openApp,
   findElementById,
   findElementByText,
-  moveMouseAndClick,
+  clickHiddenElement,
   sleep,
 } = require("./helpers");
 
@@ -68,9 +68,7 @@ wrapper(() => {
 
       await el1.click();
 
-      const el2 = await findElementById(driver, "edit-plugin-python-plugin");
-
-      await moveMouseAndClick(driver, el2);
+      await clickHiddenElement(driver, "edit-plugin-python-plugin");
 
       await sleep();
 
@@ -90,9 +88,7 @@ wrapper(() => {
 
       await el1.click();
 
-      const el2 = await findElementById(driver, "delete-plugin-python-plugin");
-
-      await moveMouseAndClick(driver, el2);
+      await clickHiddenElement(driver, "delete-plugin-python-plugin");
 
       await sleep();
 

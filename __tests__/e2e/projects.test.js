@@ -3,7 +3,7 @@ const {
   openApp,
   findElementById,
   findElementByText,
-  moveMouseAndClick,
+  clickHiddenElement,
 } = require("./helpers");
 
 const { wrapper, test, webdriver } =
@@ -52,9 +52,7 @@ wrapper(() => {
     test("edit project dialog", async (driver, percySnapshot) => {
       await openApp(driver, webdriver, TARGET_URL);
 
-      const el = await findElementById(driver, "edit-project-1");
-
-      await moveMouseAndClick(driver, el);
+      await clickHiddenElement(driver, "edit-project-1");
 
       const text = "Edit Project";
 

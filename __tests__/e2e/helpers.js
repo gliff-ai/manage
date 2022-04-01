@@ -13,7 +13,7 @@ const findElementById = async (driver, id, timeout = 1000) => {
   return el;
 };
 
-const findElementByText = async (driver, text, tag = "*", timeout = 1000) => {
+const findElementByText = async (driver, text, tag = "*", timeout = 2000) => {
   const el = await driver.wait(
     until.elementLocated(By.xpath(`//${tag}[text()='${text}']`)),
     timeout
@@ -21,7 +21,15 @@ const findElementByText = async (driver, text, tag = "*", timeout = 1000) => {
   return el;
 };
 
+const clickHiddenElement = async (driver, elementId) => {
+  driver.executeScript(
+    `var el = document.getElementById("${elementId}");
+         el.dispatchEvent(new MouseEvent("click", { bubbles: true }));`
+  );
+};
+
 const moveMouseAndClick = async (driver, element) => {
+  // Note: actions.move doesn't work with IPads.
   const actions = await driver.actions();
 
   await actions.move({ origin: element }).click().perform();
@@ -33,4 +41,5 @@ export {
   findElementById,
   findElementByText,
   moveMouseAndClick,
+  clickHiddenElement,
 };
