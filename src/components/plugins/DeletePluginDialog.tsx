@@ -28,22 +28,16 @@ import { ServiceFunctions } from "@/api";
 const useStyles = makeStyles({
   paperHeader: {
     padding: "10px 20px",
-    backgroundColor: theme.palette.info.light,
+    backgroundColor: `${theme.palette.info.light} !important`,
     display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "space-between !important",
   },
   paperBody: { width: "450px", margin: "20px", fontSize: "16px" },
   topography: {
     color: "#FFFFFF",
     display: "inline",
     fontSize: "21px",
-    marginLeft: "10px",
-  },
-  closeButton: {
-    position: "absolute",
-    top: "7px",
-    right: "5px",
+    marginLeft: "10px !important",
   },
   closeIcon: { width: "15px", height: "auto", fill: "#FFFFFF" },
   warningIcon: {
@@ -52,20 +46,20 @@ const useStyles = makeStyles({
     fill: "#FFFFFF",
   },
   dialogActions: {
-    justifyContent: "space-between",
+    justifyContent: "space-between !important",
     margin: "5px 10px",
   },
   whiteButton: {
     textTransform: "none",
     backgroundColor: "transparent",
-    borderColor: middleGrey,
+    borderColor: `${middleGrey} !important`,
     "&:hover": {
       borderColor: middleGrey,
     },
   },
   purpleButton: {
-    backgroundColor: theme.palette.info.light,
-    borderColor: theme.palette.info.light,
+    backgroundColor: `${theme.palette.info.light} !important`,
+    borderColor: `${theme.palette.info.light} !important`,
     textTransform: "none",
     color: "#FFFFFF",
     "&:hover": {
@@ -122,6 +116,7 @@ export function DeletePluginDialog({
   return (
     <>
       <GliffIconButton
+        id={`delete-plugin-${plugin.name}`}
         icon={icons.delete}
         tooltip={{ name: "Delete" }}
         onClick={triggerDelete}
@@ -135,14 +130,13 @@ export function DeletePluginDialog({
             variant="outlined"
             square
           >
-            <SVG src={icons.warning} className={classes.warningIcon} />
-            <Typography className={classes.topography}>
-              Are You Sure?
-            </Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={() => setOpen(false)}
-            >
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <SVG src={icons.warning} className={classes.warningIcon} />
+              <Typography className={classes.topography}>
+                Are You Sure?
+              </Typography>
+            </div>
+            <IconButton onClick={() => setOpen(false)}>
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>

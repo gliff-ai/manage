@@ -38,11 +38,12 @@ const useStyles = () =>
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
+      height: "50px",
     },
     topography: {
       color: "#000000",
       fontSize: "21px",
-      marginLeft: "20px",
+      marginLeft: "20px !important",
     },
     buttonGroup: {
       backgroundColor: "transparent !important",

@@ -22,8 +22,11 @@ import { Table, TableCell, TableRow } from "@/components";
 
 const useStyles = makeStyles(() => ({
   paperHeader: {
-    padding: "10px",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "50px",
   },
   paperBody: {
     margin: "15px",
@@ -33,10 +36,8 @@ const useStyles = makeStyles(() => ({
   },
   topography: {
     color: "#000000",
-    display: "inline",
     fontSize: "21px",
-    marginRight: "125px",
-    paddingLeft: "8px",
+    marginLeft: "20px !important",
   },
   cardsContainer: {
     display: "flex",

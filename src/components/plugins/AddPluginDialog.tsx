@@ -31,7 +31,9 @@ import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 const useStyles = makeStyles({
   paperHeader: {
     padding: "10px",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    justifyContent: "space-between",
   },
   paperBody: { width: "350px", margin: "10px 20px" },
   topography: {
@@ -48,21 +50,16 @@ const useStyles = makeStyles({
     borderRadius: "5px",
     fontFamily: "monospace",
   },
-  closeButton: {
-    position: "absolute",
-    top: "7px",
-    right: "5px",
-  },
   whiteButton: {
     textTransform: "none",
     backgroundColor: "transparent",
-    borderColor: middleGrey,
+    borderColor: `${middleGrey} !important`,
     "&:hover": {
       borderColor: middleGrey,
     },
   },
   greenButton: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
     "&:disabled": {
       backgroundColor: lightGrey,
     },
@@ -71,11 +68,14 @@ const useStyles = makeStyles({
       backgroundColor: theme.palette.info.main,
     },
   },
-  dialogActions: { justifyContent: "space-between", marginTop: "30px" },
+  dialogActions: {
+    justifyContent: "space-between !important",
+    marginTop: "30px",
+  },
   closeIcon: { width: "15px", height: "auto" },
   textFontSize: { fontSize: "16px" },
   marginTop: { marginTop: "15px" },
-  divider: { width: "500px", margin: "12px -20px" },
+  divider: { width: "500px !important", margin: "12px -20px !important" },
 });
 
 enum DialogPage {
@@ -311,11 +311,11 @@ export function AddPluginDialog({
   return (
     <>
       <GliffIconButton
+        id="add-plugin"
         tooltip={{ name: "Add New Plug-in" }}
         icon={icons.add}
         onClick={() => setOpen(true)}
         tooltipPlacement="top"
-        size="small"
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Card>
@@ -326,11 +326,7 @@ export function AddPluginDialog({
             square
           >
             <Typography className={classes.topography}>Add Plug-in</Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={() => setOpen(false)}
-              size="small"
-            >
+            <IconButton onClick={() => setOpen(false)} size="small">
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>

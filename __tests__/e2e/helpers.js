@@ -13,12 +13,31 @@ const findElementById = async (driver, id, timeout = 1000) => {
   return el;
 };
 
-const findElementByText = async (driver, text, timeout = 1000) => {
+const findElementByText = async (driver, text, tag = "*", timeout = 1000) => {
   const el = await driver.wait(
-    until.elementLocated(By.xpath(`//p[text()='${text}']`)),
+    until.elementLocated(By.xpath(`//${tag}[text()='${text}']`)),
     timeout
   );
   return el;
 };
 
-export { sleep, openApp, findElementById, findElementByText };
+const moveMouseAndClick = async (driver, element) => {
+  const actions = await driver.actions({ async: true });
+
+  await actions.move({ origin: element }).press().release().perform();
+};
+
+const moveMouseOver = async (driver, element) => {
+  const actions = await driver.actions({ async: true });
+
+  await actions.move({ origin: element }).perform();
+};
+
+export {
+  sleep,
+  openApp,
+  findElementById,
+  findElementByText,
+  moveMouseAndClick,
+  moveMouseOver,
+};

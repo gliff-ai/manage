@@ -30,11 +30,12 @@ const useStyles = makeStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
+    height: "50px",
   },
   topography: {
     color: "#000000",
     fontSize: "21px",
-    marginLeft: "20px",
+    marginLeft: "20px !important",
   },
   // eslint-disable-next-line mui-unused-classes/unused-classes
   "@global": {

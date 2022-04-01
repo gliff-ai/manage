@@ -21,10 +21,10 @@ const StyledTableCell = styled(TableCell)({
 const StyledTableRow = styled(TableRow)({
   height: "50px",
   "&:hover": {
-    backgroundColor: lightGrey,
+    backgroundColor: `${lightGrey} !important`,
   },
   "&:hover td div": {
-    visibility: "visible",
+    visibility: "visible !important",
     backgroundColor: "transparent !important",
     // TODO: change IconButton backgroundColor from inherit to transparent
   },
