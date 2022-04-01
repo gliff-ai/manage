@@ -299,6 +299,7 @@ export function EditProjectDialog({
     <>
       <GliffIconButton
         id={`edit-project-${projectUid}`}
+        data-testid={`edit-${projectUid}`}
         onClick={() => setOpen(!open)}
         icon={icons.edit}
         tooltip={{ name: "Edit Project" }}
