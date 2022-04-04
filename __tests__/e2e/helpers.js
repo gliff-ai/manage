@@ -1,5 +1,7 @@
 const { until, By } = require("selenium-webdriver");
 
+const { TARGET_URL = "http://bs-local.com:8080/" } = process.env;
+
 const sleep = (ms = 600) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const openApp = async (driver, webdriver, TARGET_URL) => {
@@ -8,12 +10,12 @@ const openApp = async (driver, webdriver, TARGET_URL) => {
   await driver.wait(webdriver.until.titleMatches(/Manage/i), 60000);
 };
 
-const findElementById = async (driver, id, timeout = 2000) => {
+const findElementById = async (driver, id, timeout = 3000) => {
   const el = await driver.wait(until.elementLocated(By.id(id)), timeout);
   return el;
 };
 
-const findElementByText = async (driver, text, tag = "*", timeout = 2000) => {
+const findElementByText = async (driver, text, tag = "*", timeout = 3000) => {
   const el = await driver.wait(
     until.elementLocated(By.xpath(`//${tag}[text()='${text}']`)),
     timeout
@@ -42,4 +44,5 @@ export {
   findElementByText,
   moveMouseAndClick,
   clickHiddenElement,
+  TARGET_URL,
 };

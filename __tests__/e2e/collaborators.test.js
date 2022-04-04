@@ -1,9 +1,12 @@
-const { openApp, findElementById, findElementByText } = require("./helpers");
+const {
+  openApp,
+  findElementById,
+  findElementByText,
+  TARGET_URL,
+} = require("./helpers");
 
 const { wrapper, test, webdriver } =
   require("@gliff-ai/jest-browserstack-automate")("Manage");
-
-const { TARGET_URL = "http://bs-local.com:8080/" } = process.env;
 
 wrapper(() => {
   describe("Collaborats", () => {
