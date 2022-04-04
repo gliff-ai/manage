@@ -23,7 +23,7 @@ import { CollaboratorsView } from "@/views/CollaboratorsView";
 
 import type { Services } from "@/api";
 import { PageSelector } from "./components/PageSelector";
-import { Progress, User } from "./interfaces";
+import { User } from "./interfaces";
 import { setStateIfMounted } from "./helpers";
 
 declare module "@mui/styles/defaultTheme" {
