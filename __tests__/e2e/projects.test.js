@@ -51,6 +51,8 @@ wrapper(() => {
     test("edit project dialog", async (driver, percySnapshot) => {
       await openApp(driver, webdriver, TARGET_URL);
 
+      await findElementByText(driver, "Projects", "p"); // wait for the page to load
+
       await clickHiddenElement(driver, "edit-project-1");
 
       const text = "Edit Project";
