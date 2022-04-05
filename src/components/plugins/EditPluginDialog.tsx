@@ -12,7 +12,12 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons, lightGrey } from "@gliff-ai/style";
+import {
+  theme,
+  IconButton as GliffIconButton,
+  icons,
+  lightGrey,
+} from "@gliff-ai/style";
 import { IPlugin, PluginType, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
@@ -21,7 +26,9 @@ import { ServiceFunctions } from "../../api";
 const useStyles = makeStyles({
   paperHeader: {
     padding: "10px",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    justifyContent: "space-between",
   },
   topography: {
     color: "#000000",
@@ -30,17 +37,14 @@ const useStyles = makeStyles({
     marginLeft: "8px",
   },
   paperBody: { width: "350px", margin: "10px 20px" },
-  settingsIcon: { width: "20px", height: "auto" },
-  closeButton: {
-    position: "absolute",
-    top: "7px",
-    right: "5px",
-  },
   closeIcon: { width: "15px" },
   marginTop: { marginTop: "15px" },
-  divider: { width: "500px", margin: "12px -20px" },
+  divider: {
+    width: "500px !important",
+    margin: "12px -20px !important",
+  },
   greenButton: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
     "&:disabled": {
       backgroundColor: lightGrey,
     },
@@ -168,9 +172,13 @@ export function EditPluginDialog({
 
   return (
     <>
-      <IconButton onClick={() => setOpen(true)}>
-        <SVG src={icons.cog} className={classes.settingsIcon} />
-      </IconButton>
+      <GliffIconButton
+        id={`edit-plugin-${plugin.name}`}
+        icon={icons.cog}
+        tooltip={{ name: "Settings" }}
+        onClick={() => setOpen(true)}
+        tooltipPlacement="top"
+      />
       <Dialog
         open={open}
         onClose={() => {
@@ -185,10 +193,7 @@ export function EditPluginDialog({
             square
           >
             <Typography className={classes.topography}>Edit Plug-in</Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={() => setOpen(false)}
-            >
+            <IconButton onClick={() => setOpen(false)}>
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>

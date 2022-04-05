@@ -16,9 +16,10 @@ import { IPlugin, Project } from "@/interfaces";
 const useStyles = makeStyles({
   marginTop: { marginTop: "15px" },
   option: {
-    fontSize: "16px",
+    fontSize: "14px",
     backgroundColor: `#FFFFFF !important`,
     "&:hover": { backgroundColor: `${lightGrey} !important` },
+    padding: "5px 10px",
   },
   checkboxIcon: { width: "18px", height: "auto" },
   chipLabel: {
@@ -64,7 +65,6 @@ export const ProjectsAutocomplete = ({
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
         className={classes.marginTop}
-        classes={{ option: classes.option }}
         multiple
         disableCloseOnSelect
         disableClearable
@@ -76,7 +76,7 @@ export const ProjectsAutocomplete = ({
         options={allProjects}
         getOptionLabel={(option) => option.name}
         renderOption={(props, option) => (
-          <li {...props}>
+          <li {...props} className={classes.option}>
             <FormControlLabel
               label={option.name}
               control={
