@@ -303,6 +303,7 @@ export function EditProjectDialog({
         onClick={() => setOpen(!open)}
         icon={icons.edit}
         tooltip={{ name: "Edit Project" }}
+        tooltipPlacement="top"
       />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Card className={classes.card}>
