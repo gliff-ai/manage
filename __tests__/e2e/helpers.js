@@ -10,12 +10,12 @@ const openApp = async (driver, webdriver, TARGET_URL) => {
   await driver.wait(webdriver.until.titleMatches(/Manage/i), 60000);
 };
 
-const findElementById = async (driver, id, timeout = 3000) => {
+const findElementById = async (driver, id, timeout = 5000) => {
   const el = await driver.wait(until.elementLocated(By.id(id)), timeout);
   return el;
 };
 
-const findElementByText = async (driver, text, tag = "*", timeout = 3000) => {
+const findElementByText = async (driver, text, tag = "*", timeout = 5000) => {
   const el = await driver.wait(
     until.elementLocated(By.xpath(`//${tag}[text()='${text}']`)),
     timeout
