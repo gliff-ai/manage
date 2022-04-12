@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { fireEvent, screen, act } from "@testing-library/react";
 import { ProvideAuth, UserInterface } from "./index";
-import { user, config, getAnnotationProgress } from "../examples/samples";
+import { user, config } from "../examples/samples";
 import { UserAccess } from "./interfaces";
 
 let container: HTMLDivElement;
@@ -20,7 +20,6 @@ const getComponent = (userAccess: UserAccess, tierID: number): JSX.Element => (
               user={{ ...user, userAccess, tierID }}
               services={config.services}
               showAppBar
-              getAnnotationProgress={getAnnotationProgress}
             />
           }
         />

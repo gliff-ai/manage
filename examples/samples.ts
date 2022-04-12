@@ -1,4 +1,10 @@
-import { UserAccess, IPlugin, PluginType, Product } from "@/interfaces";
+import {
+  UserAccess,
+  IPlugin,
+  PluginType,
+  Product,
+  Progress,
+} from "@/interfaces";
 import type { Services } from "../src";
 
 export const user = {
@@ -68,14 +74,24 @@ export const config = {
     removeFromProject: (data): Promise<void> => Promise.resolve(),
     getCollectionsMembers: () =>
       Promise.resolve({
-        1: {
-          usernames: ["user1@gliff.app", "user2@gliff.app", "user3@gliff.app"],
-          pendingUsernames: [],
-        },
-        2: {
-          usernames: ["user1@gliff.app", "user2@gliff.app"],
-          pendingUsernames: ["user3@gliff.app"],
-        },
+        1: [
+          {
+            username: "user1@gliff.app",
+            isPending: false,
+          },
+          {
+            username: "user2@gliff.app",
+            isPending: false,
+          },
+          { username: "user3@gliff.app", isPending: true },
+        ],
+        2: [
+          {
+            username: "user1@gliff.app",
+            isPending: false,
+          },
+          { username: "user3@gliff.app", isPending: true },
+        ],
       }),
     createPlugin: (data): Promise<{ key: string; email: string }> =>
       Promise.resolve({
@@ -104,14 +120,11 @@ export const config = {
       ]),
     updatePlugin: (data): Promise<number> => Promise.resolve(1),
     deletePlugin: (data): Promise<number> => Promise.resolve(1),
+    getAnnotationProgress: (data): Promise<Progress> =>
+      Promise.resolve({
+        1: { total: 12, complete: 1 },
+        2: { total: 0, complete: 0 },
+      }),
+    launchDocs: (): Promise<void> => Promise.resolve(),
   } as Services,
 };
-
-export const getAnnotationProgress = (
-  username: string,
-  projectId?: string
-): Promise<any> =>
-  Promise.resolve({
-    1: { total: 12, complete: 1 },
-    2: { total: 0, complete: 0 },
-  });

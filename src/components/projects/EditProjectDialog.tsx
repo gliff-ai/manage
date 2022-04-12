@@ -22,20 +22,30 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { theme, icons } from "@gliff-ai/style";
-import { Profile, ProjectUsers } from "@/interfaces";
+import {
+  IconButton as GliffIconButton,
+  theme,
+  icons,
+  lightGrey,
+} from "@gliff-ai/style";
+import { Profile, ProjectUser } from "@/interfaces";
 
 const useStyles = makeStyles({
-  paperHeader: { padding: "10px", backgroundColor: theme.palette.primary.main },
+  paperHeader: {
+    padding: "10px",
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    justifyContent: "space-between",
+  },
   card: {
     display: "flex",
     flexDirection: "column",
-    width: "300px",
+    width: "350px",
   },
   confirmButton: {
     textTransform: "none",
-    marginTop: "15px",
-    backgroundColor: theme.palette.primary.main,
+    marginTop: "15px !important",
+    backgroundColor: `${theme.palette.primary.main} !important`,
     "&:hover": {
       backgroundColor: theme.palette.info.main,
     },
@@ -50,7 +60,7 @@ const useStyles = makeStyles({
     margin: "20px 15px 15px",
   },
   editUsersSection: {
-    margin: "20px 15px 15px",
+    margin: "20px 15px 15px !important",
   },
   listUsersSection: {
     margin: "10px 15px 30px",
@@ -59,6 +69,8 @@ const useStyles = makeStyles({
   chipLabel: {
     margin: "5px 5px 0 0",
     borderRadius: "9px",
+    maxWidth: "300px",
+    fontSize: "14px",
   },
   currentChip: { borderColor: "black", color: "black" },
   pendingChip: {
@@ -73,28 +85,27 @@ const useStyles = makeStyles({
     height: "30",
   },
   divider: {
-    width: "100%",
+    width: "100% !important",
     margin: "0",
     lineHeight: "1px",
   },
-  checkboxIcon: { width: "18px", height: "auto" },
-  closeButton: {
-    position: "absolute",
-    top: "7px",
-    right: "5px",
+  checkboxIcon: {
+    width: "18px",
+    height: "auto",
   },
   closeIcon: { width: "15px" },
   option: {
     backgroundColor: `#FFFFFF !important`,
-    fontSize: "16px",
-    "&:hover": { backgroundColor: `${theme.palette.grey[100]} !important` },
+    fontSize: "14px",
+    "&:hover": { backgroundColor: `${lightGrey} !important` },
+    padding: "5px",
   },
 });
 
 interface Props {
   projectUid: string;
   projectName: string;
-  projectUsers: ProjectUsers;
+  projectUsers: ProjectUser[];
   invitees: Profile[];
   updateProjectName: (data: {
     projectUid: string;
@@ -123,16 +134,20 @@ export function EditProjectDialog({
   );
 
   const alreadyInvited = useCallback(
-    (user: Profile): boolean =>
-      projectUsers.usernames.includes(user.email) ||
-      projectUsers.pendingUsernames.includes(user.email),
+    (username: string): boolean =>
+      projectUsers.filter((user) => user.username === username).length > 0,
     [projectUsers]
   );
+
+  const filterInviteesOptions = ({ email }: Profile): boolean => {
+    const user = projectUsers.find(({ username }) => username === email);
+    return !user?.isPending && user?.accessLevel !== 1;
+  };
 
   useEffect(() => {
     if (!projectUsers) return;
 
-    setSelectedInvitees(invitees.filter(alreadyInvited));
+    setSelectedInvitees(invitees.filter(({ email }) => alreadyInvited(email)));
   }, [projectUsers, invitees, alreadyInvited]);
 
   if (!invitees || !projectUsers || !selectedInvitees) return null;
@@ -148,13 +163,16 @@ export function EditProjectDialog({
     if (!selectedInvitees) return;
     await Promise.all(
       invitees.map(async (profile) => {
-        if (selectedInvitees.includes(profile) && !alreadyInvited(profile)) {
+        if (
+          selectedInvitees.includes(profile) &&
+          !alreadyInvited(profile.email)
+        ) {
           await inviteToProject(projectUid, profile.email);
         }
 
         if (
           !selectedInvitees.includes(profile) &&
-          projectUsers.usernames.includes(profile.email) // can only remove users that have already accepted or rejected invite
+          alreadyInvited(profile.email) // can only remove users that have already accepted or rejected invite
         ) {
           await removeFromProject(projectUid, profile.email);
         }
@@ -174,17 +192,16 @@ export function EditProjectDialog({
     setOpen(false);
   };
 
-  const getChips = (usernames: string[], isPending = false) =>
-    usernames.map((username) => (
-      <Chip
-        key={username}
-        className={`${classes.chipLabel} ${
-          isPending ? classes.pendingChip : classes.currentChip
-        }`}
-        label={username}
-        variant="outlined"
-      />
-    ));
+  const getChips = ({ name, username, isPending }: ProjectUser) => (
+    <Chip
+      key={username}
+      className={`${classes.chipLabel} ${
+        isPending ? classes.pendingChip : classes.currentChip
+      }`}
+      label={name}
+      variant="outlined"
+    />
+  );
 
   const editProjectSection = (
     <Paper elevation={0} square className={classes.editProjectSection}>
@@ -210,25 +227,41 @@ export function EditProjectDialog({
         value={selectedInvitees}
         onChange={handleSelectChange}
         getOptionLabel={(option) => option.name}
-        classes={{ option: classes.option }}
+        filterOptions={(options) => options.filter(filterInviteesOptions)}
         renderOption={(props, option) => (
-          <li {...props}>
-            <Checkbox
-              icon={
-                <SVG
-                  className={classes.checkboxIcon}
-                  src={icons.notSelectedTickbox}
-                />
-              }
-              checkedIcon={
-                <SVG
-                  className={classes.checkboxIcon}
-                  src={icons.multipleImageSelection}
-                />
-              }
-              checked={selectedInvitees.includes(option)}
-            />
-            {option.name} - {option.email}
+          <li {...props} className={classes.option}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <Checkbox
+                icon={
+                  <SVG
+                    className={classes.checkboxIcon}
+                    src={icons.notSelectedTickbox}
+                  />
+                }
+                checkedIcon={
+                  <SVG
+                    className={classes.checkboxIcon}
+                    src={icons.multipleImageSelection}
+                  />
+                }
+                checked={selectedInvitees.includes(option)}
+              />
+              <div
+                style={{
+                  display: "flex",
+                  marginLeft: "5px",
+                  flexWrap: "wrap",
+                }}
+              >
+                {option.name} - {option.email}
+              </div>
+            </div>
           </li>
         )}
         renderInput={(params) => (
@@ -258,22 +291,20 @@ export function EditProjectDialog({
 
   const listUsersSection = (
     <Paper elevation={0} square className={classes.listUsersSection}>
-      <List className={classes.usersList}>
-        {getChips(projectUsers.usernames)}
-        {getChips(projectUsers.pendingUsernames, true)}
-      </List>
+      <List className={classes.usersList}>{projectUsers.map(getChips)}</List>
     </Paper>
   );
 
   return (
     <>
-      <IconButton
+      <GliffIconButton
+        id={`edit-project-${projectUid}`}
         data-testid={`edit-${projectUid}`}
         onClick={() => setOpen(!open)}
-        size="small"
-      >
-        <SVG src={icons.edit} style={{ width: "22px", height: "auto" }} />
-      </IconButton>
+        icon={icons.edit}
+        tooltip={{ name: "Edit Project" }}
+        tooltipPlacement="top"
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Card className={classes.card}>
           <Paper
@@ -285,11 +316,7 @@ export function EditProjectDialog({
             <Typography className={classes.userInviteTopography}>
               Edit Project
             </Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={() => setOpen(false)}
-              size="small"
-            >
+            <IconButton onClick={() => setOpen(false)} size="small">
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>

@@ -23,11 +23,17 @@ export type Project = {
   name: string;
 };
 
-export type ProjectsUsers = {
-  [uid: string]: ProjectUsers;
+export type ProjectUsers = {
+  [uid: string]: ProjectUser[];
 };
 
-export type ProjectUsers = { usernames: string[]; pendingUsernames: string[] };
+export type ProjectUser = {
+  name?: string;
+  username: string;
+  isPending: boolean;
+  accessLevel: number;
+};
+
 export interface Profile {
   email: string;
   name: string;
