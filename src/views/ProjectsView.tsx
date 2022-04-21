@@ -204,6 +204,21 @@ export const ProjectsView = ({
     console.log(`${email} removed from project ${projectUid}.`);
   };
 
+  const deleteProject = (projectUid: string) => () =>
+    services
+      .deleteProject({ projectUid })
+      .then((isDeleted) => {
+        if (isDeleted) {
+          // remove deleted project from the list
+          setProjects((prevProjects) =>
+            prevProjects.filter((p) => p.uid !== projectUid)
+          );
+
+          console.log(`project ${projectUid} was successfully deleted!`);
+        }
+      })
+      .catch((e) => console.error(e));
+
   const createProject = async (name: string): Promise<string> => {
     const projectId = (await services.createProject({
       name,
@@ -305,6 +320,15 @@ export const ProjectsView = ({
                         tooltipPlacement="top"
                       />
                     )}
+                  {isOwnerOrMember() && (
+                    <IconButton
+                      data-testid={`delete-${uid}`}
+                      tooltip={{ name: `Delete ${uid}` }}
+                      icon={icons.delete}
+                      onClick={deleteProject(uid)}
+                      tooltipPlacement="top"
+                    />
+                  )}
                 </TableButtonsCell>
               </TableRow>
             ))}

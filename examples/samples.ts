@@ -56,9 +56,10 @@ export const config = {
         ],
       }),
     loginUser: "GET /login",
-    getProject: (uid) =>
+    getProject: (data) =>
       Promise.resolve({ name: "New Project Name", uid: "1" }),
     getTeam: "GET /team",
+    deleteProject: (data) => Promise.resolve(true),
     getProjects: () =>
       Promise.resolve([
         { name: "Project 1", uid: "1" },

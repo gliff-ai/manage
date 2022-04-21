@@ -19,6 +19,7 @@ interface Services {
   getProjects: APIRoute | ServiceFunction;
   updateProjectName: APIRoute | ServiceFunction;
   getProject: APIRoute | ServiceFunction;
+  deleteProject: APIRoute | ServiceFunction;
   getCollectionMembers: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
   inviteToProject: APIRoute | ServiceFunction;
