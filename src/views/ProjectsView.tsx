@@ -72,6 +72,9 @@ export const ProjectsView = ({
     [auth.user.userAccess]
   );
 
+  const isTrustedServices = (email: string): boolean =>
+    email.includes("trustedservice");
+
   const updateProjectUsers = useCallback(
     (projectUid: string): void => {
       void services
@@ -81,11 +84,13 @@ export const ProjectsView = ({
             setProjectUsers((prevUsers) => {
               const newProjectsUsers = { ...prevUsers };
 
-              newProjectsUsers[projectUid] = newUsers.map((user) => ({
-                name: invitees.find(({ email }) => email === user.username)
-                  .name,
-                ...user,
-              }));
+              newProjectsUsers[projectUid] = newUsers
+                .filter(({ username }) => !isTrustedServices(username))
+                .map((user) => ({
+                  name: invitees.find(({ email }) => email === user.username)
+                    .name,
+                  ...user,
+                }));
               return newProjectsUsers;
             });
           }
@@ -143,10 +148,12 @@ export const ProjectsView = ({
       if (newUsers) {
         // add users' names
         for (const key of Object.keys(newUsers)) {
-          newUsers[key] = newUsers[key].map((user) => ({
-            name: invitees.find(({ email }) => email === user.username).name,
-            ...user,
-          }));
+          newUsers[key] = newUsers[key]
+            .filter(({ username }) => !isTrustedServices(username))
+            .map((user) => ({
+              name: invitees.find(({ email }) => email === user.username).name,
+              ...user,
+            }));
         }
 
         setStateIfMounted(newUsers, setProjectUsers, isMounted.current);
@@ -160,7 +167,11 @@ export const ProjectsView = ({
     void services
       .queryTeam(null, auth.user.authToken)
       .then(({ profiles }: Team) => {
-        setStateIfMounted(profiles, setInvitees, isMounted.current);
+        setStateIfMounted(
+          profiles.filter(({ email }) => !isTrustedServices(email)),
+          setInvitees,
+          isMounted.current
+        );
       });
   }, [auth, services, isMounted, isOwnerOrMember]);
 

@@ -91,6 +91,10 @@ export const config = {
             isPending: false,
           },
           { username: "user3@gliff.app", isPending: true },
+          {
+            username: "trustedservice@gliff.app",
+            isPending: false,
+          },
         ],
       }),
     createPlugin: (data): Promise<{ key: string; email: string }> =>
