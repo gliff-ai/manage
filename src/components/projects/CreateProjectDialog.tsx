@@ -203,11 +203,19 @@ export function CreateProjectDialog({
                 onClick={() => {
                   createProject(newProjectName).then(
                     (newProjectUid) => {
+                      const invites = new Set<string>();
+                      // Always invite the team owner
+                      for (const member of invitees) {
+                        if (member.is_owner) invites.add(member.email);
+                      }
+
                       for (const profile of dialogInvitees) {
-                        inviteToProject(newProjectUid, profile.email).catch(
-                          (err) => {
-                            console.error(err);
-                          }
+                        if (!profile.is_owner) invites.add(profile.email);
+                      }
+
+                      for (const invitee of invites) {
+                        inviteToProject(newProjectUid, invitee).catch((err) =>
+                          console.error(err)
                         );
                       }
                     },
