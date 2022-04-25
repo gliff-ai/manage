@@ -1,4 +1,4 @@
-import { useState, ReactElement } from "react";
+import { useState, ReactElement, useEffect } from "react";
 import {
   Paper,
   IconButton,
@@ -71,6 +71,7 @@ interface Props {
   invitees: Profile[] | null;
   createProject: (name: string) => Promise<string>;
   inviteToProject: (uid: string, email: string) => Promise<void>;
+  isOpen?: boolean;
 }
 
 export function CreateProjectDialog({
@@ -78,6 +79,7 @@ export function CreateProjectDialog({
   invitees,
   createProject,
   inviteToProject,
+  ...optProps
 }: Props): ReactElement | null {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [newProjectName, setNewProjectName] = useState<string>("");
@@ -85,17 +87,24 @@ export function CreateProjectDialog({
 
   const classes = useStyles();
 
+  useEffect(() => {
+    if (optProps?.isOpen === null) return;
+    setDialogOpen(optProps.isOpen);
+  }, [optProps?.isOpen]);
+
   if (!invitees || !projects) return null;
 
   return (
     <>
-      <GliffIconButton
-        id="create-project"
-        tooltip={{ name: "Add New Project" }}
-        icon={icons.add}
-        onClick={() => setDialogOpen(true)}
-        tooltipPlacement="top"
-      />
+      {optProps?.isOpen === null ? (
+        <GliffIconButton
+          id="create-project"
+          tooltip={{ name: "Add New Project" }}
+          icon={icons.add}
+          onClick={() => setDialogOpen(true)}
+          tooltipPlacement="top"
+        />
+      ) : null}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <Card>
           <Paper
@@ -227,3 +236,5 @@ export function CreateProjectDialog({
     </>
   );
 }
+
+CreateProjectDialog.defaultProps = { isOpen: null };

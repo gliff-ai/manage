@@ -19,7 +19,6 @@ import {
   theme,
   icons,
   lightGrey,
-  middleGrey,
   IconButton as GliffIconButton,
 } from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
@@ -53,9 +52,9 @@ const useStyles = makeStyles({
   whiteButton: {
     textTransform: "none",
     backgroundColor: "transparent",
-    borderColor: `${middleGrey} !important`,
+    borderColor: `${lightGrey} !important`,
     "&:hover": {
-      borderColor: middleGrey,
+      borderColor: lightGrey,
     },
   },
   greenButton: {

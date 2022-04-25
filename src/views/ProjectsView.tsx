@@ -1,7 +1,21 @@
 import { useEffect, useState, ReactElement, useRef, useCallback } from "react";
-import { Paper, Box, Typography, Card } from "@mui/material";
+import {
+  Paper,
+  Box,
+  Typography,
+  Card,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { theme, IconButton, LoadingSpinner, icons } from "@gliff-ai/style";
+import {
+  theme,
+  IconButton,
+  LoadingSpinner,
+  icons,
+  lightGrey,
+} from "@gliff-ai/style";
+import SVG from "react-inlinesvg";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -43,6 +57,26 @@ const useStyles = makeStyles({
       background: "#01dbff",
     },
   },
+  whiteButton: {
+    textTransform: "none",
+    backgroundColor: "transparent",
+    borderColor: `${lightGrey} !important`,
+    "&:hover": {
+      borderColor: lightGrey,
+    },
+  },
+  greenButton: {
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    "&:disabled": {
+      backgroundColor: lightGrey,
+    },
+    textTransform: "none",
+    "&:hover": {
+      backgroundColor: `${theme.palette.info.main} !important`,
+    },
+  },
+  cardTitle: { fontSize: "18px", fontWeight: 700 },
+  cardSubtitle: { fontSize: "16px" },
 });
 
 interface Props {
@@ -61,6 +95,8 @@ export const ProjectsView = ({
   const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
   const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null); // users in each project
+  const [createProjectIsOpen, setCreateProjectIsOpen] =
+    useState<boolean | null>(null);
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -186,6 +222,10 @@ export const ProjectsView = ({
       });
   }, [isMounted, auth, services]);
 
+  useEffect(() => {
+    setCreateProjectIsOpen(projects?.length === 0 ? false : null);
+  }, [projects]);
+
   const inviteToProject = async (
     projectUid: string,
     email: string
@@ -246,6 +286,76 @@ export const ProjectsView = ({
     );
   };
 
+  const getIntroToMenageCard = useCallback(() => {
+    const isOwnerAndMemberCard = isOwnerOrMember();
+    return (
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Card
+          variant="outlined"
+          raised={false}
+          style={{
+            width: "500px",
+            height: "auto",
+            border: `3px solid ${lightGrey}`,
+            borderRadius: "9px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "20px",
+          }}
+        >
+          <SVG
+            src={icons.projectsPage}
+            style={{ width: "auto", height: "40px", marginBottom: "20px" }}
+          />
+          <span className={classes.cardTitle}>
+            {isOwnerAndMemberCard
+              ? "You currently have no projects!"
+              : "You aren't assigned to any projects!"}
+          </span>
+          <span className={classes.cardSubtitle}>
+            {isOwnerAndMemberCard
+              ? "Create a project or try our demo project to get started."
+              : "Contact your team owner to be assigned to a project."}
+          </span>
+          {isOwnerAndMemberCard && (
+            <DialogActions
+              style={{
+                marginTop: "20px",
+                width: "340px",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button
+                variant="outlined"
+                className={classes.whiteButton}
+                onClick={() => console.log("open demo project")}
+              >
+                Open Demo Project
+              </Button>
+              <Button
+                variant="outlined"
+                className={classes.greenButton}
+                onClick={() => setCreateProjectIsOpen(true)}
+              >
+                Open New Project
+              </Button>
+            </DialogActions>
+          )}
+        </Card>
+      </div>
+    );
+  }, [isOwnerOrMember]);
+
   if (!auth?.user) return null;
 
   return (
@@ -263,15 +373,18 @@ export const ProjectsView = ({
             invitees={invitees}
             createProject={createProject}
             inviteToProject={inviteToProject}
+            isOpen={createProjectIsOpen}
           />
         )}
       </Paper>
-      <Paper elevation={0} square style={{ height: "100%" }}>
-        {projects === null ? (
+      <Paper elevation={0} style={{ height: "100%" }}>
+        {projects === null && (
           <Box display="flex" height="100%">
             <LoadingSpinner />
           </Box>
-        ) : (
+        )}
+        {projects?.length === 0 && getIntroToMenageCard()}
+        {projects?.length > 0 && (
           <Table
             header={
               isOwnerOrMember()
