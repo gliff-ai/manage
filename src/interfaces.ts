@@ -47,7 +47,7 @@ export interface Team {
   owner: {
     id: number;
     email: string;
-  }
+  };
   pending_invites: Array<{
     email: string;
     sent_date: string;

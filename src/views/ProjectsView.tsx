@@ -168,11 +168,11 @@ export const ProjectsView = ({
       .queryTeam(null, auth.user.authToken)
       .then(({ profiles, owner }: Team) => {
         const p = profiles.map((profile) => {
-          if(owner.email === profile.email) {
+          if (owner.email === profile.email) {
             profile.is_owner = true;
           }
 
-          return profile
+          return profile;
         });
 
         setStateIfMounted(
