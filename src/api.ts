@@ -31,6 +31,7 @@ interface Services {
   updatePlugin: APIRoute | ServiceFunction;
   getAnnotationProgress: APIRoute | ServiceFunction;
   launchDocs: APIRoute | ServiceFunction;
+  downloadDemoData: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {

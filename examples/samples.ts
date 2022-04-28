@@ -127,5 +127,6 @@ export const config = {
         2: { total: 0, complete: 0 },
       }),
     launchDocs: (): Promise<void> => Promise.resolve(),
+    downloadDemoData: (): Promise<void> => Promise.resolve(),
   } as Services,
 };

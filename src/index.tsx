@@ -51,6 +51,7 @@ const defaultServices = {
   updatePlugin: "PUT /plugin",
   getAnnotationProgress: "GET /progress",
   launchDocs: "GET /docs",
+  downloadDemoData: "POST /demo-data",
 } as Services;
 
 interface Props {
