@@ -11,21 +11,24 @@ import {
   TextField,
   DialogActions,
   Button,
-  ListItem,
+  Autocomplete,
 } from "@mui/material";
-import SVG from "react-inlinesvg";
-
 import makeStyles from "@mui/styles/makeStyles";
-
-import Autocomplete from "@mui/material/Autocomplete";
-import { Add } from "@mui/icons-material";
-import { theme, icons } from "@gliff-ai/style";
+import SVG from "react-inlinesvg";
+import {
+  theme,
+  icons,
+  lightGrey,
+  IconButton as GliffIconButton,
+} from "@gliff-ai/style";
 import { Profile, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
   paperHeader: {
     padding: "10px",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    justifyContent: "space-between",
   },
   projectsTopography: {
     color: "#000000",
@@ -41,11 +44,12 @@ const useStyles = makeStyles({
       backgroundColor: theme.palette.info.main,
     },
   },
-
   chipLabel: {
     margin: "5px 5px 0 0",
     borderColor: "black",
     borderRadius: "9px",
+    maxWidth: "300px",
+    fontSize: "14px",
   },
   iconSize: {
     width: "15px",
@@ -53,19 +57,20 @@ const useStyles = makeStyles({
   addButton: {
     color: "#000000",
   },
-  closeButton: {
-    position: "absolute",
-    top: "7px",
-    right: "5px",
-  },
   closeIcon: { width: "15px" },
+  option: {
+    backgroundColor: `#FFFFFF !important`,
+    fontSize: "14px",
+    "&:hover": { backgroundColor: `${lightGrey} !important` },
+    padding: "5px 10px",
+  },
 });
 
 interface Props {
   projects: Project[] | null;
   invitees: Profile[] | null;
-  createProject: (newName: string) => Promise<string>;
-  inviteToProject: (projectId: string, inviteeEmail: string) => Promise<void>;
+  createProject: (name: string) => Promise<string>;
+  inviteToProject: (uid: string, email: string) => Promise<void>;
 }
 
 export function CreateProjectDialog({
@@ -73,20 +78,24 @@ export function CreateProjectDialog({
   invitees,
   createProject,
   inviteToProject,
-}: Props): ReactElement {
+}: Props): ReactElement | null {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [newProjectName, setNewProjectName] = useState<string>("");
   const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]);
 
   const classes = useStyles();
+
+  if (!invitees || !projects) return null;
+
   return (
     <>
-      <IconButton
-        className={classes.addButton}
+      <GliffIconButton
+        id="create-project"
+        tooltip={{ name: "Add New Project" }}
+        icon={icons.add}
         onClick={() => setDialogOpen(true)}
-      >
-        <Add />
-      </IconButton>
+        tooltipPlacement="top"
+      />
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <Card>
           <Paper
@@ -98,14 +107,15 @@ export function CreateProjectDialog({
             <Typography className={classes.projectsTopography}>
               Create Project
             </Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={() => setDialogOpen(false)}
-            >
+            <IconButton onClick={() => setDialogOpen(false)}>
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>
-          <Paper elevation={0} square style={{ width: "20vw", margin: "20px" }}>
+          <Paper
+            elevation={0}
+            square
+            style={{ width: "350px", margin: "20px" }}
+          >
             <TextField
               placeholder="Project Name"
               style={{ width: "100%" }}
@@ -124,6 +134,11 @@ export function CreateProjectDialog({
                   label="Add Team Members"
                   variant="outlined"
                 />
+              )}
+              renderOption={(props, option) => (
+                <li {...props} className={classes.option}>
+                  {option.name} — {option.email}
+                </li>
               )}
               style={{ marginTop: "26px" }}
               onChange={(event, value) => {
@@ -163,7 +178,7 @@ export function CreateProjectDialog({
                     </Avatar>
                   }
                   className={classes.chipLabel}
-                  label={profile.email}
+                  label={profile.name}
                   variant="outlined"
                 />
               ))}
@@ -188,11 +203,19 @@ export function CreateProjectDialog({
                 onClick={() => {
                   createProject(newProjectName).then(
                     (newProjectUid) => {
+                      const invites = new Set<string>();
+                      // Always invite the team owner
+                      for (const member of invitees) {
+                        if (member.is_owner) invites.add(member.email);
+                      }
+
                       for (const profile of dialogInvitees) {
-                        inviteToProject(newProjectUid, profile.email).catch(
-                          (err) => {
-                            console.error(err);
-                          }
+                        if (!profile.is_owner) invites.add(profile.email);
+                      }
+
+                      for (const invitee of invites) {
+                        inviteToProject(newProjectUid, invitee).catch((err) =>
+                          console.error(err)
                         );
                       }
                     },

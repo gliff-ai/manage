@@ -1,4 +1,10 @@
-import { UserAccess, TrustedService, JsPlugin } from "@/interfaces";
+import {
+  UserAccess,
+  IPlugin,
+  PluginType,
+  Product,
+  Progress,
+} from "@/interfaces";
 import type { Services } from "../src";
 
 export const user = {
@@ -13,6 +19,10 @@ export const config = {
   services: {
     queryTeam: () =>
       Promise.resolve({
+        owner: {
+          email: "user1@gliff.app",
+          id: 1 
+        },
         profiles: [
           {
             email: "user1@gliff.app",
@@ -66,47 +76,63 @@ export const config = {
     inviteCollaborator: (data): Promise<boolean> => Promise.resolve(true),
     inviteToProject: (data): Promise<boolean> => Promise.resolve(true),
     removeFromProject: (data): Promise<void> => Promise.resolve(),
-    createTrustedService: (data): Promise<string> =>
-      Promise.resolve("key key key"),
-    getTrustedServices: (data): Promise<TrustedService[]> =>
-      Promise.resolve([
-        {
-          type: "Python",
-          name: "python-plugin",
-          url: "https://ts.gliff.app",
-          products: "ALL",
-          enabled: false,
-        },
-      ]),
-    createJsPlugin: (data): Promise<void> => Promise.resolve(),
-    getJsPlugins: (data): Promise<JsPlugin[]> =>
-      Promise.resolve([
-        {
-          name: "js-plugin",
-          url: "https://plugin.gliff.app",
-          products: "CURATE",
-          enabled: true,
-        },
-      ]),
     getCollectionsMembers: () =>
       Promise.resolve({
-        1: {
-          usernames: ["user1@gliff.app", "user2@gliff.app", "user3@gliff.app"],
-          pendingUsernames: [],
-        },
-        2: {
-          usernames: ["user1@gliff.app", "user2@gliff.app"],
-          pendingUsernames: ["user3@gliff.app"],
-        },
+        1: [
+          {
+            username: "user1@gliff.app",
+            isPending: false,
+          },
+          {
+            username: "user2@gliff.app",
+            isPending: false,
+          },
+          { username: "user3@gliff.app", isPending: true },
+        ],
+        2: [
+          {
+            username: "user1@gliff.app",
+            isPending: false,
+          },
+          { username: "user3@gliff.app", isPending: true },
+          {
+            username: "trustedservice@gliff.app",
+            isPending: false,
+          },
+        ],
       }),
+    createPlugin: (data): Promise<{ key: string; email: string }> =>
+      Promise.resolve({
+        key: "key key key",
+        email: "1234@trustedservice.gliff.app",
+      }),
+    getPlugins: (data): Promise<IPlugin[]> =>
+      Promise.resolve([
+        {
+          username: "1234@trustedservice.gliff.app",
+          type: PluginType.Python,
+          name: "python-plugin",
+          url: "https://ts.gliff.app",
+          products: Product.ALL,
+          enabled: false,
+          collection_uids: ["1"],
+        } as IPlugin,
+        {
+          type: PluginType.Javascript,
+          name: "js-plugin",
+          url: "https://plugin.gliff.app",
+          products: Product.CURATE,
+          enabled: true,
+          collection_uids: [],
+        } as IPlugin,
+      ]),
+    updatePlugin: (data): Promise<number> => Promise.resolve(1),
+    deletePlugin: (data): Promise<number> => Promise.resolve(1),
+    getAnnotationProgress: (data): Promise<Progress> =>
+      Promise.resolve({
+        1: { total: 12, complete: 1 },
+        2: { total: 0, complete: 0 },
+      }),
+    launchDocs: (): Promise<void> => Promise.resolve(),
   } as Services,
 };
-
-export const getAnnotationProgress = (
-  username: string,
-  projectId?: string
-): Promise<any> =>
-  Promise.resolve({
-    1: { total: 12, complete: 1 },
-    2: { total: 0, complete: 0 },
-  });

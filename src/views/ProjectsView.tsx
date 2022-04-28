@@ -1,18 +1,7 @@
 import { useEffect, useState, ReactElement, useRef, useCallback } from "react";
-import {
-  Paper,
-  Box,
-  Typography,
-  Card,
-  TableContainer,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableHead,
-} from "@mui/material";
+import { Paper, Box, Typography, Card } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { theme, LoadingSpinner } from "@gliff-ai/style";
+import { theme, IconButton, LoadingSpinner, icons } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -21,28 +10,32 @@ import {
   Team,
   UserAccess,
   Progress,
-  ProjectsUsers,
+  ProjectUsers,
+  ProjectUser,
 } from "@/interfaces";
 import {
   EditProjectDialog,
-  LaunchIcon,
   CreateProjectDialog,
   ProgressBar,
+  Table,
+  TableCell,
+  TableRow,
+  TableButtonsCell,
 } from "@/components";
 import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles({
   paperHeader: {
-    padding: "2px",
     backgroundColor: `${theme.palette.primary.main} !important`,
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
+    height: "50px",
   },
   topography: {
     color: "#000000",
     fontSize: "21px",
-    marginLeft: "20px",
+    marginLeft: "20px !important",
   },
   // eslint-disable-next-line mui-unused-classes/unused-classes
   "@global": {
@@ -56,15 +49,10 @@ interface Props {
   services: ServiceFunctions;
   launchCurateCallback?: (projectUid: string) => void | null;
   launchAuditCallback?: (projectUid: string) => void | null;
-  getAnnotationProgress: (
-    username: string,
-    projectId?: string
-  ) => Promise<Progress>;
 }
 
 export const ProjectsView = ({
   services,
-  getAnnotationProgress,
   launchCurateCallback,
   launchAuditCallback,
 }: Props): ReactElement => {
@@ -72,7 +60,7 @@ export const ProjectsView = ({
   const [projects, setProjects] = useState<Project[] | null>(null); // all projects
   const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
-  const [projectUsers, setProjectUsers] = useState<ProjectsUsers | null>(null); // users in each project
+  const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null); // users in each project
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -84,23 +72,31 @@ export const ProjectsView = ({
     [auth.user.userAccess]
   );
 
+  const isTrustedServices = (email: string): boolean =>
+    email.includes("trustedservice");
+
   const updateProjectUsers = useCallback(
     (projectUid: string): void => {
       void services
         .getCollectionMembers({ collectionUid: projectUid })
-        .then(
-          (newUsers: { usernames: string[]; pendingUsernames: string[] }) => {
-            if (newUsers && isMounted.current) {
-              setProjectUsers((users) => {
-                const newProjectsUsers = { ...users };
-                newProjectsUsers[projectUid] = newUsers;
-                return newProjectsUsers;
-              });
-            }
+        .then((newUsers: ProjectUser[]) => {
+          if (newUsers && isMounted.current) {
+            setProjectUsers((prevUsers) => {
+              const newProjectsUsers = { ...prevUsers };
+
+              newProjectsUsers[projectUid] = newUsers
+                .filter(({ username }) => !isTrustedServices(username))
+                .map((user) => ({
+                  name: invitees.find(({ email }) => email === user.username)
+                    .name,
+                  ...user,
+                }));
+              return newProjectsUsers;
+            });
           }
-        );
+        });
     },
-    [services, isMounted]
+    [services, isMounted, invitees]
   );
 
   const updateProject = useCallback(
@@ -117,18 +113,18 @@ export const ProjectsView = ({
   );
 
   const updateAnnotationProgress = useCallback(
-    (projectId: string): void => {
+    (projectUid: string): void => {
       if (!auth?.user?.email) return;
 
-      void getAnnotationProgress(auth.user.email, projectId).then(
-        (newProgress) => {
+      void services
+        .getAnnotationProgress({ username: auth.user.email, projectUid })
+        .then((newProgress: Progress) => {
           if (newProgress && isMounted.current) {
             setProgress((p) => ({ ...p, ...newProgress }));
           }
-        }
-      );
+        });
     },
-    [getAnnotationProgress, isMounted, auth]
+    [services, isMounted, auth]
   );
 
   const triggerRefetch = (projectId: string) => {
@@ -147,21 +143,43 @@ export const ProjectsView = ({
   }, []);
 
   useEffect(() => {
-    if (!isMounted?.current || !isOwnerOrMember()) return;
-    void services.getCollectionsMembers().then((newUsers) => {
+    if (!isMounted?.current || !isOwnerOrMember() || !invitees) return;
+    void services.getCollectionsMembers().then((newUsers: ProjectUsers) => {
       if (newUsers) {
+        // add users' names
+        for (const key of Object.keys(newUsers)) {
+          newUsers[key] = newUsers[key]
+            .filter(({ username }) => !isTrustedServices(username))
+            .map((user) => ({
+              name: invitees.find(({ email }) => email === user.username).name,
+              ...user,
+            }));
+        }
+
         setStateIfMounted(newUsers, setProjectUsers, isMounted.current);
       }
     });
-  }, [isMounted, services, isOwnerOrMember]);
+  }, [isMounted, services, isOwnerOrMember, invitees]);
 
   useEffect(() => {
     if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
 
     void services
       .queryTeam(null, auth.user.authToken)
-      .then(({ profiles }: Team) => {
-        setStateIfMounted(profiles, setInvitees, isMounted.current);
+      .then(({ profiles, owner }: Team) => {
+        const p = profiles.map((profile) => {
+          if (owner.email === profile.email) {
+            profile.is_owner = true;
+          }
+
+          return profile;
+        });
+
+        setStateIfMounted(
+          p.filter(({ email }) => !isTrustedServices(email)),
+          setInvitees,
+          isMounted.current
+        );
       });
   }, [auth, services, isMounted, isOwnerOrMember]);
 
@@ -178,29 +196,31 @@ export const ProjectsView = ({
   useEffect(() => {
     if (!isMounted.current || !auth?.user?.email) return;
 
-    void getAnnotationProgress(auth.user.email).then((newProgress) => {
-      if (newProgress) {
-        setStateIfMounted(newProgress, setProgress, isMounted.current);
-      }
-    });
-  }, [isMounted, auth, getAnnotationProgress]);
+    void services
+      .getAnnotationProgress({ username: auth.user.email })
+      .then((newProgress) => {
+        if (newProgress) {
+          setStateIfMounted(newProgress, setProgress, isMounted.current);
+        }
+      });
+  }, [isMounted, auth, services]);
 
   const inviteToProject = async (
-    projectId: string,
-    inviteeEmail: string
+    projectUid: string,
+    email: string
   ): Promise<void> => {
-    await services.inviteToProject({ projectId, email: inviteeEmail });
+    await services.inviteToProject({ projectUid, email });
 
-    console.log(`${inviteeEmail} invited to project ${projectId}`);
+    console.log(`${email} invited to project ${projectUid}`);
   };
 
   const removeFromProject = async (
-    projectId: string,
-    username: string
+    projectUid: string,
+    email: string
   ): Promise<void> => {
-    await services.removeFromProject({ uid: projectId, username });
+    await services.removeFromProject({ projectUid, email });
 
-    console.log(`${username} removed from project ${projectId}.`);
+    console.log(`${email} removed from project ${projectUid}.`);
   };
 
   const createProject = async (name: string): Promise<string> => {
@@ -216,17 +236,17 @@ export const ProjectsView = ({
   };
 
   const listAssignees = (
-    users: ProjectsUsers,
-    uid: string
+    projectUid: string,
+    users: ProjectUsers
   ): ReactElement | null => {
-    if (!users || users[uid] === undefined) return null;
+    if (!users || users[projectUid] === undefined) return null;
 
-    const assignees = users[uid].usernames;
+    const assignees = users[projectUid].map(({ name }) => name);
     return (
-      <p>
+      <span>
         {assignees.slice(0, 3).join(", ")}
         {assignees.length > 3 && <b> + {assignees.length - 3} others</b>}
-      </p>
+      </span>
     );
   };
 
@@ -241,7 +261,7 @@ export const ProjectsView = ({
         className={classes.paperHeader}
       >
         <Typography className={classes.topography}>Projects</Typography>
-        {isOwnerOrMember() && projects !== null && (
+        {isOwnerOrMember() && (
           <CreateProjectDialog
             projects={projects}
             invitees={invitees}
@@ -256,61 +276,58 @@ export const ProjectsView = ({
             <LoadingSpinner />
           </Box>
         ) : (
-          <TableContainer>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow key="tab-header">
-                  <TableCell>Name</TableCell>
-                  {isOwnerOrMember() && <TableCell>Assignees</TableCell>}
-                  <TableCell>Annotation Progress</TableCell>
-                  <TableCell />
-                </TableRow>
-              </TableHead>
-
-              <TableBody>
-                {projects.map(({ name, uid }) => (
-                  <TableRow key={uid}>
-                    <TableCell>{name}</TableCell>
-                    {isOwnerOrMember() && (
-                      <TableCell>{listAssignees(projectUsers, uid)}</TableCell>
-                    )}
-                    <TableCell>
-                      {progress && <ProgressBar progress={progress[uid]} />}
-                    </TableCell>
-                    <TableCell align="right">
-                      {isOwnerOrMember() &&
-                        projectUsers &&
-                        projectUsers[uid] !== undefined && (
-                          <EditProjectDialog
-                            projectUid={uid}
-                            projectName={name}
-                            projectUsers={projectUsers[uid]}
-                            invitees={invitees}
-                            updateProjectName={services.updateProjectName}
-                            inviteToProject={inviteToProject}
-                            removeFromProject={removeFromProject}
-                            triggerRefetch={triggerRefetch}
-                          />
-                        )}
-                      <LaunchIcon
-                        launchCallback={() => launchCurateCallback(uid)}
-                        tooltip={`Open ${name} in CURATE`}
+          <Table
+            header={
+              isOwnerOrMember()
+                ? ["Name", "Assignees", "Annotation Progress"]
+                : ["Name", "Annotation Progress"]
+            }
+          >
+            {projects.map(({ name, uid }) => (
+              <TableRow key={uid}>
+                <TableCell>{name}</TableCell>
+                {isOwnerOrMember() && (
+                  <TableCell>{listAssignees(uid, projectUsers)}</TableCell>
+                )}
+                <TableCell>
+                  {progress && <ProgressBar progress={progress[uid]} />}
+                </TableCell>
+                <TableButtonsCell>
+                  {isOwnerOrMember() &&
+                    projectUsers &&
+                    projectUsers[uid] !== undefined && (
+                      <EditProjectDialog
+                        projectUid={uid}
+                        projectName={name}
+                        projectUsers={projectUsers[uid]}
+                        invitees={invitees}
+                        updateProjectName={services.updateProjectName}
+                        inviteToProject={inviteToProject}
+                        removeFromProject={removeFromProject}
+                        triggerRefetch={triggerRefetch}
                       />
-                      {isOwnerOrMember() &&
-                        auth.user.tierID > 1 &&
-                        launchAuditCallback !== null && (
-                          <LaunchIcon
-                            data-testid={`audit-${uid}`}
-                            launchCallback={() => launchAuditCallback(uid)}
-                            tooltip={`Open ${name} in AUDIT`}
-                          />
-                        )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                    )}
+                  <IconButton
+                    icon={icons.navigationCURATE}
+                    tooltip={{ name: "Open in CURATE" }}
+                    onClick={() => launchCurateCallback(uid)}
+                    tooltipPlacement="top"
+                  />
+                  {isOwnerOrMember() &&
+                    auth.user.tierID > 1 &&
+                    launchAuditCallback !== null && (
+                      <IconButton
+                        data-testid={`audit-${uid}`}
+                        tooltip={{ name: "Open in AUDIT" }}
+                        icon={icons.navigationAUDIT}
+                        onClick={() => launchAuditCallback(uid)}
+                        tooltipPlacement="top"
+                      />
+                    )}
+                </TableButtonsCell>
+              </TableRow>
+            ))}
+          </Table>
         )}
       </Paper>
     </Card>

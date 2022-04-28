@@ -42,6 +42,6 @@ export function ProgressBar({ progress }: Props): ReactElement | null {
       </Box>
     </Box>
   ) : (
-    <p>No assigned images.</p>
+    <span>No assigned images.</span>
   );
 }

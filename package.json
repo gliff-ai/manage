@@ -24,20 +24,21 @@
   },
   "license": "AGPL-3.0-only",
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.4",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@gliff-ai/eslint-config": "^0.2.0",
     "@gliff-ai/jest-browserstack-automate": "^5.0.0",
-    "@gliff-ai/style": "^8.2.0",
+    "@gliff-ai/style": "^9.0.1",
     "@mui/icons-material": "^5.2.5",
-    "@mui/lab": "^5.0.0-alpha.64",
     "@mui/material": "^5.2.8",
     "@mui/styles": "^5.2.3",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.1",
+    "chromedriver": "^100.0.0",
     "eslint": "^7.25.0",
     "history": "==5.0.1",
     "jest": "^27.0.4",
@@ -54,7 +55,7 @@
   "peerDependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@gliff-ai/style": "^8.2.0",
+    "@gliff-ai/style": "^9.0.1",
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.8",
     "@mui/styles": "^5.2.3",
@@ -65,7 +66,7 @@
   },
   "dependencies": {
     "axios": "^0.24.0",
-    "csstype": "^3.0.10",
+    "csstype": "<=3.0.10 || >3.0.11",
     "react-inlinesvg": "^2.3.0"
   }
 }

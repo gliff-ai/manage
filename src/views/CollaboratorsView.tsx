@@ -6,12 +6,6 @@ import {
   Card,
   List,
   ListItem,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
   TextField,
   ListSubheader,
   Box,
@@ -24,24 +18,26 @@ import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
+import { Table, TableCell, TableRow } from "@/components";
 
 const useStyles = makeStyles(() => ({
-  topography: {
-    color: "#000000",
-    display: "inline",
-    fontSize: "21px",
-    marginRight: "125px",
-    paddingLeft: "8px",
-  },
   paperHeader: {
-    padding: "10px",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "50px",
   },
   paperBody: {
     margin: "15px",
     width: "95%",
     fontSize: "17px",
     paddingLeft: "6px",
+  },
+  topography: {
+    color: "#000000",
+    fontSize: "21px",
+    marginLeft: "20px !important",
   },
   cardsContainer: {
     display: "flex",
@@ -192,33 +188,18 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
         >
           <Typography className={classes.topography}>Collaborators</Typography>
         </Paper>
-
         {team?.profiles ? (
-          <TableContainer>
-            <Table aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell className={classes.tableText}>Name</TableCell>
-                  <TableCell className={classes.tableText}>Email</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {team?.profiles.map(
-                  ({ email, name, is_collaborator }, index) =>
-                    is_collaborator && (
-                      <TableRow key={email}>
-                        <TableCell className={classes.tableText}>
-                          {name}
-                        </TableCell>
-                        <TableCell className={classes.tableText}>
-                          {email}
-                        </TableCell>
-                      </TableRow>
-                    )
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <Table header={["Name", "Email"]} hasButtonsCell={false}>
+            {team?.profiles.map(
+              ({ email, name, is_collaborator }) =>
+                is_collaborator && (
+                  <TableRow key={email}>
+                    <TableCell>{name}</TableCell>
+                    <TableCell>{email}</TableCell>
+                  </TableRow>
+                )
+            )}
+          </Table>
         ) : (
           <Box display="flex" height="100%">
             <LoadingSpinner />

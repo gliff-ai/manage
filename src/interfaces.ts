@@ -23,20 +23,31 @@ export type Project = {
   name: string;
 };
 
-export type ProjectsUsers = {
-  [uid: string]: ProjectUsers;
+export type ProjectUsers = {
+  [uid: string]: ProjectUser[];
 };
 
-export type ProjectUsers = { usernames: string[]; pendingUsernames: string[] };
+export type ProjectUser = {
+  name?: string;
+  username: string;
+  isPending: boolean;
+  accessLevel: number;
+};
+
 export interface Profile {
   email: string;
   name: string;
   is_collaborator?: boolean;
   is_trusted_service?: boolean;
+  is_owner?: boolean;
 }
 
 export interface Team {
   profiles: Profile[];
+  owner: {
+    id: number;
+    email: string;
+  };
   pending_invites: Array<{
     email: string;
     sent_date: string;
@@ -57,18 +68,11 @@ export enum PluginType {
 }
 
 export interface IPlugin {
+  username?: string;
   type: PluginType;
   name: string;
   url: string;
   products: Product;
   enabled: boolean;
-}
-
-export interface TrustedService extends Omit<IPlugin, "type" | "products"> {
-  type: "Python" | "AI";
-  products: "CURATE" | "ANNOTATE" | "ALL";
-}
-
-export interface JsPlugin extends Omit<IPlugin, "type" | "products"> {
-  products: "CURATE" | "ANNOTATE" | "ALL";
+  collection_uids: string[];
 }

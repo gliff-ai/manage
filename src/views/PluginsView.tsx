@@ -3,52 +3,60 @@ import {
   Paper,
   Typography,
   Card,
-  TableContainer,
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
   Box,
   Switch,
+  ButtonGroup,
 } from "@mui/material";
 
 import makeStyles from "@mui/styles/makeStyles";
-
-import { LoadingSpinner, theme, WarningSnackbar } from "@gliff-ai/style";
+import SVG from "react-inlinesvg";
+import {
+  LoadingSpinner,
+  theme,
+  WarningSnackbar,
+  IconButton,
+  icons,
+} from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import { setStateIfMounted } from "@/helpers";
-import { AddPluginDialog } from "@/components";
-import { IPlugin, PluginType, Project, JsPlugin } from "@/interfaces";
+import {
+  AddPluginDialog,
+  DeletePluginDialog,
+  EditPluginDialog,
+  Table,
+  TableCell,
+  TableRow,
+  TableButtonsCell,
+} from "@/components";
+import { IPlugin, Project } from "@/interfaces";
 
 const useStyles = () =>
   makeStyles(() => ({
     paperHeader: {
-      padding: "10px",
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: `${theme.palette.primary.main} !important`,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      height: "50px",
     },
-    projectsTopography: {
+    topography: {
       color: "#000000",
-      display: "inline",
       fontSize: "21px",
-      marginRight: "125px",
+      marginLeft: "20px !important",
     },
-    // eslint-disable-next-line mui-unused-classes/unused-classes
-    "@global": {
-      '.MuiAutocomplete-option[data-focus="true"]': {
-        background: "#01dbff",
+    buttonGroup: {
+      backgroundColor: "transparent !important",
+      border: "none !important",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-evenly",
+      marginRight: "15px",
+      "& span button div": {
+        backgroundColor: "transparent !important",
+        // TODO: change IconButton backgroundColor from inherit to transparent
       },
     },
-    tableHeader: {
-      paddingLeft: "20px",
-      fontSize: "16px",
-      fontWeight: 700,
-    },
-    tableCell: {
-      paddingLeft: "20px",
-      fontSize: "16px",
-    },
-    buttonsContainer: { position: "relative", float: "right", top: "-8px" },
   }));
 
 interface Props {
@@ -59,7 +67,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [plugins, setPlugins] = useState<IPlugin[] | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const isMounted = useRef(false);
 
@@ -82,73 +90,41 @@ export const PluginsView = ({ services }: Props): ReactElement => {
       .then((p: Project[]) =>
         setStateIfMounted(p, setProjects, isMounted.current)
       );
-  }, [isMounted, services]);
+  }, [isMounted, services, auth]);
 
-  const fetchPlugins = useCallback(async () => {
-    const trustedService = (await services.getTrustedServices(
-      null,
-      auth.user.authToken
-    )) as IPlugin[];
+  const getPlugins = useCallback(async () => {
+    if (!auth?.user?.email) return;
+    const newPlugins = await services.getPlugins();
 
-    const jsplugins = (await services.getJsPlugins(
-      null,
-      auth.user.authToken
-    )) as JsPlugin[];
+    setStateIfMounted(newPlugins, setPlugins, isMounted.current);
+  }, [auth, services]);
 
-    const allPlugins = trustedService.concat(
-      jsplugins.map((p) => ({ ...p, type: PluginType.Javascript } as IPlugin))
+  const updatePlugins = (prevPlugin: IPlugin, plugin: IPlugin) => {
+    void services.updatePlugin({ ...plugin }).then((result) => {
+      if (result && isMounted.current) {
+        setPlugins((prevPlugins) =>
+          prevPlugins.map((p) => (prevPlugin === p ? plugin : p))
+        );
+      }
+    });
+  };
+
+  const updateEnabled = (plugin: IPlugin) => {
+    const newPlugin: IPlugin = plugins.find(
+      (p) => p.name === plugin.name && p.url === plugin.url
     );
+    newPlugin.enabled = !newPlugin.enabled;
 
-    setStateIfMounted(allPlugins, setPlugins, isMounted.current);
-  }, []);
+    if (newPlugin) {
+      updatePlugins(plugin, newPlugin);
+    }
+  };
 
   useEffect(() => {
-    if (auth?.user?.email) {
-      void fetchPlugins();
+    if (!plugins) {
+      void getPlugins();
     }
-  }, [auth, services, isMounted]);
-
-  const tableHeader = (
-    <TableRow>
-      <TableCell className={classes.tableHeader}>Name</TableCell>
-      <TableCell className={classes.tableHeader}>Type</TableCell>
-      <TableCell className={classes.tableHeader}>URL</TableCell>
-      <TableCell className={classes.tableHeader}>Products</TableCell>
-      <TableCell className={classes.tableHeader}>Enabled</TableCell>
-      <TableCell className={classes.tableHeader} align="right" />
-    </TableRow>
-  );
-
-  const fillTableRow = ({ name, url, type, enabled, products }: IPlugin) => (
-    <TableRow key={`${name}-${url}`}>
-      <TableCell className={classes.tableCell}>{name}</TableCell>
-      <TableCell className={classes.tableCell}>{type}</TableCell>
-      <TableCell className={classes.tableCell}>{url}</TableCell>
-      <TableCell className={classes.tableCell}>{products}</TableCell>
-      <TableCell className={classes.tableCell}>
-        <Switch
-          color="primary"
-          checked={enabled}
-          onChange={
-            () =>
-              setPlugins((prevPlugins) =>
-                prevPlugins.map((p) =>
-                  p.name === name && p.url === url
-                    ? {
-                        ...p,
-                        enabled: !enabled,
-                      }
-                    : p
-                )
-              )
-            // TODO: save changes
-          }
-          size="small"
-        />
-      </TableCell>
-      <TableCell className={classes.tableCell} align="right" />
-    </TableRow>
-  );
+  }, [auth, isMounted, plugins, getPlugins]);
 
   if (!auth) return null;
 
@@ -161,41 +137,93 @@ export const PluginsView = ({ services }: Props): ReactElement => {
           square
           className={classes.paperHeader}
         >
-          <Typography
-            className={classes.projectsTopography}
-            style={{ marginLeft: "14px" }}
+          <Typography className={classes.topography}>Plugins</Typography>
+          <ButtonGroup
+            className={classes.buttonGroup}
+            orientation="horizontal"
+            size="small"
+            variant="text"
           >
-            Plugins
-          </Typography>
-          <div className={classes.buttonsContainer}>
+            <SVG
+              src={icons.betaStatus}
+              style={{ width: "auto", height: "25px", marginRight: "10px" }}
+            />
+            <IconButton
+              tooltip={{ name: "Docs" }}
+              icon={icons.documentHelp}
+              onClick={() => services.launchDocs()}
+              tooltipPlacement="top"
+            />
             <AddPluginDialog
               services={services}
               setError={setError}
               projects={projects}
+              getPlugins={getPlugins}
             />
-          </div>
+          </ButtonGroup>
         </Paper>
         {plugins ? (
-          <Paper elevation={0} square>
-            <TableContainer>
-              <Table aria-label="simple table">
-                <TableBody>
-                  {tableHeader}
-                  {plugins.map(fillTableRow)}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
+          <Table
+            header={[
+              "Name",
+              "Type",
+              "Product",
+              "Products",
+              "Enabled",
+              "Added To",
+            ]}
+          >
+            {plugins.map((iplugin) => {
+              const {
+                name,
+                url,
+                type,
+                products,
+                enabled,
+                collection_uids: collectionUids,
+              } = iplugin;
+              return (
+                <TableRow key={`${name}-${url}`}>
+                  <TableCell>{name}</TableCell>
+                  <TableCell>{type}</TableCell>
+                  <TableCell>{url}</TableCell>
+                  <TableCell>{products}</TableCell>
+                  <TableCell>
+                    <Switch
+                      size="small"
+                      color="primary"
+                      checked={enabled}
+                      onChange={(e) => updateEnabled(iplugin)}
+                    />
+                  </TableCell>
+                  <TableCell>{collectionUids.length}&nbsp;projects</TableCell>
+                  <TableButtonsCell>
+                    <EditPluginDialog
+                      plugin={iplugin}
+                      allProjects={projects}
+                      updatePlugins={updatePlugins}
+                      services={services}
+                      setError={setError}
+                    />
+                    <DeletePluginDialog
+                      plugin={iplugin}
+                      setPlugins={setPlugins}
+                      services={services}
+                    />
+                  </TableButtonsCell>
+                </TableRow>
+              );
+            })}
+          </Table>
         ) : (
           <Box display="flex" height="100%">
             <LoadingSpinner />
           </Box>
         )}
       </Card>
-
       <WarningSnackbar
-        open={Boolean(error)}
-        onClose={() => setError("")}
+        open={error !== null}
+        onClose={() => setError(null)}
         messageText={error}
       />
     </>

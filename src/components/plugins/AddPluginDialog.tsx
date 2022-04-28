@@ -8,34 +8,34 @@ import {
   TextField,
   Typography,
   DialogActions,
-  FormControlLabel,
-  Checkbox,
   RadioGroup,
   FormControl,
   Box,
-  Radio,
-  Avatar,
-  Chip,
-  List,
   Divider,
-  Autocomplete,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { Add } from "@mui/icons-material";
 import SVG from "react-inlinesvg";
-import { theme, icons, darkGrey } from "@gliff-ai/style";
+import {
+  theme,
+  icons,
+  lightGrey,
+  middleGrey,
+  IconButton as GliffIconButton,
+} from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
+import { FormLabelControl } from "./FormLabelControl";
+import { ProductsRadioForm } from "./ProductsRadioForm";
+import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 
 const useStyles = makeStyles({
   paperHeader: {
     padding: "10px",
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    display: "flex",
+    justifyContent: "space-between",
   },
-  paperBody: { width: "25vw", margin: "10px 20px" },
-  addButton: {
-    color: "black",
-  },
+  paperBody: { width: "350px", margin: "10px 20px" },
   topography: {
     color: "#000000",
     display: "inline",
@@ -50,51 +50,32 @@ const useStyles = makeStyles({
     borderRadius: "5px",
     fontFamily: "monospace",
   },
-  closeButton: {
-    position: "absolute",
-    top: "7px",
-    right: "5px",
-  },
   whiteButton: {
     textTransform: "none",
     backgroundColor: "transparent",
+    borderColor: `${middleGrey} !important`,
+    "&:hover": {
+      borderColor: middleGrey,
+    },
   },
   greenButton: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: `${theme.palette.primary.main} !important`,
     "&:disabled": {
-      backgroundColor: theme.palette.grey[300],
+      backgroundColor: lightGrey,
     },
     textTransform: "none",
     "&:hover": {
       backgroundColor: theme.palette.info.main,
     },
   },
-  formControl: { alignItems: "flex-start" },
-  radio: { marginRight: "15px" },
-  dialogActions: { justifyContent: "space-between", marginTop: "30px" },
-  checkboxIcon: { width: "18px", height: "auto" },
-  radioName: { fontSize: "16px", lineHeight: 0 },
-  radioDescription: { fontSize: "14px", color: darkGrey },
-  chipLabel: {
-    margin: "5px 5px 0 0",
-    borderColor: "black",
-    borderRadius: "9px",
+  dialogActions: {
+    justifyContent: "space-between !important",
+    marginTop: "30px",
   },
   closeIcon: { width: "15px", height: "auto" },
   textFontSize: { fontSize: "16px" },
-  productRadioName: { fontSize: "16px", lineHeight: 0, fontWeight: 400 },
   marginTop: { marginTop: "15px" },
-  checkedIcon: {
-    fill: "white",
-    borderRadius: "3px",
-    backgroundColor: theme.palette.primary.main,
-  },
-  divider: { width: "500px", margin: "12px -20px" },
-  option: {
-    backgroundColor: `#FFFFFF !important`,
-    fontSize: "16px",
-    "&:hover": { backgroundColor: `${theme.palette.grey[100]} !important` },
-  },
+  divider: { width: "500px !important", margin: "12px -20px !important" },
 });
 
 enum DialogPage {
@@ -104,9 +85,10 @@ enum DialogPage {
 }
 
 interface Props {
-  projects: Project[];
+  projects: Project[] | null;
   services: ServiceFunctions;
   setError: (error: string) => void;
+  getPlugins: () => Promise<void>;
 }
 
 const defaultPlugin = {
@@ -115,51 +97,23 @@ const defaultPlugin = {
   url: "",
   products: Product.ALL,
   enabled: false,
+  collection_uids: [] as string[],
 };
 
 export function AddPluginDialog({
   services,
   setError,
   projects,
+  getPlugins,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
   const [key, setKey] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [dialogPage, setDialogPage] = useState(DialogPage.pickPluginType);
   const [newPlugin, setNewPlugin] = useState<IPlugin>(defaultPlugin);
-  const [addedToProjects, setAddedToProjects] = useState<Project[]>([]);
+  const [validUrl, setValidUrl] = useState<boolean>(true);
 
   const classes = useStyles();
-
-  const createJsPlugin = async (): Promise<void> => {
-    try {
-      const { type, products, ...rest } = newPlugin;
-      await services.createJsPlugin({
-        products: String(products),
-        ...rest,
-      });
-    } catch (e) {
-      setError("Couldn't create plugin");
-    }
-  };
-
-  const createTrustedService = async (): Promise<unknown> => {
-    try {
-      const { type, products, ...rest } = newPlugin;
-      const tsKey = await services.createTrustedService({
-        type: String(type),
-        products: String(products),
-        ...rest,
-      });
-      if (!tsKey) {
-        setError("Couldn't create plugin");
-      }
-      return tsKey;
-    } catch (e) {
-      setError("Couldn't create plugin");
-      return null;
-    }
-  };
 
   useEffect(() => {
     if (open) return;
@@ -172,65 +126,55 @@ export function AddPluginDialog({
       setCreating(false);
       setDialogPage(DialogPage.pickPluginType);
       setKey(null);
+      setError(null);
+      setValidUrl(true);
     }, 500);
-  }, [open]);
+  }, [open, setError]);
 
-  const createPlugin = async () => {
-    setCreating(true);
+  if (!projects) return null;
 
-    if (newPlugin.type === PluginType.Javascript) {
-      // create new plugin
-      await createJsPlugin();
-      setOpen(false);
-    } else {
-      // create new trusted service
-      const res = await createTrustedService();
-      if (res) {
-        setKey(res as string);
-      }
-    }
-
-    setCreating(false);
-    setDialogPage((page) => page + 1);
+  const addPluginToProjects = async (plugin: IPlugin, email: string) => {
+    await Promise.allSettled(
+      plugin.collection_uids.map(async (projectUid) => {
+        try {
+          await services.inviteToProject({
+            projectUid,
+            email,
+          });
+        } catch (e) {
+          console.log(e);
+        }
+      })
+    );
   };
 
-  const getPluginFormLabelControl = (
-    value: unknown,
-    name: string,
-    description: string,
-    nameStyling?: string,
-    descriptionStyling?: string
-  ): ReactElement => (
-    <FormControlLabel
-      className={classes.formControl}
-      control={
-        <Radio
-          icon={
-            <SVG
-              className={classes.checkboxIcon}
-              src={icons.notSelectedTickbox}
-            />
-          }
-          checkedIcon={
-            <SVG
-              className={`${classes.checkboxIcon} ${classes.checkedIcon}`}
-              src={icons.multipleImageSelection}
-            />
-          }
-          className={classes.radio}
-          value={value}
-        />
+  const createPlugin = async (): Promise<boolean> => {
+    try {
+      const result = (await services.createPlugin({ ...newPlugin })) as {
+        key: string;
+        email: string;
+      } | null;
+
+      if (newPlugin.type === PluginType.Javascript) {
+        setOpen(false);
+        return true;
       }
-      label={
-        <>
-          <h3 className={nameStyling || classes.radioName}>{name}</h3>
-          <p className={descriptionStyling || classes.radioDescription}>
-            {description}
-          </p>
-        </>
+
+      if (!result?.key) {
+        setError("Couldn't create plugin");
+        return false;
       }
-    />
-  );
+
+      setKey(result.key);
+      void addPluginToProjects(newPlugin, result.email);
+
+      setDialogPage((page) => page + 1);
+      return true;
+    } catch (e) {
+      setError("Couldn't create plugin");
+      return false;
+    }
+  };
 
   const pickPluginTypeDialog = dialogPage === DialogPage.pickPluginType && (
     <Box>
@@ -241,32 +185,38 @@ export function AddPluginDialog({
       >
         <h3>What type of plug-in do you want to register?</h3>
         <RadioGroup value={newPlugin.type}>
-          {getPluginFormLabelControl(
-            PluginType.Javascript,
-            "Javascript Plug-in",
-            "These plugins are client-side and run in each user's own browser with data decrypted locally."
-          )}
-          {getPluginFormLabelControl(
-            PluginType.Python,
-            "Python Plug-in",
-            `These plugins are server-side and run by your team on your own remote compute capacity.
-            Security issue responsabilities become the server's team.`
-          )}
-          {getPluginFormLabelControl(
-            PluginType.AI,
-            "AI Plug-in",
-            `These plugins are server-side and run by your team on your own remote compute capacity.
-            Security issue responsabilities become the server's team.`
-          )}
+          <FormLabelControl
+            value={PluginType.Javascript}
+            name="Javascript Plug-in"
+            description="These plugins are client-side and run in the logged in users browser. The data is decrypted locally."
+          />
+          <FormLabelControl
+            value={PluginType.Python}
+            name="Python Plug-in"
+            description={`These plugins are server-side, hosted and run by your team. 
+            
+            The data is decrypted on your server and the security of the decrypted data is your responsibility.
+            `}
+          />
+          <FormLabelControl
+            value={PluginType.AI}
+            name="AI Plug-in"
+            description={`These plugins are server-side, hosted and run by your team. 
+            
+            The data is decrypted on your server and the security of the decrypted data is your responsibility.`}
+          />
         </RadioGroup>
       </FormControl>
       <DialogActions className={classes.dialogActions}>
-        <Button variant="text" className={classes.whiteButton}>
-          {/* TODO: add onClick with link to docs */}
+        <Button
+          className={classes.whiteButton}
+          variant="outlined"
+          onClick={() => services.launchDocs()}
+        >
           Learn more
         </Button>
         <Button
-          variant="text"
+          variant="outlined"
           className={classes.greenButton}
           onClick={() => setDialogPage((page) => page + 1)}
         >
@@ -275,6 +225,11 @@ export function AddPluginDialog({
       </DialogActions>
     </Box>
   );
+
+  const isValidURL = (url: string): boolean => {
+    const pattern = new RegExp("^https?:\\/\\/");
+    return pattern.test(url);
+  };
 
   const enterValuesDialog = dialogPage === DialogPage.enterValues && (
     <>
@@ -292,123 +247,43 @@ export function AddPluginDialog({
         variant="outlined"
         placeholder="Plug-in URL"
         type="url"
+        error={!validUrl}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          setValidUrl(isValidURL(e.target.value));
           setNewPlugin((p) => ({ ...p, url: e.target.value } as IPlugin));
         }}
       />
       <Divider className={classes.divider} />
-      <FormControl
-        className={classes.marginTop}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, products: e.target.value } as IPlugin));
-        }}
-      >
-        <p className={classes.textFontSize}>Add plugin to:</p>
-        <RadioGroup value={newPlugin.products}>
-          {getPluginFormLabelControl(
-            Product.CURATE,
-            "CURATE plug-in toolbar",
-            "",
-            classes.productRadioName
-          )}
-          {getPluginFormLabelControl(
-            Product.ANNOTATE,
-            "ANNOTATE plug-in toolbar",
-            "",
-            classes.productRadioName
-          )}
-          {getPluginFormLabelControl(
-            Product.ALL,
-            "ALL plug-in toolbars",
-            "",
-            classes.productRadioName
-          )}
-        </RadioGroup>
-      </FormControl>
+      <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
       <Divider className={classes.divider} />
-      {/* eslint-disable react/jsx-props-no-spreading */}
-      <Autocomplete
-        className={classes.marginTop}
-        classes={{ option: classes.option }}
-        multiple
-        disableCloseOnSelect
-        disableClearable
-        value={addedToProjects}
-        onChange={(e: ChangeEvent<HTMLSelectElement>, value: Project[]) => {
-          setAddedToProjects(value);
-        }}
-        renderTags={(option) => null}
-        options={projects}
-        getOptionLabel={(option) => option.name}
-        renderOption={(props, option) => (
-          <li {...props}>
-            <FormControlLabel
-              label={option.name}
-              control={
-                <Checkbox
-                  style={{ padding: "10px" }}
-                  icon={<div className={classes.checkboxIcon} />}
-                  checkedIcon={
-                    <SVG
-                      className={classes.checkboxIcon}
-                      src={icons.multipleImageSelection}
-                    />
-                  }
-                  checked={addedToProjects.includes(option)}
-                />
-              }
-            />
-          </li>
-        )}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="outlined"
-            placeholder="Add Plug-in to Projects"
-          />
-        )}
+      <ProjectsAutocomplete
+        allProjects={projects}
+        plugin={newPlugin}
+        setPlugin={setNewPlugin}
       />
-      <List>
-        {addedToProjects?.map((project) => (
-          <Chip
-            variant="outlined"
-            key={project.name}
-            className={classes.chipLabel}
-            label={project.name}
-            avatar={
-              <Avatar
-                variant="circular"
-                style={{ cursor: "pointer" }}
-                onClick={() =>
-                  setAddedToProjects((prevProjects) =>
-                    prevProjects.filter((p) => p !== project)
-                  )
-                }
-              >
-                <SVG
-                  fill="inherit"
-                  className={classes.closeIcon}
-                  src={icons.removeLabel}
-                />
-              </Avatar>
-            }
-          />
-        ))}
-      </List>
-
       <DialogActions className={classes.dialogActions}>
         <Button
-          variant="text"
+          variant="outlined"
           onClick={() => setDialogPage((page) => page - 1)}
           className={classes.whiteButton}
         >
           Back
         </Button>
         <Button
-          variant="text"
+          variant="outlined"
           className={classes.greenButton}
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
-          onClick={createPlugin}
+          onClick={() => {
+            if (!validUrl) return;
+
+            setCreating(true);
+            void createPlugin().then((result: boolean) => {
+              setCreating(false);
+              if (result) {
+                void getPlugins();
+              }
+            });
+          }}
         >
           {creating ? "Loading..." : "Confirm"}
         </Button>
@@ -438,13 +313,13 @@ export function AddPluginDialog({
 
   return (
     <>
-      <IconButton
-        className={classes.addButton}
+      <GliffIconButton
+        id="add-plugin"
+        tooltip={{ name: "Add New Plug-in" }}
+        icon={icons.add}
         onClick={() => setOpen(true)}
-        size="small"
-      >
-        <Add />
-      </IconButton>
+        tooltipPlacement="top"
+      />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <Card>
           <Paper
@@ -454,11 +329,7 @@ export function AddPluginDialog({
             square
           >
             <Typography className={classes.topography}>Add Plug-in</Typography>
-            <IconButton
-              className={classes.closeButton}
-              onClick={() => setOpen(false)}
-              size="small"
-            >
+            <IconButton onClick={() => setOpen(false)} size="small">
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>
