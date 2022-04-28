@@ -28,7 +28,7 @@ wrapper(() => {
       const text = "Plugins";
       await findElementByText(driver, text, "p");
 
-      // expect(await targetEl.getText()).toEqual(text);
+      expect(await targetEl.getText()).toEqual(text);
 
       await percySnapshot(driver, "Plugins Page");
     });
