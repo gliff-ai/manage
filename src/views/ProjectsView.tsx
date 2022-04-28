@@ -338,7 +338,7 @@ export const ProjectsView = ({
               <Button
                 variant="outlined"
                 className={classes.whiteButton}
-                onClick={() => console.log("open demo project")}
+                onClick={() => services.downloadDemoData()}
               >
                 Open Demo Project
               </Button>
