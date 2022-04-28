@@ -3,7 +3,7 @@ on: push
 jobs:
   ubuntu-job:
     name: "BrowserStack Test on Ubuntu"
-    timeout-minutes: 5
+    timeout-minutes: 10
     runs-on: ubuntu-latest # Can be self-hosted runner also
     steps:
       - name: "BrowserStack Env Setup" # Invokes the setup-env action
