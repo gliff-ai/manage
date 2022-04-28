@@ -65,6 +65,7 @@
     "react-router-dom": "^6.2.1"
   },
   "dependencies": {
+    "@babel/core": "^7.17.8",
     "@percy/cli": "^1.0.0-beta.76",
     "axios": "^0.24.0",
     "csstype": "<=3.0.10 || >3.0.11",
