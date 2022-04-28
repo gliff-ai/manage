@@ -70,6 +70,7 @@
     "@babel/helpers": "^7.17.8",
     "@babel/plugin-transform-regenerator": "^7.16.7",
     "@babel/runtime": "^7.17.8",
+    "@emotion/babel-plugin": "^11.7.2",
     "@percy/cli": "^1.0.0-beta.76",
     "axios": "^0.24.0",
     "csstype": "<=3.0.10 || >3.0.11",
