@@ -4,5 +4,6 @@ public/
 coverage
 examples/user.json
 .vscode
-*.log
+*.lo-b fix_bs
+
 *.err

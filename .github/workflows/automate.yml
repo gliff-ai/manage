@@ -3,6 +3,7 @@ on: push
 jobs:
   ubuntu-job:
     name: "BrowserStack Test on Ubuntu"
+    timeout-minutes: 5
     runs-on: ubuntu-latest # Can be self-hosted runner also
     steps:
       - name: "BrowserStack Env Setup" # Invokes the setup-env action
@@ -36,6 +37,7 @@ jobs:
         run: npx http-server -p 8080 -a bs-local.com dist &
 
       - run: sleep 10
+      - run: curl 127.0.0.1:8080
 
       - name: "Running test on BrowserStack" # Invokes the actual test script that would run on BrowserStack browsers
         run: npm run test:e2e
