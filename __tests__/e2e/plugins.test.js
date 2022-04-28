@@ -23,9 +23,8 @@ wrapper(() => {
 
       await el.click();
 
-      await sleep();
-
       const text = "Plugins";
+
       const targetEl = await findElementByText(driver, text, "p");
 
       expect(await targetEl.getText()).toEqual(text);
