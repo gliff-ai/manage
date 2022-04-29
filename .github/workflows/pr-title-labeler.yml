@@ -10,10 +10,12 @@ on:
 
 jobs:
   check_PR_title:
+    if: github.actor!= 'dependabot'  
     uses: gliff-ai/.github/.github/workflows/check-pr-title.yml@main
     secrets:
       ROBOT_PAT: ${{ secrets.ROBOT_PAT }}
   add_labels:
+    if: github.actor!= 'dependabot'  
     uses: gliff-ai/.github/.github/workflows/add-labels.yml@main
     secrets:
       ROBOT_PAT: ${{ secrets.ROBOT_PAT }}
