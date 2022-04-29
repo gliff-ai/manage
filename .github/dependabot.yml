@@ -8,7 +8,8 @@ updates:
       - "gliff-ai/frontend"
   - package-ecosystem: "npm"
     directory: "/"
+    open-pull-requests-limit: 100
     schedule:
-      interval: "weekly"
+      interval: "daily"
     reviewers:
       - "gliff-ai/frontend"
