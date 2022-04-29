@@ -22,6 +22,7 @@ updates:
   - package-ecosystem: "npm"
     # update gliff packages very regularly
     directory: "/"
+    open-pull-requests-limit: 100
     schedule:
       interval: "daily"
     reviewers:
