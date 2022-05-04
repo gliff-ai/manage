@@ -87,7 +87,7 @@ interface Props {
   projects: Project[] | null;
   services: ServiceFunctions;
   setError: (error: string) => void;
-  getPlugins: () => Promise<void>;
+  getPlugins: () => void;
 }
 
 const defaultPlugin = {

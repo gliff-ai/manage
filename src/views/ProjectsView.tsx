@@ -21,7 +21,6 @@ import { useAuth } from "@/hooks/use-auth";
 import {
   Project,
   Profile,
-  Team,
   UserAccess,
   Progress,
   ProjectUsers,
@@ -36,7 +35,6 @@ import {
   TableRow,
   TableButtonsCell,
 } from "@/components";
-import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles({
   paperHeader: {
@@ -163,68 +161,6 @@ export const ProjectsView = ({
     updateProjectUsers(projectId);
     updateAnnotationProgress(projectId);
   };
-
-  useEffect(() => {
-    // runs at mount
-    isMounted.current = true;
-    return () => {
-      // runs at dismount
-      isMounted.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted?.current || !isOwnerOrMember() || !invitees) return;
-    void services.getCollectionsMembers().then((newUsers: ProjectUsers) => {
-      if (newUsers) {
-        // add users' names
-        for (const key of Object.keys(newUsers)) {
-          newUsers[key] = newUsers[key].map((user) => ({
-            name: invitees.find(({ email }) => email === user.username).name,
-            ...user,
-          }));
-        }
-
-        setStateIfMounted(newUsers, setProjectUsers, isMounted.current);
-      }
-    });
-  }, [isMounted, services, isOwnerOrMember, invitees]);
-
-  useEffect(() => {
-    if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
-
-    void services
-      .queryTeam(null, auth.user.authToken)
-      .then(({ profiles }: Team) => {
-        setStateIfMounted(profiles, setInvitees, isMounted.current);
-      });
-  }, [auth, services, isMounted, isOwnerOrMember]);
-
-  useEffect(() => {
-    if (!isMounted.current || !auth?.user?.email) return;
-
-    void services
-      .getProjects(null, auth.user.authToken)
-      .then((p: Project[]) =>
-        setStateIfMounted(p, setProjects, isMounted.current)
-      );
-  }, [auth, services, isMounted]);
-
-  useEffect(() => {
-    if (!isMounted.current || !auth?.user?.email) return;
-
-    void services
-      .getAnnotationProgress({ username: auth.user.email })
-      .then((newProgress) => {
-        if (newProgress) {
-          setStateIfMounted(newProgress, setProgress, isMounted.current);
-        }
-      });
-  }, [isMounted, auth, services]);
-
-  useEffect(() => {
-    setCreateProjectIsOpen(projects?.length === 0 ? false : null);
-  }, [projects]);
 
   const inviteToProject = async (
     projectUid: string,
@@ -355,6 +291,62 @@ export const ProjectsView = ({
       </div>
     );
   }, [isOwnerOrMember]);
+
+  useEffect(() => {
+    // runs at mount
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // fetch projects (should run once at mount)
+    if (!auth?.user?.authToken) return;
+
+    void services.getProjects(null, auth.user.authToken).then(setProjects);
+  }, [services, auth?.user?.authToken]);
+
+  useEffect(() => {
+    // fetch project users (should run once at mount)
+    if (!isOwnerOrMember() || !invitees) return;
+
+    void services.getCollectionsMembers().then((newUsers: ProjectUsers) => {
+      if (newUsers) {
+        // add users' names
+        for (const key of Object.keys(newUsers)) {
+          newUsers[key] = newUsers[key].map((user) => ({
+            name: invitees.find(({ email }) => email === user.username).name,
+            ...user,
+          }));
+        }
+        setProjectUsers(newUsers);
+      }
+    });
+  }, [services, isOwnerOrMember, invitees]);
+
+  useEffect(() => {
+    // fetch team members (should run once at mount)
+    if (!auth?.user?.authToken || !isOwnerOrMember()) return;
+
+    void services
+      .queryTeam(null, auth.user.authToken)
+      .then(({ profiles }) => setInvitees(profiles));
+  }, [auth?.user?.authToken, services, isOwnerOrMember]);
+
+  useEffect(() => {
+    // fetch annotation progress (should run once at mount)
+    if (!auth?.user?.email) return;
+
+    void services
+      .getAnnotationProgress({ username: auth.user.email })
+      .then(setProgress);
+  }, [services, auth?.user?.email]);
+
+  useEffect(() => {
+    setCreateProjectIsOpen(projects?.length === 0 ? false : null);
+  }, [projects]);
 
   if (!auth?.user) return null;
 
