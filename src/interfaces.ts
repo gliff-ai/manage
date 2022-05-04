@@ -39,10 +39,15 @@ export interface Profile {
   name: string;
   is_collaborator?: boolean;
   is_trusted_service?: boolean;
+  is_owner?: boolean;
 }
 
 export interface Team {
   profiles: Profile[];
+  owner: {
+    id: number;
+    email: string;
+  };
   pending_invites: Array<{
     email: string;
     sent_date: string;

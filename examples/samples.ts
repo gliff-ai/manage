@@ -19,6 +19,10 @@ export const config = {
   services: {
     queryTeam: () =>
       Promise.resolve({
+        owner: {
+          email: "user1@gliff.app",
+          id: 1 
+        },
         profiles: [
           {
             email: "user1@gliff.app",
@@ -92,6 +96,10 @@ export const config = {
             isPending: false,
           },
           { username: "user3@gliff.app", isPending: true },
+          {
+            username: "trustedservice@gliff.app",
+            isPending: false,
+          },
         ],
       }),
     createPlugin: (data): Promise<{ key: string; email: string }> =>

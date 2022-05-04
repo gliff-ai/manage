@@ -25,6 +25,7 @@ import {
   Progress,
   ProjectUsers,
   ProjectUser,
+  Team,
 } from "@/interfaces";
 import {
   EditProjectDialog,
@@ -106,6 +107,9 @@ export const ProjectsView = ({
     [auth.user.userAccess]
   );
 
+  const isTrustedServices = (email: string): boolean =>
+    email.includes("trustedservice");
+
   const updateProjectUsers = useCallback(
     (projectUid: string): void => {
       void services
@@ -115,11 +119,13 @@ export const ProjectsView = ({
             setProjectUsers((prevUsers) => {
               const newProjectsUsers = { ...prevUsers };
 
-              newProjectsUsers[projectUid] = newUsers.map((user) => ({
-                name: invitees.find(({ email }) => email === user.username)
-                  .name,
-                ...user,
-              }));
+              newProjectsUsers[projectUid] = newUsers
+                .filter(({ username }) => !isTrustedServices(username))
+                .map((user) => ({
+                  name: invitees.find(({ email }) => email === user.username)
+                    .name,
+                  ...user,
+                }));
               return newProjectsUsers;
             });
           }
@@ -332,7 +338,18 @@ export const ProjectsView = ({
 
     void services
       .queryTeam(null, auth.user.authToken)
-      .then(({ profiles }) => setInvitees(profiles));
+      .then(({ profiles, owner }: Team) => {
+        const p = profiles
+          .map((profile) => {
+            if (owner.email === profile.email) {
+              profile.is_owner = true;
+            }
+
+            return profile;
+          })
+          .filter(({ email }) => !isTrustedServices(email));
+        setInvitees(p);
+      });
   }, [auth?.user?.authToken, services, isOwnerOrMember]);
 
   useEffect(() => {

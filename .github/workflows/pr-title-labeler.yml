@@ -1,8 +1,5 @@
 name: check PR title and label appropriately
 on:
-  push:
-    branches:
-      - main
   pull_request:
     types: [opened, edited, synchronize, auto_merge_enabled, reopened]
     branches:
@@ -10,10 +7,12 @@ on:
 
 jobs:
   check_PR_title:
+    if: github.actor!= 'dependabot'  
     uses: gliff-ai/.github/.github/workflows/check-pr-title.yml@main
     secrets:
       ROBOT_PAT: ${{ secrets.ROBOT_PAT }}
   add_labels:
+    if: github.actor!= 'dependabot'  
     uses: gliff-ai/.github/.github/workflows/add-labels.yml@main
     secrets:
       ROBOT_PAT: ${{ secrets.ROBOT_PAT }}
