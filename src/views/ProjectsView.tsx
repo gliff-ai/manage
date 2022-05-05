@@ -1,4 +1,11 @@
-import { useEffect, useState, ReactElement, useRef, useCallback } from "react";
+import {
+  useEffect,
+  useState,
+  ReactElement,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   Paper,
   Box,
@@ -101,7 +108,7 @@ export const ProjectsView = ({
   const classes = useStyles();
   const isMounted = useRef(false);
 
-  const isOwnerOrMember = useCallback(
+  const isOwnerOrMember = useMemo(
     (): boolean =>
       auth.user.userAccess === UserAccess.Owner ||
       auth.user.userAccess === UserAccess.Member,
@@ -229,9 +236,8 @@ export const ProjectsView = ({
     );
   };
 
-  const getIntroToManageCard = useCallback(() => {
-    const isOwnerAndMemberCard = isOwnerOrMember();
-    return (
+  const introToManageCard = useMemo(
+    () => (
       <div
         style={{
           height: "100%",
@@ -261,16 +267,16 @@ export const ProjectsView = ({
             style={{ width: "auto", height: "40px", marginBottom: "20px" }}
           />
           <span className={classes.cardTitle}>
-            {isOwnerAndMemberCard
+            {isOwnerOrMember
               ? "You currently have no projects!"
               : "You aren't assigned to any projects!"}
           </span>
           <span className={classes.cardSubtitle}>
-            {isOwnerAndMemberCard
+            {isOwnerOrMember
               ? "Create a project or try our demo project to get started."
               : "Contact your team owner to be assigned to a project."}
           </span>
-          {isOwnerAndMemberCard && (
+          {isOwnerOrMember && (
             <DialogActions
               style={{
                 marginTop: "20px",
@@ -296,8 +302,9 @@ export const ProjectsView = ({
           )}
         </Card>
       </div>
-    );
-  }, [isOwnerOrMember]);
+    ),
+    [isOwnerOrMember]
+  );
 
   useEffect(() => {
     // runs at mount
@@ -320,16 +327,18 @@ export const ProjectsView = ({
 
   useEffect(() => {
     // fetch project users (should run once at mount)
-    if (!isOwnerOrMember() || !invitees) return;
+    if (!isOwnerOrMember || !invitees) return;
 
     void services.getCollectionsMembers().then((newUsers: ProjectUsers) => {
       if (newUsers) {
         // add users' names
         for (const key of Object.keys(newUsers)) {
-          newUsers[key] = newUsers[key].map((user) => ({
-            name: invitees.find(({ email }) => email === user.username).name,
-            ...user,
-          }));
+          newUsers[key] = newUsers[key]
+            .filter(({ username }) => !isTrustedServices(username))
+            .map((user) => ({
+              name: invitees.find(({ email }) => email === user.username).name,
+              ...user,
+            }));
         }
         setProjectUsers(newUsers);
       }
@@ -338,7 +347,7 @@ export const ProjectsView = ({
 
   useEffect(() => {
     // fetch team members (should run once at mount)
-    if (!auth?.user?.authToken || !isOwnerOrMember()) return;
+    if (!auth?.user?.authToken || !isOwnerOrMember) return;
 
     void services
       .queryTeam(null, auth.user.authToken)
@@ -369,7 +378,7 @@ export const ProjectsView = ({
     // if the user is new to manage, the button that opens the create-project dialog
     // is added to the intro-to-manage card, otherwise to the projects table.
     setCreateProjectIsOpen(isNewToManage ? false : null);
-  }, [projects]);
+  }, [isNewToManage]);
 
   if (!auth?.user) return null;
 
@@ -382,7 +391,7 @@ export const ProjectsView = ({
         className={classes.paperHeader}
       >
         <Typography className={classes.topography}>Projects</Typography>
-        {isOwnerOrMember() && (
+        {isOwnerOrMember && (
           <CreateProjectDialog
             projects={projects}
             invitees={invitees}
@@ -398,11 +407,11 @@ export const ProjectsView = ({
             <LoadingSpinner />
           </Box>
         )}
-        {isNewToManage && getIntroToManageCard()}
+        {isNewToManage && introToManageCard}
         {projects?.length > 0 && (
           <Table
             header={
-              isOwnerOrMember()
+              isOwnerOrMember
                 ? ["Name", "Assignees", "Annotation Progress"]
                 : ["Name", "Annotation Progress"]
             }
@@ -410,14 +419,14 @@ export const ProjectsView = ({
             {projects.map(({ name, uid }) => (
               <TableRow key={uid}>
                 <TableCell>{name}</TableCell>
-                {isOwnerOrMember() && (
+                {isOwnerOrMember && (
                   <TableCell>{listAssignees(uid, projectUsers)}</TableCell>
                 )}
                 <TableCell>
                   {progress && <ProgressBar progress={progress[uid]} />}
                 </TableCell>
                 <TableButtonsCell>
-                  {isOwnerOrMember() &&
+                  {isOwnerOrMember &&
                     projectUsers &&
                     projectUsers[uid] !== undefined && (
                       <EditProjectDialog
@@ -437,7 +446,7 @@ export const ProjectsView = ({
                     onClick={() => launchCurateCallback(uid)}
                     tooltipPlacement="top"
                   />
-                  {isOwnerOrMember() &&
+                  {isOwnerOrMember &&
                     auth.user.tierID > 1 &&
                     launchAuditCallback !== null && (
                       <IconButton
@@ -448,7 +457,7 @@ export const ProjectsView = ({
                         tooltipPlacement="top"
                       />
                     )}
-                  {isOwnerOrMember() && (
+                  {isOwnerOrMember && (
                     <IconButton
                       data-testid={`delete-${uid}`}
                       tooltip={{ name: `Delete ${uid}` }}
