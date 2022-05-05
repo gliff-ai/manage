@@ -115,7 +115,9 @@ export const PluginsView = ({ services }: Props): ReactElement => {
   useEffect(() => {
     // fetch projects (should run once at mount)
     if (!auth?.user?.authToken) return;
-    void services.getProjects(null, auth.user.authToken).then(setProjects);
+    void services
+      .getProjects(null, auth.user.authToken)
+      .then((p) => setProjects((p || []) as Project[]));
   }, [services, auth?.user?.authToken]);
 
   if (!auth || !services) return null;

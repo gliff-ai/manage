@@ -96,6 +96,7 @@ export const ProjectsView = ({
   const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null); // users in each project
   const [createProjectIsOpen, setCreateProjectIsOpen] =
     useState<boolean | null>(null);
+  const [isNewToManage, setIsNewToManage] = useState<boolean>(false);
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -228,7 +229,7 @@ export const ProjectsView = ({
     );
   };
 
-  const getIntroToMenageCard = useCallback(() => {
+  const getIntroToManageCard = useCallback(() => {
     const isOwnerAndMemberCard = isOwnerOrMember();
     return (
       <div
@@ -311,7 +312,10 @@ export const ProjectsView = ({
     // fetch projects (should run once at mount)
     if (!auth?.user?.authToken) return;
 
-    void services.getProjects(null, auth.user.authToken).then(setProjects);
+    void services.getProjects(null, auth.user.authToken).then((p) => {
+      setIsNewToManage(p === undefined);
+      setProjects((p || []) as Project[]);
+    });
   }, [services, auth?.user?.authToken]);
 
   useEffect(() => {
@@ -362,7 +366,9 @@ export const ProjectsView = ({
   }, [services, auth?.user?.email]);
 
   useEffect(() => {
-    setCreateProjectIsOpen(projects?.length === 0 ? false : null);
+    // if the user is new to manage, the button that opens the create-project dialog
+    // is added to the intro-to-manage card, otherwise to the projects table.
+    setCreateProjectIsOpen(isNewToManage ? false : null);
   }, [projects]);
 
   if (!auth?.user) return null;
@@ -392,7 +398,7 @@ export const ProjectsView = ({
             <LoadingSpinner />
           </Box>
         )}
-        {projects?.length === 0 && getIntroToMenageCard()}
+        {isNewToManage && getIntroToManageCard()}
         {projects?.length > 0 && (
           <Table
             header={
