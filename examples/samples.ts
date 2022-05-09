@@ -21,7 +21,7 @@ export const config = {
       Promise.resolve({
         owner: {
           email: "user1@gliff.app",
-          id: 1 
+          id: 1,
         },
         profiles: [
           {
@@ -135,6 +135,6 @@ export const config = {
         2: { total: 0, complete: 0 },
       }),
     launchDocs: (): Promise<void> => Promise.resolve(),
-    downloadDemoData: (): Promise<void> => Promise.resolve(),
+    downloadDemoData: (): Promise<string | null> => Promise.resolve("2"),
   } as Services,
 };
