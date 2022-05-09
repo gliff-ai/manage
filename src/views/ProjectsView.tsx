@@ -286,7 +286,26 @@ export const ProjectsView = ({
               <Button
                 variant="outlined"
                 className={classes.whiteButton}
-                onClick={() => services.downloadDemoData()}
+                onClick={async () => {
+                  const newProjectUid: string =
+                    (await services.downloadDemoData()) as string;
+                  if (!newProjectUid) return;
+
+                  // always invite the team owners
+                  for (const member of invitees) {
+                    if (member.is_owner) {
+                      inviteToProject(newProjectUid, member.email).catch(
+                        (err) => console.error(err)
+                      );
+                    }
+                  }
+
+                  // update projects list
+                  if (isMounted.current && newProjectUid) {
+                    void services.getProjects().then(setProjects);
+                    triggerRefetch(newProjectUid);
+                  }
+                }}
               >
                 Open Demo Project
               </Button>
@@ -302,7 +321,7 @@ export const ProjectsView = ({
         </Card>
       </div>
     ),
-    [isOwnerOrMember]
+    [isOwnerOrMember, invitees]
   );
 
   useEffect(() => {
@@ -357,7 +376,9 @@ export const ProjectsView = ({
             return profile;
           })
           .filter(({ email }) => !isTrustedServices(email));
-        setInvitees(p);
+        if (p) {
+          setInvitees(p);
+        }
       });
   }, [auth?.user?.authToken, services, isOwnerOrMember]);
 
