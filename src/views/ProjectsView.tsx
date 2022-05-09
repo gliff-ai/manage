@@ -477,7 +477,7 @@ export const ProjectsView = ({
                   {isOwnerOrMember && (
                     <IconButton
                       data-testid={`delete-${uid}`}
-                      tooltip={{ name: `Delete ${uid}` }}
+                      tooltip={{ name: "Delete Project" }}
                       icon={icons.delete}
                       onClick={deleteProject(uid)}
                       tooltipPlacement="top"
