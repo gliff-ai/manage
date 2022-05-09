@@ -85,10 +85,8 @@ export function AddPluginDialog({
     }
   }, [closeDialog]);
 
-  useEffect(() => {
-    if (closeDialog) return;
-
-    // reset some states
+  const resetDefaults = (): void => {
+    // Reset defaults values
     setTimeout(() => {
       // NOTE: setTimeout is used to update the dialog page
       // after the dialog has disappeared from view
@@ -99,7 +97,7 @@ export function AddPluginDialog({
       setError(null);
       setValidUrl(true);
     }, 500);
-  }, [closeDialog, setError]);
+  };
 
   if (!projects) return null;
 
@@ -301,6 +299,7 @@ export function AddPluginDialog({
             }}
             onClick={() => {
               setCloseDialog(true);
+              resetDefaults();
             }}
           >
             OK
@@ -325,6 +324,7 @@ export function AddPluginDialog({
             id="add-plugin"
           />
         }
+        resetDefaults={resetDefaults}
       >
         <Box sx={{ width: "350px" }}>
           {pickPluginTypeDialog}
