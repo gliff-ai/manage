@@ -12,6 +12,7 @@ import {
   Progress,
   ProjectUsers,
   ProjectUser,
+  ProjectDetails,
 } from "@/interfaces";
 import {
   EditProjectDialog,
@@ -223,9 +224,11 @@ export const ProjectsView = ({
     console.log(`${email} removed from project ${projectUid}.`);
   };
 
-  const createProject = async (name: string): Promise<string> => {
+  const createProject = async (
+    projectDetails: ProjectDetails
+  ): Promise<string> => {
     const projectId = (await services.createProject({
-      name,
+      ...projectDetails,
     })) as string;
     const p = (await services.getProjects()) as Project[];
     setProjects(p);
@@ -283,7 +286,7 @@ export const ProjectsView = ({
                 : ["Name", "Annotation Progress"]
             }
           >
-            {projects.map(({ name, uid }) => (
+            {projects.map(({ name, uid, description = "" }) => (
               <TableRow key={uid}>
                 <TableCell>{name}</TableCell>
                 {isOwnerOrMember() && (
@@ -298,10 +301,10 @@ export const ProjectsView = ({
                     projectUsers[uid] !== undefined && (
                       <EditProjectDialog
                         projectUid={uid}
-                        projectName={name}
+                        projectDetails={{ name, description }}
                         projectUsers={projectUsers[uid]}
                         invitees={invitees}
-                        updateProjectName={services.updateProjectName}
+                        updateProjectDetails={services.updateProjectDetails}
                         inviteToProject={inviteToProject}
                         removeFromProject={removeFromProject}
                         triggerRefetch={triggerRefetch}

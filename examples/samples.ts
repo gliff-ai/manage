@@ -21,7 +21,7 @@ export const config = {
       Promise.resolve({
         owner: {
           email: "user1@gliff.app",
-          id: 1 
+          id: 1,
         },
         profiles: [
           {
@@ -68,7 +68,7 @@ export const config = {
         { name: "Project 1", uid: "1" },
         { name: "Project 2", uid: "2" },
       ]),
-    updateProjectName: (data): Promise<boolean> => Promise.resolve(true),
+    updateProjectDetails: (data): Promise<boolean> => Promise.resolve(true),
     getCollectionMembers: (data) =>
       Promise.resolve({ usernames: [], pendingUsernames: [] }),
     createProject: (data): Promise<string> => Promise.resolve("3"),
