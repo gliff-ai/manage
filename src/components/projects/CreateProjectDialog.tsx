@@ -21,7 +21,8 @@ import {
   lightGrey,
   IconButton as GliffIconButton,
 } from "@gliff-ai/style";
-import { Profile, Project } from "@/interfaces";
+import { Profile, Project, ProjectDetails } from "@/interfaces";
+import { Notepad } from "@/components";
 
 const useStyles = makeStyles({
   paperHeader: {
@@ -69,9 +70,11 @@ const useStyles = makeStyles({
 interface Props {
   projects: Project[] | null;
   invitees: Profile[] | null;
-  createProject: (name: string) => Promise<string>;
+  createProject: (projectDetails: ProjectDetails) => Promise<string>;
   inviteToProject: (uid: string, email: string) => Promise<void>;
 }
+
+const INITIAL_PROJECT_DETAILS: ProjectDetails = { name: "", description: "" };
 
 export function CreateProjectDialog({
   projects,
@@ -80,10 +83,17 @@ export function CreateProjectDialog({
   inviteToProject,
 }: Props): ReactElement | null {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [newProjectName, setNewProjectName] = useState<string>("");
+  const [projectDetails, setProjectDetails] = useState<ProjectDetails>(
+    INITIAL_PROJECT_DETAILS
+  );
   const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]);
 
   const classes = useStyles();
+
+  const closeDialog = (): void => {
+    setDialogOpen(false);
+    setProjectDetails(INITIAL_PROJECT_DETAILS);
+  };
 
   if (!invitees || !projects) return null;
 
@@ -96,7 +106,7 @@ export function CreateProjectDialog({
         onClick={() => setDialogOpen(true)}
         tooltipPlacement="top"
       />
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+      <Dialog open={dialogOpen} onClose={closeDialog}>
         <Card>
           <Paper
             className={classes.paperHeader}
@@ -107,7 +117,7 @@ export function CreateProjectDialog({
             <Typography className={classes.projectsTopography}>
               Create Project
             </Typography>
-            <IconButton onClick={() => setDialogOpen(false)}>
+            <IconButton onClick={closeDialog}>
               <SVG src={icons.removeLabel} className={classes.closeIcon} />
             </IconButton>
           </Paper>
@@ -120,9 +130,24 @@ export function CreateProjectDialog({
               placeholder="Project Name"
               style={{ width: "100%" }}
               onChange={(event) => {
-                setNewProjectName(event.target.value);
+                setProjectDetails((details) => ({
+                  ...details,
+                  name: event.target.value,
+                }));
               }}
               variant="standard"
+            />
+            <br />
+            <Notepad
+              placeholder="Project Description (Optional)"
+              value={projectDetails.description}
+              onChange={(event) => {
+                setProjectDetails((details) => ({
+                  ...details,
+                  description: event.target.value,
+                }));
+              }}
+              rows={6}
             />
             {/* eslint-disable react/jsx-props-no-spreading */}
             <Autocomplete
@@ -197,11 +222,11 @@ export function CreateProjectDialog({
                 variant="contained"
                 color="primary"
                 disabled={
-                  newProjectName === "" ||
-                  projects.map((p) => p.name).includes(newProjectName)
+                  projectDetails.name === "" ||
+                  projects.map((p) => p.name).includes(projectDetails.name)
                 }
                 onClick={() => {
-                  createProject(newProjectName).then(
+                  createProject(projectDetails).then(
                     (newProjectUid) => {
                       const invites = new Set<string>();
                       // Always invite the team owner
@@ -223,7 +248,7 @@ export function CreateProjectDialog({
                       console.error(err);
                     }
                   );
-                  setDialogOpen(false);
+                  closeDialog();
                 }}
               >
                 OK

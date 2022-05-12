@@ -21,7 +21,10 @@ export enum UserAccess {
 export type Project = {
   uid: string;
   name: string;
+  description?: string;
 };
+
+export type ProjectDetails = Omit<Project, "uid">;
 
 export type ProjectUsers = {
   [uid: string]: ProjectUser[];
