@@ -4,16 +4,17 @@ import {
   useState,
   Dispatch,
   SetStateAction,
+  useCallback,
 } from "react";
 import {
   theme,
   IconButton,
   icons,
   middleGrey,
-  Dialog,
   Box,
   Button,
   Typography,
+  AdvancedDialog,
 } from "@gliff-ai/style";
 import { IPlugin } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
@@ -54,7 +55,6 @@ export function DeletePluginDialog({
   setPlugins,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
-  const [closeDialog, setCloseDialog] = useState<boolean>(false);
 
   const [canDelete, setCanDelete] = useState<boolean>(false);
 
@@ -65,12 +65,6 @@ export function DeletePluginDialog({
       setCanDelete(true);
     }
   };
-
-  useEffect(() => {
-    if (closeDialog) {
-      setCloseDialog(false);
-    }
-  }, [closeDialog]);
 
   useEffect(() => {
     if (canDelete) {
@@ -89,23 +83,27 @@ export function DeletePluginDialog({
     }
   }, [open]);
 
+  const onClose = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+
   return (
     <>
-      <Dialog
+      <IconButton
+        tooltip={{
+          name: "Delete",
+        }}
+        icon={icons.delete}
+        size="small"
+        tooltipPlacement="top"
+        id={`delete-plugin-${plugin.name}`}
+        onClick={triggerDelete}
+      />
+      <AdvancedDialog
         title="Are You Sure?"
+        open={open}
         warningDialog
-        close={closeDialog}
-        TriggerButton={
-          <IconButton
-            tooltip={{
-              name: "Delete",
-            }}
-            icon={icons.delete}
-            size="small"
-            tooltipPlacement="top"
-            id={`delete-plugin-${plugin.name}`}
-          />
-        }
+        onClose={onClose}
       >
         <Box sx={{ width: "450px" }}>
           <Typography sx={{ ...purpleText }}>{plugin.name}</Typography>
@@ -127,7 +125,7 @@ export function DeletePluginDialog({
               sx={{
                 ...whiteButtonStyle,
               }}
-              onClick={() => setCloseDialog(true)}
+              onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
@@ -144,7 +142,7 @@ export function DeletePluginDialog({
             </Button>
           </Box>
         </Box>
-      </Dialog>
+      </AdvancedDialog>
     </>
   );
 }
