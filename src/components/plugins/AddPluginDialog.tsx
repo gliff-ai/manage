@@ -252,8 +252,9 @@ export function AddPluginDialog({
         type="url"
         error={!validUrl}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setValidUrl(isValidURL(e.target.value));
-          setNewPlugin((p) => ({ ...p, url: e.target.value } as IPlugin));
+          const url = e.target.value.replace(/\/$/, ""); // remove trailing slash
+          setValidUrl(isValidURL(url));
+          setNewPlugin((p) => ({ ...p, url } as IPlugin));
         }}
       />
       <Divider className={classes.divider} />
