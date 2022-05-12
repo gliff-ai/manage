@@ -138,12 +138,15 @@ export function EditPluginDialog({
     <>
       <TextField
         className={classes.marginTop}
-        variant="outlined"
         value={newPlugin.name}
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
         }}
+        inputProps={{
+          maxLength: 50, // NOTE: name for python or AI plugins cannot be over 50 characters, otherwise 500
+        }}
+        variant="outlined"
       />
 
       <Divider className={classes.divider} />
