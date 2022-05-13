@@ -72,6 +72,7 @@ interface Props {
   invitees: Profile[] | null;
   createProject: (projectDetails: ProjectDetails) => Promise<string>;
   inviteToProject: (uid: string, email: string) => Promise<void>;
+  isOpen?: boolean; // if isOpen !== null, the dialog is controlled externally and the create-project button is not displayed
 }
 
 const INITIAL_PROJECT_DETAILS: ProjectDetails = { name: "", description: "" };
@@ -260,3 +261,5 @@ export function CreateProjectDialog({
     </>
   );
 }
+
+CreateProjectDialog.defaultProps = { isOpen: null };

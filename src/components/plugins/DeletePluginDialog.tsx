@@ -4,74 +4,45 @@ import {
   useState,
   Dispatch,
   SetStateAction,
+  useCallback,
 } from "react";
 import {
-  Button,
-  Card,
-  Dialog,
-  DialogActions,
-  IconButton,
-  Paper,
-  Typography,
-} from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import SVG from "react-inlinesvg";
-import {
   theme,
-  IconButton as GliffIconButton,
+  IconButton,
   icons,
-  middleGrey,
+  lightGrey,
+  Box,
+  Button,
+  Typography,
+  AdvancedDialog,
 } from "@gliff-ai/style";
 import { IPlugin } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
-const useStyles = makeStyles({
-  paperHeader: {
-    padding: "10px 20px",
-    backgroundColor: `${theme.palette.info.light} !important`,
-    display: "flex",
-    justifyContent: "space-between !important",
+const purpleText = {
+  color: theme.palette.info.light,
+  fontWeight: 500,
+  display: "inline",
+};
+
+const whiteButtonStyle = {
+  textTransform: "none",
+  backgroundColor: "transparent",
+  borderColor: `${lightGrey} !important`,
+  ":hover": {
+    borderColor: lightGrey,
   },
-  paperBody: { width: "450px", margin: "20px", fontSize: "16px" },
-  topography: {
-    color: "#FFFFFF",
-    display: "inline",
-    fontSize: "21px",
-    marginLeft: "10px !important",
+};
+
+const purpleButtonStyle = {
+  backgroundColor: `${theme.palette.info.light} !important`,
+  borderColor: `${theme.palette.info.light} !important`,
+  textTransform: "none",
+  color: "#FFFFFF",
+  ":hover": {
+    backgroundColor: theme.palette.info.light,
   },
-  closeIcon: { width: "15px", height: "auto", fill: "#FFFFFF" },
-  warningIcon: {
-    width: "25px",
-    height: "25px",
-    fill: "#FFFFFF",
-  },
-  dialogActions: {
-    justifyContent: "space-between !important",
-    margin: "5px 10px",
-  },
-  whiteButton: {
-    textTransform: "none",
-    backgroundColor: "transparent",
-    borderColor: `${middleGrey} !important`,
-    "&:hover": {
-      borderColor: middleGrey,
-    },
-  },
-  purpleButton: {
-    backgroundColor: `${theme.palette.info.light} !important`,
-    borderColor: `${theme.palette.info.light} !important`,
-    textTransform: "none",
-    color: "#FFFFFF",
-    "&:hover": {
-      backgroundColor: theme.palette.info.light,
-    },
-  },
-  purpleText: {
-    color: theme.palette.info.light,
-    fontWeight: 500,
-    display: "inline",
-  },
-});
+};
 
 interface Props {
   plugin: IPlugin;
@@ -85,8 +56,8 @@ export function DeletePluginDialog({
   setPlugins,
 }: Props): ReactElement {
   const [open, setOpen] = useState<boolean>(false);
+
   const [canDelete, setCanDelete] = useState<boolean>(false);
-  const classes = useStyles();
 
   const triggerDelete = () => {
     if (plugin.collection_uids.length > 0) {
@@ -113,64 +84,68 @@ export function DeletePluginDialog({
     }
   }, [open]);
 
+  const onClose = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+
   return (
     <>
-      <GliffIconButton
-        id={`delete-plugin-${plugin.name}`}
+      <IconButton
+        tooltip={{
+          name: "Delete",
+        }}
         icon={icons.delete}
-        tooltip={{ name: "Delete" }}
-        onClick={triggerDelete}
+        size="small"
         tooltipPlacement="top"
+        id={`delete-plugin-${plugin.name}`}
+        onClick={triggerDelete}
       />
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Card>
-          <Paper
-            className={classes.paperHeader}
-            elevation={0}
-            variant="outlined"
-            square
+      <AdvancedDialog
+        title="Are You Sure?"
+        open={open}
+        warningDialog
+        onClose={onClose}
+      >
+        <Box sx={{ width: "400px" }}>
+          <span style={{ fontSize: "16px", lineHeight: "1px" }}>
+            <Typography sx={{ ...purpleText }}>{plugin.name}</Typography>
+            &nbsp;plug-in is currently enabled in&nbsp;
+            <Typography sx={{ ...purpleText }}>
+              {plugin.collection_uids.length}
+            </Typography>
+            &nbsp;projects.
+          </span>
+          <Typography>Do you want to delete this plug-in or cancel?</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between !important",
+              marginTop: "20px",
+            }}
           >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <SVG src={icons.warning} className={classes.warningIcon} />
-              <Typography className={classes.topography}>
-                Are You Sure?
-              </Typography>
-            </div>
-            <IconButton onClick={() => setOpen(false)}>
-              <SVG src={icons.removeLabel} className={classes.closeIcon} />
-            </IconButton>
-          </Paper>
-          <Paper elevation={0} square className={classes.paperBody}>
-            <span>
-              <p className={classes.purpleText}>{plugin.name}</p>
-              &nbsp;plug-in is currently enabled in&nbsp;
-              <p className={classes.purpleText}>
-                {plugin.collection_uids.length}
-              </p>
-              &nbsp;projects.
-            </span>
-            <p>Do you want to delete this plug-in or cancel?</p>
-          </Paper>
-          <DialogActions className={classes.dialogActions}>
             <Button
               variant="outlined"
-              className={classes.whiteButton}
+              sx={{
+                ...whiteButtonStyle,
+              }}
               onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
             <Button
               variant="outlined"
-              className={classes.purpleButton}
+              sx={{
+                ...purpleButtonStyle,
+              }}
               onClick={() => {
                 setCanDelete(true);
               }}
             >
               Confirm
             </Button>
-          </DialogActions>
-        </Card>
-      </Dialog>
+          </Box>
+        </Box>
+      </AdvancedDialog>
     </>
   );
 }

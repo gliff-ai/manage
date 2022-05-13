@@ -19,6 +19,7 @@ interface Services {
   getProjects: APIRoute | ServiceFunction;
   updateProjectDetails: APIRoute | ServiceFunction;
   getProject: APIRoute | ServiceFunction;
+  deleteProject: APIRoute | ServiceFunction;
   getCollectionMembers: APIRoute | ServiceFunction;
   createProject: APIRoute | ServiceFunction;
   inviteToProject: APIRoute | ServiceFunction;
@@ -30,6 +31,7 @@ interface Services {
   updatePlugin: APIRoute | ServiceFunction;
   getAnnotationProgress: APIRoute | ServiceFunction;
   launchDocs: APIRoute | ServiceFunction;
+  downloadDemoData: APIRoute | ServiceFunction;
 }
 
 type ServiceFunctions = {
