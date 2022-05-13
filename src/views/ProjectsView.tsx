@@ -317,7 +317,7 @@ export const ProjectsView = ({
                 className={classes.greenButton}
                 onClick={() => setCreateProjectIsOpen(true)}
               >
-                Open New Project
+                Create New Project
               </Button>
             </DialogActions>
           )}
