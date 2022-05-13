@@ -324,7 +324,7 @@ export function AddPluginDialog({
             id="add-plugin"
           />
         }
-        resetDefaults={resetDefaults}
+        afterClose={resetDefaults}
       >
         <Box sx={{ width: "350px" }}>
           {pickPluginTypeDialog}

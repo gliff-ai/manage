@@ -167,7 +167,7 @@ export function EditPluginDialog({
             id={`edit-plugin-${plugin.name}`}
           />
         }
-        resetDefaults={resetDefaults}
+        afterClose={resetDefaults}
       >
         <Box sx={{ width: "350px" }}>
           {editDialogSection}
