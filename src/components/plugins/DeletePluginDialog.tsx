@@ -10,7 +10,7 @@ import {
   theme,
   IconButton,
   icons,
-  middleGrey,
+  lightGrey,
   Box,
   Button,
   Typography,
@@ -28,11 +28,12 @@ const purpleText = {
 const whiteButtonStyle = {
   textTransform: "none",
   backgroundColor: "transparent",
-  borderColor: `${middleGrey} !important`,
+  borderColor: `${lightGrey} !important`,
   ":hover": {
-    borderColor: middleGrey,
+    borderColor: lightGrey,
   },
 };
+
 const purpleButtonStyle = {
   backgroundColor: `${theme.palette.info.light} !important`,
   borderColor: `${theme.palette.info.light} !important`,
@@ -105,19 +106,21 @@ export function DeletePluginDialog({
         warningDialog
         onClose={onClose}
       >
-        <Box sx={{ width: "450px" }}>
-          <Typography sx={{ ...purpleText }}>{plugin.name}</Typography>
-          &nbsp;plug-in is currently enabled in&nbsp;
-          <Typography sx={{ ...purpleText }}>
-            {plugin.collection_uids.length}
-          </Typography>
-          &nbsp;projects.
+        <Box sx={{ width: "400px" }}>
+          <span style={{ fontSize: "16px", lineHeight: "1px" }}>
+            <Typography sx={{ ...purpleText }}>{plugin.name}</Typography>
+            &nbsp;plug-in is currently enabled in&nbsp;
+            <Typography sx={{ ...purpleText }}>
+              {plugin.collection_uids.length}
+            </Typography>
+            &nbsp;projects.
+          </span>
           <Typography>Do you want to delete this plug-in or cancel?</Typography>
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between !important",
-              marginTop: "15px",
+              marginTop: "20px",
             }}
           >
             <Button
