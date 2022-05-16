@@ -21,7 +21,7 @@ export const config = {
       Promise.resolve({
         owner: {
           email: "user1@gliff.app",
-          id: 1 
+          id: 1,
         },
         profiles: [
           {
@@ -60,15 +60,16 @@ export const config = {
         ],
       }),
     loginUser: "GET /login",
-    getProject: (uid) =>
+    getProject: (data) =>
       Promise.resolve({ name: "New Project Name", uid: "1" }),
     getTeam: "GET /team",
+    deleteProject: (data) => Promise.resolve(true),
     getProjects: () =>
       Promise.resolve([
         { name: "Project 1", uid: "1" },
         { name: "Project 2", uid: "2" },
       ]),
-    updateProjectName: (data): Promise<boolean> => Promise.resolve(true),
+    updateProjectDetails: (data): Promise<boolean> => Promise.resolve(true),
     getCollectionMembers: (data) =>
       Promise.resolve({ usernames: [], pendingUsernames: [] }),
     createProject: (data): Promise<string> => Promise.resolve("3"),
@@ -134,5 +135,6 @@ export const config = {
         2: { total: 0, complete: 0 },
       }),
     launchDocs: (): Promise<void> => Promise.resolve(),
+    downloadDemoData: (): Promise<string | null> => Promise.resolve("2"),
   } as Services,
 };

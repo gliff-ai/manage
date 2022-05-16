@@ -28,7 +28,8 @@ import {
   icons,
   lightGrey,
 } from "@gliff-ai/style";
-import { Profile, ProjectUser } from "@/interfaces";
+import { Profile, ProjectDetails, ProjectUser } from "@/interfaces";
+import { Notepad } from "@/components";
 
 const useStyles = makeStyles({
   paperHeader: {
@@ -104,12 +105,12 @@ const useStyles = makeStyles({
 
 interface Props {
   projectUid: string;
-  projectName: string;
+  projectDetails: ProjectDetails;
   projectUsers: ProjectUser[];
   invitees: Profile[];
-  updateProjectName: (data: {
+  updateProjectDetails: (data: {
     projectUid: string;
-    projectName: string;
+    projectDetails: ProjectDetails;
   }) => Promise<unknown>;
   inviteToProject: (uid: string, email: string) => Promise<void>;
   removeFromProject: (uid: string, email: string) => Promise<void>;
@@ -121,7 +122,7 @@ export function EditProjectDialog({
   projectUid,
   inviteToProject,
   removeFromProject,
-  updateProjectName,
+  updateProjectDetails,
   triggerRefetch,
   projectUsers,
   ...otherProps
@@ -129,8 +130,8 @@ export function EditProjectDialog({
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
   const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>(null);
-  const [projectName, setProjectName] = useState<string>(
-    otherProps.projectName
+  const [projectDetails, setProjectDetails] = useState<ProjectDetails>(
+    otherProps.projectDetails
   );
 
   const alreadyInvited = useCallback(
@@ -184,8 +185,14 @@ export function EditProjectDialog({
   const updateProject = async () => {
     await changeCollectionMembers();
 
-    if (projectName !== otherProps.projectName) {
-      await updateProjectName({ projectUid, projectName });
+    const { name: newName, description: newDescription } = projectDetails;
+    const { name, description } = otherProps.projectDetails;
+
+    if (newName !== name || newDescription !== description) {
+      await updateProjectDetails({
+        projectUid,
+        projectDetails,
+      });
     }
 
     triggerRefetch(projectUid);
@@ -208,10 +215,25 @@ export function EditProjectDialog({
       <TextField
         placeholder="Project Name"
         variant="outlined"
-        value={projectName}
+        value={projectDetails.name}
         onChange={(event) => {
-          setProjectName(event.target.value);
+          setProjectDetails((details) => ({
+            ...details,
+            name: event.target.value,
+          }));
         }}
+      />
+      <br />
+      <Notepad
+        placeholder="Project Description (Optional)"
+        value={projectDetails.description}
+        onChange={(event) => {
+          setProjectDetails((details) => ({
+            ...details,
+            description: event.target.value,
+          }));
+        }}
+        rows={6}
       />
     </Paper>
   );

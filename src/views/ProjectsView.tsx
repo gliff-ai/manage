@@ -1,17 +1,39 @@
-import { useEffect, useState, ReactElement, useRef, useCallback } from "react";
-import { Paper, Box, Typography, Card } from "@mui/material";
+import {
+  useEffect,
+  useState,
+  ReactElement,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
+import {
+  Paper,
+  Box,
+  Typography,
+  Card,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
-import { theme, IconButton, LoadingSpinner, icons } from "@gliff-ai/style";
+import {
+  theme,
+  IconButton,
+  LoadingSpinner,
+  icons,
+  lightGrey,
+} from "@gliff-ai/style";
+import SVG from "react-inlinesvg";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
 import {
   Project,
   Profile,
-  Team,
   UserAccess,
   Progress,
   ProjectUsers,
   ProjectUser,
+  Team,
+  ProjectDetails,
 } from "@/interfaces";
 import {
   EditProjectDialog,
@@ -22,7 +44,6 @@ import {
   TableRow,
   TableButtonsCell,
 } from "@/components";
-import { setStateIfMounted } from "@/helpers";
 
 const useStyles = makeStyles({
   paperHeader: {
@@ -43,6 +64,26 @@ const useStyles = makeStyles({
       background: "#01dbff",
     },
   },
+  whiteButton: {
+    textTransform: "none",
+    backgroundColor: "transparent",
+    borderColor: `${lightGrey} !important`,
+    "&:hover": {
+      borderColor: lightGrey,
+    },
+  },
+  greenButton: {
+    backgroundColor: `${theme.palette.primary.main} !important`,
+    "&:disabled": {
+      backgroundColor: lightGrey,
+    },
+    textTransform: "none",
+    "&:hover": {
+      backgroundColor: `${theme.palette.info.main} !important`,
+    },
+  },
+  cardTitle: { fontSize: "18px", fontWeight: 700 },
+  cardSubtitle: { fontSize: "16px" },
 });
 
 interface Props {
@@ -61,11 +102,13 @@ export const ProjectsView = ({
   const [progress, setProgress] = useState<Progress | null>(null); // progress for each project
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
   const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null); // users in each project
+  const [createProjectIsOpen, setCreateProjectIsOpen] =
+    useState<boolean | null>(null);
 
   const classes = useStyles();
   const isMounted = useRef(false);
 
-  const isOwnerOrMember = useCallback(
+  const isOwnerOrMember = useMemo(
     (): boolean =>
       auth.user.userAccess === UserAccess.Owner ||
       auth.user.userAccess === UserAccess.Member,
@@ -133,78 +176,6 @@ export const ProjectsView = ({
     updateAnnotationProgress(projectId);
   };
 
-  useEffect(() => {
-    // runs at mount
-    isMounted.current = true;
-    return () => {
-      // runs at dismount
-      isMounted.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted?.current || !isOwnerOrMember() || !invitees) return;
-    void services.getCollectionsMembers().then((newUsers: ProjectUsers) => {
-      if (newUsers) {
-        // add users' names
-        for (const key of Object.keys(newUsers)) {
-          newUsers[key] = newUsers[key]
-            .filter(({ username }) => !isTrustedServices(username))
-            .map((user) => ({
-              name: invitees.find(({ email }) => email === user.username).name,
-              ...user,
-            }));
-        }
-
-        setStateIfMounted(newUsers, setProjectUsers, isMounted.current);
-      }
-    });
-  }, [isMounted, services, isOwnerOrMember, invitees]);
-
-  useEffect(() => {
-    if (!isMounted.current || !auth?.user || !isOwnerOrMember()) return;
-
-    void services
-      .queryTeam(null, auth.user.authToken)
-      .then(({ profiles, owner }: Team) => {
-        const p = profiles.map((profile) => {
-          if (owner.email === profile.email) {
-            profile.is_owner = true;
-          }
-
-          return profile;
-        });
-
-        setStateIfMounted(
-          p.filter(({ email }) => !isTrustedServices(email)),
-          setInvitees,
-          isMounted.current
-        );
-      });
-  }, [auth, services, isMounted, isOwnerOrMember]);
-
-  useEffect(() => {
-    if (!isMounted.current || !auth?.user?.email) return;
-
-    void services
-      .getProjects(null, auth.user.authToken)
-      .then((p: Project[]) =>
-        setStateIfMounted(p, setProjects, isMounted.current)
-      );
-  }, [auth, services, isMounted]);
-
-  useEffect(() => {
-    if (!isMounted.current || !auth?.user?.email) return;
-
-    void services
-      .getAnnotationProgress({ username: auth.user.email })
-      .then((newProgress) => {
-        if (newProgress) {
-          setStateIfMounted(newProgress, setProgress, isMounted.current);
-        }
-      });
-  }, [isMounted, auth, services]);
-
   const inviteToProject = async (
     projectUid: string,
     email: string
@@ -223,9 +194,26 @@ export const ProjectsView = ({
     console.log(`${email} removed from project ${projectUid}.`);
   };
 
-  const createProject = async (name: string): Promise<string> => {
+  const deleteProject = (projectUid: string) => () =>
+    services
+      .deleteProject({ projectUid })
+      .then((isDeleted) => {
+        if (isDeleted) {
+          // remove deleted project from the list
+          setProjects((prevProjects) =>
+            prevProjects.filter((p) => p.uid !== projectUid)
+          );
+
+          console.log(`project ${projectUid} was successfully deleted!`);
+        }
+      })
+      .catch((e) => console.error(e));
+
+  const createProject = async (
+    projectDetails: ProjectDetails
+  ): Promise<string> => {
     const projectId = (await services.createProject({
-      name,
+      ...projectDetails,
     })) as string;
     const p = (await services.getProjects()) as Project[];
     setProjects(p);
@@ -250,6 +238,168 @@ export const ProjectsView = ({
     );
   };
 
+  const introToManageCard = useMemo(
+    () => (
+      <div
+        style={{
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Card
+          variant="outlined"
+          raised={false}
+          style={{
+            width: "500px",
+            height: "auto",
+            border: `3px solid ${lightGrey}`,
+            borderRadius: "9px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "20px",
+          }}
+        >
+          <SVG
+            src={icons.projectsPage}
+            style={{ width: "auto", height: "40px", marginBottom: "20px" }}
+          />
+          <span className={classes.cardTitle}>
+            {isOwnerOrMember
+              ? "You currently have no projects!"
+              : "You aren't assigned to any projects!"}
+          </span>
+          <span className={classes.cardSubtitle}>
+            {isOwnerOrMember
+              ? "Create a project or try our demo project to get started."
+              : "Contact your team owner to be assigned to a project."}
+          </span>
+          {isOwnerOrMember && (
+            <DialogActions
+              style={{
+                marginTop: "20px",
+                width: "340px",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button
+                variant="outlined"
+                className={classes.whiteButton}
+                onClick={async () => {
+                  const newProjectUid: string =
+                    (await services.downloadDemoData()) as string;
+                  if (!newProjectUid) return;
+
+                  // always invite the team owners
+                  for (const member of invitees) {
+                    if (member.is_owner) {
+                      inviteToProject(newProjectUid, member.email).catch(
+                        (err) => console.error(err)
+                      );
+                    }
+                  }
+
+                  // update projects list
+                  if (isMounted.current && newProjectUid) {
+                    void services.getProjects().then(setProjects);
+                    triggerRefetch(newProjectUid);
+                  }
+                }}
+              >
+                Open Demo Project
+              </Button>
+              <Button
+                variant="outlined"
+                className={classes.greenButton}
+                onClick={() => setCreateProjectIsOpen(true)}
+              >
+                Create New Project
+              </Button>
+            </DialogActions>
+          )}
+        </Card>
+      </div>
+    ),
+    [isOwnerOrMember, invitees]
+  );
+
+  useEffect(() => {
+    // runs at mount
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // fetch projects (should run once at mount)
+    if (!auth?.user?.authToken) return;
+
+    void services.getProjects(null, auth.user.authToken).then(setProjects);
+  }, [services, auth?.user?.authToken]);
+
+  useEffect(() => {
+    // fetch project users (should run once at mount)
+    if (!isOwnerOrMember || !invitees) return;
+
+    void services.getCollectionsMembers().then((newUsers: ProjectUsers) => {
+      if (newUsers) {
+        // add users' names
+        for (const key of Object.keys(newUsers)) {
+          newUsers[key] = newUsers[key]
+            .filter(({ username }) => !isTrustedServices(username))
+            .map((user) => ({
+              name: invitees.find(({ email }) => email === user.username).name,
+              ...user,
+            }));
+        }
+        setProjectUsers(newUsers);
+      }
+    });
+  }, [services, isOwnerOrMember, invitees]);
+
+  useEffect(() => {
+    // fetch team members (should run once at mount)
+    if (!auth?.user?.authToken || !isOwnerOrMember) return;
+
+    void services
+      .queryTeam(null, auth.user.authToken)
+      .then(({ profiles, owner }: Team) => {
+        const p = profiles
+          .map((profile) => {
+            if (owner.email === profile.email) {
+              profile.is_owner = true;
+            }
+
+            return profile;
+          })
+          .filter(({ email }) => !isTrustedServices(email));
+        if (p) {
+          setInvitees(p);
+        }
+      });
+  }, [auth?.user?.authToken, services, isOwnerOrMember]);
+
+  useEffect(() => {
+    // fetch annotation progress (should run once at mount)
+    if (!auth?.user?.email) return;
+
+    void services
+      .getAnnotationProgress({ username: auth.user.email })
+      .then(setProgress);
+  }, [services, auth?.user?.email]);
+
+  useEffect(() => {
+    // if the user is new to manage, the button that opens the create-project dialog
+    // is added to the intro-to-manage card, otherwise to the projects table.
+    setCreateProjectIsOpen(projects?.length === 0 ? false : null);
+  }, [projects]);
+
   if (!auth?.user) return null;
 
   return (
@@ -261,47 +411,50 @@ export const ProjectsView = ({
         className={classes.paperHeader}
       >
         <Typography className={classes.topography}>Projects</Typography>
-        {isOwnerOrMember() && (
+        {isOwnerOrMember && (
           <CreateProjectDialog
             projects={projects}
             invitees={invitees}
             createProject={createProject}
             inviteToProject={inviteToProject}
+            isOpen={createProjectIsOpen}
           />
         )}
       </Paper>
-      <Paper elevation={0} square style={{ height: "100%" }}>
-        {projects === null ? (
+      <Paper elevation={0} style={{ height: "100%" }}>
+        {projects === null && (
           <Box display="flex" height="100%">
             <LoadingSpinner />
           </Box>
-        ) : (
+        )}
+        {projects?.length === 0 && introToManageCard}
+        {projects?.length > 0 && (
           <Table
             header={
-              isOwnerOrMember()
+              isOwnerOrMember
                 ? ["Name", "Assignees", "Annotation Progress"]
                 : ["Name", "Annotation Progress"]
             }
           >
-            {projects.map(({ name, uid }) => (
+            {projects.map(({ name, uid, description = "" }) => (
               <TableRow key={uid}>
                 <TableCell>{name}</TableCell>
-                {isOwnerOrMember() && (
+                {isOwnerOrMember && (
                   <TableCell>{listAssignees(uid, projectUsers)}</TableCell>
                 )}
                 <TableCell>
                   {progress && <ProgressBar progress={progress[uid]} />}
                 </TableCell>
                 <TableButtonsCell>
-                  {isOwnerOrMember() &&
+                  {isOwnerOrMember &&
                     projectUsers &&
                     projectUsers[uid] !== undefined && (
                       <EditProjectDialog
                         projectUid={uid}
-                        projectName={name}
+                        projectDetails={{ name, description }}
                         projectUsers={projectUsers[uid]}
                         invitees={invitees}
-                        updateProjectName={services.updateProjectName}
+                        updateProjectDetails={services.updateProjectDetails}
                         inviteToProject={inviteToProject}
                         removeFromProject={removeFromProject}
                         triggerRefetch={triggerRefetch}
@@ -313,7 +466,7 @@ export const ProjectsView = ({
                     onClick={() => launchCurateCallback(uid)}
                     tooltipPlacement="top"
                   />
-                  {isOwnerOrMember() &&
+                  {isOwnerOrMember &&
                     auth.user.tierID > 1 &&
                     launchAuditCallback !== null && (
                       <IconButton
@@ -324,6 +477,15 @@ export const ProjectsView = ({
                         tooltipPlacement="top"
                       />
                     )}
+                  {isOwnerOrMember && (
+                    <IconButton
+                      data-testid={`delete-${uid}`}
+                      tooltip={{ name: "Delete Project" }}
+                      icon={icons.delete}
+                      onClick={deleteProject(uid)}
+                      tooltipPlacement="top"
+                    />
+                  )}
                 </TableButtonsCell>
               </TableRow>
             ))}

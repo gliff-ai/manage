@@ -19,7 +19,6 @@ import {
 } from "@gliff-ai/style";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { setStateIfMounted } from "@/helpers";
 import {
   AddPluginDialog,
   DeletePluginDialog,
@@ -73,32 +72,6 @@ export const PluginsView = ({ services }: Props): ReactElement => {
 
   const classes = useStyles()();
 
-  useEffect(() => {
-    // runs at mount
-    isMounted.current = true;
-    return () => {
-      // runs at dismount
-      isMounted.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isMounted.current || !auth?.user?.email) return;
-
-    void services
-      .getProjects(null, auth.user.authToken)
-      .then((p: Project[]) =>
-        setStateIfMounted(p, setProjects, isMounted.current)
-      );
-  }, [isMounted, services, auth]);
-
-  const getPlugins = useCallback(async () => {
-    if (!auth?.user?.email) return;
-    const newPlugins = await services.getPlugins();
-
-    setStateIfMounted(newPlugins, setPlugins, isMounted.current);
-  }, [auth, services]);
-
   const updatePlugins = (prevPlugin: IPlugin, plugin: IPlugin) => {
     void services.updatePlugin({ ...plugin }).then((result) => {
       if (result && isMounted.current) {
@@ -120,13 +93,32 @@ export const PluginsView = ({ services }: Props): ReactElement => {
     }
   };
 
-  useEffect(() => {
-    if (!plugins) {
-      void getPlugins();
-    }
-  }, [auth, isMounted, plugins, getPlugins]);
+  const getPlugins = useCallback(() => {
+    if (!auth?.user?.email) return;
+    void services.getPlugins().then(setPlugins);
+  }, [auth?.user?.email, services]);
 
-  if (!auth) return null;
+  useEffect(() => {
+    // runs at mount
+    isMounted.current = true;
+    return () => {
+      // runs at dismount
+      isMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // fetch plugins (should run once at mount)
+    getPlugins();
+  }, [getPlugins]);
+
+  useEffect(() => {
+    // fetch projects (should run once at mount)
+    if (!auth?.user?.authToken) return;
+    void services.getProjects(null, auth.user.authToken).then(setProjects);
+  }, [services, auth?.user?.authToken]);
+
+  if (!auth || !services) return null;
 
   return (
     <>

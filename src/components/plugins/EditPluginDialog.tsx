@@ -1,61 +1,42 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import {
-  Button,
-  Card,
-  Dialog,
-  DialogActions,
-  Divider,
-  IconButton,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import SVG from "react-inlinesvg";
-import {
   theme,
-  IconButton as GliffIconButton,
+  IconButton,
   icons,
   lightGrey,
+  Dialog,
+  Box,
+  Divider,
+  TextField,
+  Button,
+  Typography,
 } from "@gliff-ai/style";
 import { IPlugin, PluginType, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ServiceFunctions } from "../../api";
 
-const useStyles = makeStyles({
-  paperHeader: {
-    padding: "10px",
-    backgroundColor: `${theme.palette.primary.main} !important`,
-    display: "flex",
-    justifyContent: "space-between",
+const tab = {
+  display: "inline-block",
+  marginLeft: "20px",
+  fontWeight: 400,
+};
+
+const divider = {
+  width: "500px !important",
+  margin: "12px -20px !important",
+};
+
+const greenButtonStyle = {
+  backgroundColor: `${theme.palette.primary.main} !important`,
+  "&:disabled": {
+    backgroundColor: lightGrey,
   },
-  topography: {
-    color: "#000000",
-    display: "inline",
-    fontSize: "21px",
-    marginLeft: "8px",
+  textTransform: "none",
+  ":hover": {
+    backgroundColor: theme.palette.info.main,
   },
-  paperBody: { width: "350px", margin: "10px 20px" },
-  closeIcon: { width: "15px" },
-  marginTop: { marginTop: "15px" },
-  divider: {
-    width: "500px !important",
-    margin: "12px -20px !important",
-  },
-  greenButton: {
-    backgroundColor: `${theme.palette.primary.main} !important`,
-    "&:disabled": {
-      backgroundColor: lightGrey,
-    },
-    textTransform: "none",
-    "&:hover": {
-      backgroundColor: theme.palette.info.main,
-    },
-  },
-  dialogActions: { justifyContent: "end", marginTop: "30px" },
-  tab: { display: "inline-block", marginLeft: "20px" },
-});
+};
 
 interface Props {
   plugin: IPlugin;
@@ -72,17 +53,18 @@ export function EditPluginDialog({
   services,
   setError,
 }: Props): ReactElement {
-  const [open, setOpen] = useState<boolean>(false);
   const [newPlugin, setNewPlugin] = useState<IPlugin>(plugin);
+  const [closeDialog, setCloseDialog] = useState<boolean>(false);
 
-  const classes = useStyles();
+  const resetDefaults = (): void => {
+    setNewPlugin(plugin);
+  };
 
   useEffect(() => {
-    // reset values to default on dialog closed
-    if (!open) {
-      setNewPlugin(plugin);
+    if (closeDialog) {
+      setCloseDialog(false);
     }
-  }, [open, plugin]);
+  }, [closeDialog]);
 
   if (!allProjects) return null;
 
@@ -137,7 +119,7 @@ export function EditPluginDialog({
   const editDialogSection = (
     <>
       <TextField
-        className={classes.marginTop}
+        sx={{ marginTop: "15px" }}
         value={newPlugin.name}
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
@@ -148,23 +130,22 @@ export function EditPluginDialog({
         }}
         variant="outlined"
       />
-
-      <Divider className={classes.divider} />
-
-      <p>
-        <b>Type:</b>
-        <span className={classes.tab} />
-        {plugin.type}
-      </p>
-      <p>
-        <b>URL:</b>
-        <span className={classes.tab} />
-        {plugin.url}
-      </p>
-
-      <Divider className={classes.divider} />
+      <Divider sx={{ ...divider }} />
+      <Typography sx={{ fontWeight: 700 }}>
+        Type:
+        <Box component="span" sx={{ ...tab }}>
+          {plugin.type}
+        </Box>
+      </Typography>
+      <Typography sx={{ fontWeight: 700 }}>
+        URL:
+        <Box component="span" sx={{ ...tab }}>
+          {plugin.url}
+        </Box>
+      </Typography>{" "}
+      <Divider sx={{ ...divider }} />
       <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
-      <Divider className={classes.divider} />
+      <Divider sx={{ ...divider }} />
       <ProjectsAutocomplete
         allProjects={allProjects}
         plugin={newPlugin}
@@ -175,52 +156,50 @@ export function EditPluginDialog({
 
   return (
     <>
-      <GliffIconButton
-        id={`edit-plugin-${plugin.name}`}
-        icon={icons.cog}
-        tooltip={{ name: "Settings" }}
-        onClick={() => setOpen(true)}
-        tooltipPlacement="top"
-      />
       <Dialog
-        open={open}
-        onClose={() => {
-          setOpen(false);
-        }}
+        title="Edit Plug-in"
+        close={closeDialog}
+        TriggerButton={
+          <IconButton
+            tooltip={{
+              name: "Settings",
+            }}
+            icon={icons.cog}
+            size="small"
+            tooltipPlacement="top"
+            id={`edit-plugin-${plugin.name}`}
+          />
+        }
+        afterClose={resetDefaults}
       >
-        <Card>
-          <Paper
-            className={classes.paperHeader}
-            elevation={0}
-            variant="outlined"
-            square
+        <Box sx={{ width: "350px" }}>
+          {editDialogSection}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "end",
+              marginTop: "30px",
+            }}
           >
-            <Typography className={classes.topography}>Edit Plug-in</Typography>
-            <IconButton onClick={() => setOpen(false)}>
-              <SVG src={icons.removeLabel} className={classes.closeIcon} />
-            </IconButton>
-          </Paper>
-          <Paper className={classes.paperBody} elevation={0} square>
-            {editDialogSection}
-            <DialogActions className={classes.dialogActions}>
-              <Button
-                variant="outlined"
-                className={classes.greenButton}
-                disabled={JSON.stringify(newPlugin) === JSON.stringify(plugin)}
-                onClick={async () => {
-                  const finalColUids = await updatePluginProjects();
+            <Button
+              variant="outlined"
+              sx={{ ...greenButtonStyle }}
+              disabled={JSON.stringify(newPlugin) === JSON.stringify(plugin)}
+              onClick={async () => {
+                const finalColUids = await updatePluginProjects();
 
-                  updatePlugins(plugin, {
-                    ...newPlugin,
-                    collection_uids: finalColUids,
-                  });
-                }}
-              >
-                Confirm
-              </Button>
-            </DialogActions>
-          </Paper>
-        </Card>
+                updatePlugins(plugin, {
+                  ...newPlugin,
+                  collection_uids: finalColUids,
+                });
+                setCloseDialog(true);
+                resetDefaults();
+              }}
+            >
+              Confirm
+            </Button>
+          </Box>
+        </Box>
       </Dialog>
     </>
   );
