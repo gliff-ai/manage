@@ -47,7 +47,7 @@ wrapper(() => {
       // expect(res).toEqual(text);
 
       console.log("doing percy");
-      await percySnapshot(driver, "Plugins Page");
+      // await percySnapshot(driver, "Plugins Page");
       console.log("done percy");
     }, 30000, {capabilities: {"browserstack.idleTimeout": 300}});
 
