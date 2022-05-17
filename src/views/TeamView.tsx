@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState, useRef } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   Paper,
   IconButton,
@@ -16,7 +16,6 @@ import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { setStateIfMounted } from "@/helpers";
 import { Table, TableCell, TableRow } from "@/components";
 
 const useStyles = makeStyles(() => ({
@@ -68,14 +67,14 @@ interface Props {
   services: ServiceFunctions;
 }
 
-export const TeamView = (props: Props): JSX.Element => {
+export const TeamView = ({ services }: Props): JSX.Element => {
   const auth = useAuth();
   const [team, setTeam] = useState<Team | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
-  const classes = useStyles();
-  const isMounted = useRef(false);
   const [open, setOpen] = useState(false);
+
+  const classes = useStyles();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
@@ -87,7 +86,7 @@ export const TeamView = (props: Props): JSX.Element => {
     setInviteMessage("");
 
     try {
-      await props.services.inviteUser({
+      await services.inviteUser({
         email: inviteEmail,
       });
       setInviteEmail("");
@@ -97,77 +96,19 @@ export const TeamView = (props: Props): JSX.Element => {
       console.error(`${(e as Error).message}`);
     }
   };
-  useEffect(() => {
-    // runs at mount
-    isMounted.current = true;
-    return () => {
-      // runs at dismount
-      isMounted.current = false;
-    };
-  }, []);
 
   useEffect(() => {
-    if (auth?.user?.email) {
-      void props.services
-        .queryTeam(null, auth.user.authToken)
-        .then((t: Team) => {
-          t.profiles = t.profiles.filter(
-            ({ is_trusted_service }) => !is_trusted_service
-          );
-          setStateIfMounted(t, setTeam, isMounted.current);
-        });
-    }
-  }, [auth, props.services, isMounted]);
+    if (!auth?.user?.authToken) return;
 
-  let pendingInvites;
-  if (team?.pending_invites?.length > 0) {
-    pendingInvites = (
-      <List>
-        {team?.pending_invites.map(
-          ({ email, sent_date, is_collaborator }) =>
-            !is_collaborator && (
-              <ListItem key={email}>
-                {email} - {sent_date}
-              </ListItem>
-            )
-        )}
-      </List>
-    );
-  } else if (team?.pending_invites?.length === 0) {
-    pendingInvites = (
-      <Typography style={{ marginTop: "10px", marginBottom: "15px" }}>
-        No pending invites
-      </Typography>
-    );
-  } else {
-    pendingInvites = <LoadingSpinner />;
-  }
+    void services.queryTeam(null, auth.user.authToken).then((newTeam: Team) => {
+      newTeam.profiles = newTeam.profiles.filter(
+        ({ is_trusted_service }) => !is_trusted_service
+      );
+      setTeam(newTeam);
+    });
+  }, [auth?.user?.authToken, services]);
 
-  const inviteForm = (
-    <>
-      <Typography>Why not invite someone else to the team?</Typography>
-      <form autoComplete="off" onSubmit={inviteNewUser}>
-        <div>{inviteMessage}</div>
-        <div style={{ display: "flex" }}>
-          <TextField
-            id="invite-email"
-            type="email"
-            required
-            onChange={handleChange}
-            value={inviteEmail}
-            label="Email address"
-            className={classes.textField}
-            variant="filled"
-          />
-          <IconButton type="submit" size="large">
-            <Send />
-          </IconButton>
-        </div>
-      </form>
-    </>
-  );
-
-  if (!auth) return null;
+  if (!auth?.user) return null;
 
   return (
     <>
@@ -183,7 +124,6 @@ export const TeamView = (props: Props): JSX.Element => {
         >
           <Typography className={classes.topography}>Team Members</Typography>
         </Paper>
-
         {team?.profiles ? (
           <Table header={["Name", "Email"]} hasButtonsCell={false}>
             {team?.profiles.map(
@@ -202,7 +142,6 @@ export const TeamView = (props: Props): JSX.Element => {
           </Box>
         )}
       </Card>
-
       <div className={classes.cardsContainer}>
         <Card
           className={classes.teamCard}
@@ -252,7 +191,6 @@ export const TeamView = (props: Props): JSX.Element => {
             </Typography>
           </Paper>
         </Card>
-
         <Card
           className={classes.teamCard}
           style={{ width: "100%", height: "100%" }}
@@ -268,11 +206,46 @@ export const TeamView = (props: Props): JSX.Element => {
             </Typography>
           </Paper>
           <Paper elevation={0} square className={classes.paperBody}>
-            {pendingInvites}
+            {!team?.pending_invites && <LoadingSpinner />}
+            {team?.pending_invites?.length === 0 && (
+              <Typography style={{ marginTop: "10px", marginBottom: "15px" }}>
+                No pending invites
+              </Typography>
+            )}
+            {team?.pending_invites?.length > 0 && (
+              <List>
+                {team?.pending_invites.map(
+                  ({ email, sent_date, is_collaborator }) =>
+                    !is_collaborator && (
+                      <ListItem key={email}>
+                        {email} - {sent_date}
+                      </ListItem>
+                    )
+                )}
+              </List>
+            )}
             <hr
               style={{ width: "80%", marginLeft: "5px", marginRight: "5px" }}
             />
-            {inviteForm}
+            <Typography>Why not invite someone else to the team?</Typography>
+            <form autoComplete="off" onSubmit={inviteNewUser}>
+              <div>{inviteMessage}</div>
+              <div style={{ display: "flex" }}>
+                <TextField
+                  id="invite-email"
+                  type="email"
+                  required
+                  onChange={handleChange}
+                  value={inviteEmail}
+                  label="Email address"
+                  className={classes.textField}
+                  variant="filled"
+                />
+                <IconButton type="submit" size="large">
+                  <Send />
+                </IconButton>
+              </div>
+            </form>
           </Paper>
         </Card>
       </div>

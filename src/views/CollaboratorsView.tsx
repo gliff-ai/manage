@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useEffect, useState, useRef } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   Paper,
   IconButton,
@@ -17,7 +17,6 @@ import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
-import { setStateIfMounted } from "@/helpers";
 import { Table, TableCell, TableRow } from "@/components";
 
 const useStyles = makeStyles(() => ({
@@ -78,9 +77,9 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
   const [team, setTeam] = useState<Team | null>(null);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteMessage, setInviteMessage] = useState("");
-  const classes = useStyles();
-  const isMounted = useRef(false);
   const [open, setOpen] = useState(false);
+
+  const classes = useStyles();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     const { value } = event.target;
@@ -104,75 +103,11 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    // runs at mount
-    isMounted.current = true;
-    return () => {
-      // runs at dismount
-      isMounted.current = false;
-    };
-  }, []);
+    if (!auth?.user?.authToken) return;
+    void props.services.queryTeam(null, auth.user.authToken).then(setTeam);
+  }, [auth?.user?.authToken, props.services]);
 
-  useEffect(() => {
-    if (auth?.user?.email) {
-      void props.services
-        .queryTeam(null, auth.user.authToken)
-        .then((t: Team) => {
-          setStateIfMounted(t, setTeam, isMounted.current);
-        });
-    }
-  }, [auth, props.services, isMounted]);
-
-  let pendingInvites;
-  if (team?.pending_invites?.length > 0) {
-    pendingInvites = (
-      <List>
-        {team?.pending_invites.map(
-          ({ email, sent_date, is_collaborator }) =>
-            is_collaborator && (
-              <ListItem key={email}>
-                {email} - {sent_date}
-              </ListItem>
-            )
-        )}
-      </List>
-    );
-  } else if (team?.pending_invites?.length === 0) {
-    pendingInvites = (
-      <Typography style={{ marginTop: "10px", marginBottom: "15px" }}>
-        No pending invites
-      </Typography>
-    );
-  } else {
-    pendingInvites = <LoadingSpinner />;
-  }
-
-  const inviteForm = (
-    <>
-      <Typography>
-        Why not invite someone else to collaborate on your project?
-      </Typography>
-      <form autoComplete="off" onSubmit={inviteNewCollaborator}>
-        <div>{inviteMessage}</div>
-        <div style={{ display: "flex" }}>
-          <TextField
-            id="invite-email"
-            type="email"
-            required
-            onChange={handleChange}
-            value={inviteEmail}
-            label="Email address"
-            className={classes.textField}
-            variant="filled"
-          />
-          <IconButton type="submit" size="large">
-            <Send />
-          </IconButton>
-        </div>
-      </form>
-    </>
-  );
-
-  if (!auth) return null;
+  if (!auth?.user) return null;
 
   return (
     <>
@@ -206,7 +141,6 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
           </Box>
         )}
       </Card>
-
       <div className={classes.cardsContainer}>
         <Card
           className={classes.teamCard}
@@ -272,11 +206,48 @@ export const CollaboratorsView = (props: Props): JSX.Element => {
             </Typography>
           </Paper>
           <Paper elevation={0} square className={classes.paperBody}>
-            {pendingInvites}
+            {!team?.pending_invites && <LoadingSpinner />}
+            {team?.pending_invites?.length === 0 && (
+              <Typography style={{ marginTop: "10px", marginBottom: "15px" }}>
+                No pending invites
+              </Typography>
+            )}
+            {team?.pending_invites?.length > 0 && (
+              <List>
+                {team?.pending_invites.map(
+                  ({ email, sent_date, is_collaborator }) =>
+                    is_collaborator && (
+                      <ListItem key={email}>
+                        {email} - {sent_date}
+                      </ListItem>
+                    )
+                )}
+              </List>
+            )}
             <hr
               style={{ width: "80%", marginLeft: "5px", marginRight: "5px" }}
             />
-            {inviteForm}
+            <Typography>
+              Why not invite someone else to collaborate on your project?
+            </Typography>
+            <form autoComplete="off" onSubmit={inviteNewCollaborator}>
+              <div>{inviteMessage}</div>
+              <div style={{ display: "flex" }}>
+                <TextField
+                  id="invite-email"
+                  type="email"
+                  required
+                  onChange={handleChange}
+                  value={inviteEmail}
+                  label="Email address"
+                  className={classes.textField}
+                  variant="filled"
+                />
+                <IconButton type="submit" size="large">
+                  <Send />
+                </IconButton>
+              </div>
+            </form>
           </Paper>
         </Card>
       </div>

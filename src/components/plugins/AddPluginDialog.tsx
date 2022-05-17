@@ -1,26 +1,19 @@
 import { ReactElement, useState, ChangeEvent, useEffect } from "react";
-import {
-  Button,
-  Card,
-  Dialog,
-  IconButton,
-  Paper,
-  TextField,
-  Typography,
-  DialogActions,
-  RadioGroup,
-  FormControl,
-  Box,
-  Divider,
-} from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import SVG from "react-inlinesvg";
+
 import {
   theme,
   icons,
   lightGrey,
-  middleGrey,
-  IconButton as GliffIconButton,
+  IconButton,
+  Dialog,
+  Typography,
+  Button,
+  Paper,
+  TextField,
+  RadioGroup,
+  FormControl,
+  Box,
+  Divider,
 } from "@gliff-ai/style";
 import { IPlugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
@@ -28,55 +21,28 @@ import { FormLabelControl } from "./FormLabelControl";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 
-const useStyles = makeStyles({
-  paperHeader: {
-    padding: "10px",
-    backgroundColor: `${theme.palette.primary.main} !important`,
-    display: "flex",
-    justifyContent: "space-between",
+const whiteButtonStyle = {
+  textTransform: "none",
+  backgroundColor: "transparent",
+  borderColor: `${lightGrey} !important`,
+  ":hover": {
+    borderColor: lightGrey,
   },
-  paperBody: { width: "350px", margin: "10px 20px" },
-  topography: {
-    color: "#000000",
-    display: "inline",
-    fontSize: "21px",
-    marginLeft: "8px",
+};
+
+const greenButtonStyle = {
+  backgroundColor: `${theme.palette.primary.main} !important`,
+  "&:disabled": {
+    backgroundColor: lightGrey,
   },
-  key: {
-    width: "100%",
-    overflowWrap: "anywhere",
-    background: "#eee",
-    padding: "8px",
-    borderRadius: "5px",
-    fontFamily: "monospace",
+  textTransform: "none",
+  ":hover": {
+    backgroundColor: theme.palette.info.main,
   },
-  whiteButton: {
-    textTransform: "none",
-    backgroundColor: "transparent",
-    borderColor: `${middleGrey} !important`,
-    "&:hover": {
-      borderColor: middleGrey,
-    },
-  },
-  greenButton: {
-    backgroundColor: `${theme.palette.primary.main} !important`,
-    "&:disabled": {
-      backgroundColor: lightGrey,
-    },
-    textTransform: "none",
-    "&:hover": {
-      backgroundColor: theme.palette.info.main,
-    },
-  },
-  dialogActions: {
-    justifyContent: "space-between !important",
-    marginTop: "30px",
-  },
-  closeIcon: { width: "15px", height: "auto" },
-  textFontSize: { fontSize: "16px" },
-  marginTop: { marginTop: "15px" },
-  divider: { width: "500px !important", margin: "12px -20px !important" },
-});
+};
+
+const marginTop = { marginTop: "15px" };
+const divider = { width: "500px !important", margin: "12px -20px !important" };
 
 enum DialogPage {
   pickPluginType,
@@ -88,7 +54,7 @@ interface Props {
   projects: Project[] | null;
   services: ServiceFunctions;
   setError: (error: string) => void;
-  getPlugins: () => Promise<void>;
+  getPlugins: () => void;
 }
 
 const defaultPlugin = {
@@ -106,19 +72,21 @@ export function AddPluginDialog({
   projects,
   getPlugins,
 }: Props): ReactElement {
-  const [open, setOpen] = useState<boolean>(false);
+  const [closeDialog, setCloseDialog] = useState<boolean>(false);
   const [key, setKey] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [dialogPage, setDialogPage] = useState(DialogPage.pickPluginType);
   const [newPlugin, setNewPlugin] = useState<IPlugin>(defaultPlugin);
   const [validUrl, setValidUrl] = useState<boolean>(true);
 
-  const classes = useStyles();
-
   useEffect(() => {
-    if (open) return;
+    if (closeDialog) {
+      setCloseDialog(false);
+    }
+  }, [closeDialog]);
 
-    // reset some states
+  const resetDefaults = (): void => {
+    // Reset defaults values
     setTimeout(() => {
       // NOTE: setTimeout is used to update the dialog page
       // after the dialog has disappeared from view
@@ -129,7 +97,7 @@ export function AddPluginDialog({
       setError(null);
       setValidUrl(true);
     }, 500);
-  }, [open, setError]);
+  };
 
   if (!projects) return null;
 
@@ -156,7 +124,7 @@ export function AddPluginDialog({
       } | null;
 
       if (newPlugin.type === PluginType.Javascript) {
-        setOpen(false);
+        setCloseDialog(true);
         return true;
       }
 
@@ -207,22 +175,28 @@ export function AddPluginDialog({
           />
         </RadioGroup>
       </FormControl>
-      <DialogActions className={classes.dialogActions}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between !important",
+          marginTop: "30px",
+        }}
+      >
         <Button
-          className={classes.whiteButton}
           variant="outlined"
           onClick={() => services.launchDocs()}
+          sx={{ ...whiteButtonStyle }}
         >
           Learn more
         </Button>
         <Button
           variant="outlined"
-          className={classes.greenButton}
           onClick={() => setDialogPage((page) => page + 1)}
+          sx={{ ...greenButtonStyle }}
         >
           Continue
         </Button>
-      </DialogActions>
+      </Box>
     </Box>
   );
 
@@ -234,16 +208,16 @@ export function AddPluginDialog({
   const enterValuesDialog = dialogPage === DialogPage.enterValues && (
     <>
       <TextField
-        className={classes.marginTop}
+        sx={{ ...marginTop }}
         variant="outlined"
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
         }}
       />
-      <Divider className={classes.divider} />
+      <Divider sx={{ ...divider }} />
       <TextField
-        className={classes.marginTop}
+        sx={{ ...marginTop }}
         variant="outlined"
         placeholder="Plug-in URL"
         type="url"
@@ -253,29 +227,34 @@ export function AddPluginDialog({
           setNewPlugin((p) => ({ ...p, url: e.target.value } as IPlugin));
         }}
       />
-      <Divider className={classes.divider} />
+      <Divider sx={{ ...divider }} />
       <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
-      <Divider className={classes.divider} />
+      <Divider sx={{ ...divider }} />
       <ProjectsAutocomplete
         allProjects={projects}
         plugin={newPlugin}
         setPlugin={setNewPlugin}
       />
-      <DialogActions className={classes.dialogActions}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between !important",
+          marginTop: "30px",
+        }}
+      >
         <Button
           variant="outlined"
           onClick={() => setDialogPage((page) => page - 1)}
-          className={classes.whiteButton}
+          sx={{ ...whiteButtonStyle }}
         >
           Back
         </Button>
         <Button
           variant="outlined"
-          className={classes.greenButton}
+          sx={{ ...greenButtonStyle }}
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={() => {
             if (!validUrl) return;
-
             setCreating(true);
             void createPlugin().then((result: boolean) => {
               setCreating(false);
@@ -287,58 +266,71 @@ export function AddPluginDialog({
         >
           {creating ? "Loading..." : "Confirm"}
         </Button>
-      </DialogActions>
+      </Box>
     </>
   );
 
   const accessKeyDialog =
     key !== null && dialogPage === DialogPage.accessKey ? (
       <Paper elevation={0} square>
-        <p className={classes.textFontSize}>
+        <Typography sx={{ fontSize: "16px" }}>
           This is your trusted access key, it will only be shown once. If you
           need a new one, you can re-register the plugin.
-        </p>
-        <p className={classes.key}>{key}</p>
+        </Typography>
+        <Typography
+          sx={{
+            width: "100%",
+            overflowWrap: "anywhere",
+            background: "#eee",
+            padding: "8px",
+            borderRadius: "5px",
+            fontFamily: "monospace",
+            marginTop: "10px",
+            marginBottom: "10px",
+          }}
+        >
+          {key}
+        </Typography>
 
-        <DialogActions>
+        <Box sx={{ display: "flex", justifyContent: "end" }}>
           <Button
-            className={classes.greenButton}
-            onClick={() => setOpen(false)}
+            sx={{
+              ...greenButtonStyle,
+            }}
+            onClick={() => {
+              setCloseDialog(true);
+              resetDefaults();
+            }}
           >
             OK
           </Button>
-        </DialogActions>
+        </Box>
       </Paper>
     ) : null;
 
   return (
     <>
-      <GliffIconButton
-        id="add-plugin"
-        tooltip={{ name: "Add New Plug-in" }}
-        icon={icons.add}
-        onClick={() => setOpen(true)}
-        tooltipPlacement="top"
-      />
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Card>
-          <Paper
-            className={classes.paperHeader}
-            elevation={0}
-            variant="outlined"
-            square
-          >
-            <Typography className={classes.topography}>Add Plug-in</Typography>
-            <IconButton onClick={() => setOpen(false)} size="small">
-              <SVG src={icons.removeLabel} className={classes.closeIcon} />
-            </IconButton>
-          </Paper>
-          <Paper elevation={0} square className={classes.paperBody}>
-            {pickPluginTypeDialog}
-            {enterValuesDialog}
-            {accessKeyDialog}
-          </Paper>
-        </Card>
+      <Dialog
+        title="Add Plug-in"
+        close={closeDialog}
+        TriggerButton={
+          <IconButton
+            tooltip={{
+              name: "Add New Plug-in",
+            }}
+            icon={icons.add}
+            size="small"
+            tooltipPlacement="top"
+            id="add-plugin"
+          />
+        }
+        afterClose={resetDefaults}
+      >
+        <Box sx={{ width: "350px" }}>
+          {pickPluginTypeDialog}
+          {enterValuesDialog}
+          {accessKeyDialog}
+        </Box>
       </Dialog>
     </>
   );
