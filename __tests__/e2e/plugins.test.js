@@ -28,7 +28,13 @@ wrapper(() => {
       sleep(1000)
       const targetEl = await findElementByText(driver, text, "p");
 
-      expect(await targetEl.getText()).toEqual(text);
+      console.log(targetEl);
+
+      const res = await targetEl.getText()
+
+      console.log(res);
+      
+      expect(res).toEqual(text);
 
       await percySnapshot(driver, "Plugins Page");
     }, 30000, {capabilities: {"browserstack.idleTimeout": 300}});
