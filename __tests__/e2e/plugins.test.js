@@ -25,15 +25,23 @@ wrapper(() => {
 
       const text = "Plugins";
 
-      sleep(1000)
+      sleep(5000)
+
+      console.log("go!")
+      const x = driver.findElement(By.xpath(`//p[text()='Plugins']`))
+
+      console.log(x)
+
       const targetEl = await findElementByText(driver, text, "p");
+
+      sleep(5000)
 
       console.log(targetEl);
 
       const res = await targetEl.getText()
 
       console.log(res);
-      
+
       expect(res).toEqual(text);
 
       await percySnapshot(driver, "Plugins Page");
