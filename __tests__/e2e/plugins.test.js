@@ -40,13 +40,15 @@ wrapper(() => {
 
       console.log(targetEl);
 
-      const res = await targetEl.getText()
+      const res = targetEl.getText()
 
       console.log(res);
 
       expect(res).toEqual(text);
 
+      console.log("doing percy");
       await percySnapshot(driver, "Plugins Page");
+      console.log("done percy");
     }, 30000, {capabilities: {"browserstack.idleTimeout": 300}});
 
     test("add plugin dialog", async (driver, percySnapshot) => {
