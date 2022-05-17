@@ -30,7 +30,7 @@ wrapper(() => {
       expect(await targetEl.getText()).toEqual(text);
 
       await percySnapshot(driver, "Plugins Page");
-    });
+    }, 30000, {capabilities: {"browserstack.idleTimeout": 300}});
 
     test("add plugin dialog", async (driver, percySnapshot) => {
       await openApp(driver, webdriver, TARGET_URL);
