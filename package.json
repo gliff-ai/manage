@@ -34,6 +34,9 @@
     "@mui/icons-material": "^5.4.2",
     "@mui/material": "^5.4.3",
     "@mui/styles": "^5.4.2",
+    "@percy/cli": "==1.0.0-beta.76",
+    "@percy/sdk-utils": "==1.0.0-beta.76",
+    "@percy/selenium-webdriver": "==1.0.0",
     "@testing-library/react": "^12.1.5",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.20",
@@ -64,9 +67,6 @@
     "react-router-dom": "^6.2.1"
   },
   "dependencies": {
-    "@percy/cli": "^1.0.0-beta.76",
-    "@percy/sdk-utils": "^1.0.0-beta.76",
-    "@percy/selenium-webdriver": "^1.0.0",
     "axios": "^0.27.2",
     "csstype": "<=3.0.10 || >3.0.11",
     "react-inlinesvg": "^2.3.0"
