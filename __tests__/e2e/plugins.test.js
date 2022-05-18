@@ -25,13 +25,7 @@ wrapper(() => {
 
       await el.click();
 
-      const text = "Plugins";
-
-      const targetEl = await findElementByText(driver, text, "p");
-
-      const res = targetEl.getText()
-
-      expect(res).toEqual(text);
+      await findElementByText(driver, "Plugins", "p");
 
       await percySnapshot(driver, "Plugins Page");
     }, 30000, {capabilities: {"browserstack.idleTimeout": 300}});
