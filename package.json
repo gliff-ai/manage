@@ -20,7 +20,7 @@
     "build:example": "vite build",
     "test": "jest --coverage --passWithNoTests",
     "build:patch": "sed -i 's/const generateClassName$1 = createGenerateClassName();/const generateClassName$1 = createGenerateClassName({seed:\"\",disableGlobal:true,productionPrefix:\"jss-manage-\"});/g' dist/index.es.js",
-    "test:e2e": "jest -c jest.e2e.config.js --no-colors --maxWorkers=3"
+    "test:e2e": "percy exec -v -- jest -c jest.e2e.config.js --no-colors --maxWorkers=3"
   },
   "license": "AGPL-3.0-only",
   "devDependencies": {
