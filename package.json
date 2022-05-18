@@ -20,7 +20,7 @@
     "build:example": "vite build",
     "test": "jest --coverage --passWithNoTests",
     "build:patch": "sed -i 's/const generateClassName$1 = createGenerateClassName();/const generateClassName$1 = createGenerateClassName({seed:\"\",disableGlobal:true,productionPrefix:\"jss-manage-\"});/g' dist/index.es.js",
-    "test:e2e": "percy exec -- jest -c jest.e2e.config.js --no-colors"
+    "test:e2e": "percy exec -v -- jest -c jest.e2e.config.js --no-colors"
   },
   "license": "AGPL-3.0-only",
   "devDependencies": {
@@ -64,6 +64,9 @@
     "react-router-dom": "^6.2.1"
   },
   "dependencies": {
+    "@percy/cli": "^1.0.0-beta.76",
+    "@percy/sdk-utils": "^1.0.0-beta.76",
+    "@percy/selenium-webdriver": "^1.0.0",
     "axios": "^0.27.2",
     "csstype": "<=3.0.10 || >3.0.11",
     "react-inlinesvg": "^2.3.0"
