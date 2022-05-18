@@ -25,30 +25,9 @@ wrapper(() => {
 
       await el.click();
 
-      const text = "Plugins";
+      await findElementByText(driver, "Plugins", "p");
 
-      sleep(5000)
-
-      console.log("go!")
-      const x = driver.findElement(By.xpath(`//p[text()='Plugins']`))
-
-      console.log(x)
-
-      const targetEl = await findElementByText(driver, text, "p");
-
-      sleep(5000)
-
-      console.log(targetEl);
-
-      const res = targetEl.getText()
-
-      console.log(res);
-
-      // expect(res).toEqual(text);
-
-      console.log("doing percy");
-      // await percySnapshot(driver, "Plugins Page");
-      console.log("done percy");
+      await percySnapshot(driver, "Plugins Page");
     }, 30000, {capabilities: {"browserstack.idleTimeout": 300}});
 
     test("add plugin dialog", async (driver, percySnapshot) => {
