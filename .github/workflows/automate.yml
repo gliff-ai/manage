@@ -17,6 +17,7 @@ jobs:
         with:
           local-testing: start
           local-identifier: random
+          local-logging-level: all-logs
 
       # The next 3 steps are for building the web application to be tested and starting the web server on the runner environment
 
