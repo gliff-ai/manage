@@ -36,9 +36,15 @@ jobs:
       - name: "Running application under test"
         run: npx http-server -p 8080 -a bs-local.com dist &
 
-      - run: sleep 10
+      - run: sleep 20
 
       - name: "Running test on BrowserStack" # Invokes the actual test script that would run on BrowserStack browsers
         run: npm run test:e2e
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+
+      - name: Stop Local Testing
+        if: always()
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: stop
