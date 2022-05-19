@@ -1,3 +1,5 @@
+const { until, By } = require("selenium-webdriver");
+
 const {
   openApp,
   findElementById,
@@ -23,11 +25,9 @@ wrapper(() => {
 
       await el.click();
 
-      const text = "Plugins";
+      await sleep();
 
-      const targetEl = await findElementByText(driver, text, "p");
-
-      expect(await targetEl.getText()).toEqual(text);
+      await findElementByText(driver, "Plugins", "p");
 
       await percySnapshot(driver, "Plugins Page");
     });
