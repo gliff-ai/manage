@@ -1,4 +1,4 @@
-import { useState, ReactElement } from "react";
+import { useState, ReactElement, useEffect } from "react";
 import {
   Paper,
   IconButton,
@@ -82,6 +82,7 @@ export function CreateProjectDialog({
   invitees,
   createProject,
   inviteToProject,
+  isOpen,
 }: Props): ReactElement | null {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>(
@@ -96,17 +97,23 @@ export function CreateProjectDialog({
     setProjectDetails(INITIAL_PROJECT_DETAILS);
   };
 
+  useEffect(() => {
+    if (isOpen !== null) setDialogOpen(isOpen);
+  }, [isOpen]);
+
   if (!invitees || !projects) return null;
 
   return (
     <>
-      <GliffIconButton
-        id="create-project"
-        tooltip={{ name: "Add New Project" }}
-        icon={icons.add}
-        onClick={() => setDialogOpen(true)}
-        tooltipPlacement="top"
-      />
+      {isOpen === null && (
+        <GliffIconButton
+          id="create-project"
+          tooltip={{ name: "Add New Project" }}
+          icon={icons.add}
+          onClick={() => setDialogOpen(true)}
+          tooltipPlacement="top"
+        />
+      )}
       <Dialog open={dialogOpen} onClose={closeDialog}>
         <Card>
           <Paper
