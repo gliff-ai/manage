@@ -209,11 +209,14 @@ export function AddPluginDialog({
     <>
       <TextField
         sx={{ ...marginTop }}
-        variant="outlined"
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
         }}
+        inputProps={{
+          maxLength: 50, // NOTE: name for python or AI plugins cannot be over 50 characters, otherwise 500
+        }}
+        variant="outlined"
       />
       <Divider sx={{ ...divider }} />
       <TextField
@@ -223,8 +226,9 @@ export function AddPluginDialog({
         type="url"
         error={!validUrl}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setValidUrl(isValidURL(e.target.value));
-          setNewPlugin((p) => ({ ...p, url: e.target.value } as IPlugin));
+          const url = e.target.value.replace(/\/$/, ""); // remove trailing slash
+          setValidUrl(isValidURL(url));
+          setNewPlugin((p) => ({ ...p, url } as IPlugin));
         }}
       />
       <Divider sx={{ ...divider }} />
