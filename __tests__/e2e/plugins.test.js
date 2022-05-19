@@ -25,12 +25,10 @@ wrapper(() => {
 
       await el.click();
 
-      await sleep();
-
       await findElementByText(driver, "Plugins", "p");
 
       await percySnapshot(driver, "Plugins Page");
-    });
+    }, );
 
     test("add plugin dialog", async (driver, percySnapshot) => {
       await openApp(driver, webdriver, TARGET_URL);
