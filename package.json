@@ -22,6 +22,9 @@
     "build:patch": "sed -i 's/const generateClassName$1 = createGenerateClassName();/const generateClassName$1 = createGenerateClassName({seed:\"\",disableGlobal:true,productionPrefix:\"jss-manage-\"});/g' dist/index.es.js",
     "test:e2e": "percy exec -v -- jest -c jest.e2e.config.js --no-colors --maxWorkers=3"
   },
+  "resolutions": {
+    "csstype": "3.0.11"
+ },
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.17.0",
@@ -34,17 +37,17 @@
     "@mui/icons-material": "^5.4.2",
     "@mui/material": "^5.4.3",
     "@mui/styles": "^5.4.2",
-    "@percy/cli": "==1.0.0-beta.76",
-    "@percy/sdk-utils": "==1.0.0-beta.76",
-    "@percy/selenium-webdriver": "==1.0.0",
+    "@percy/cli": "1.0.0-beta.76",
+    "@percy/sdk-utils": "1.0.0-beta.76",
+    "@percy/selenium-webdriver": "1.0.0",
     "@testing-library/react": "^12.1.5",
     "@types/jest": "^27.0.1",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.1",
     "eslint": "^7.25.0",
-    "history": "==5.0.1",
+    "history": "5.0.1",
     "jest": "^27.5.1",
-    "prettier": "==2.3.0",
+    "prettier": "2.3.0",
     "react": "^17.0.0",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.3.0",
@@ -61,7 +64,7 @@
     "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.8",
     "@mui/styles": "^5.2.3",
-    "history": "==5.0.1",
+    "history": "5.0.1",
     "react": "^17.0.0",
     "react-dom": "^17.0.1",
     "react-router-dom": "^6.2.1"
