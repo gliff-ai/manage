@@ -30,7 +30,7 @@ jobs:
           node-version: 16
 
       - name: "Building web application to be tested"
-        run: npm ci --no-bin-links
+        run: npm ci --no-bin-links && npm i -g vite
 
       - run: npm run build:example
 
