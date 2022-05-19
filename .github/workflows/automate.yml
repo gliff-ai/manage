@@ -17,6 +17,7 @@ jobs:
         with:
           local-testing: start
           local-identifier: random
+          local-logging-level: all-logs
 
       # The next 3 steps are for building the web application to be tested and starting the web server on the runner environment
 
@@ -29,16 +30,22 @@ jobs:
           node-version: 16
 
       - name: "Building web application to be tested"
-        run: npm i
+        run: npm ci
 
       - run: npm run build:example
 
       - name: "Running application under test"
         run: npx http-server -p 8080 -a bs-local.com dist &
 
-      - run: sleep 10
+      - run: sleep 20
 
       - name: "Running test on BrowserStack" # Invokes the actual test script that would run on BrowserStack browsers
         run: npm run test:e2e
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+
+      - name: Stop Local Testing
+        if: always()
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: stop
