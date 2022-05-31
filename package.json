@@ -22,9 +22,6 @@
     "build:patch": "sed -i 's/const generateClassName$1 = createGenerateClassName();/const generateClassName$1 = createGenerateClassName({seed:\"\",disableGlobal:true,productionPrefix:\"jss-manage-\"});/g' dist/index.es.js",
     "test:e2e": "percy exec -v -- jest -c jest.e2e.config.js --no-colors -i"
   },
-  "resolutions": {
-    "csstype": "3.0.11"
-  },
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.18.2",
@@ -71,7 +68,6 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
-    "csstype": "3.0.10",
     "react-inlinesvg": "^2.3.0"
   }
 }

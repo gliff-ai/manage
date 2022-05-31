@@ -248,7 +248,7 @@ export function EditProjectDialog({
         options={invitees}
         value={selectedInvitees}
         onChange={handleSelectChange}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option: Profile) => option.name}
         filterOptions={(options) => options.filter(filterInviteesOptions)}
         renderOption={(props, option) => (
           <li {...props} className={classes.option}>
