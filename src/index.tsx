@@ -9,7 +9,6 @@ import {
   Theme,
   StyledEngineProvider,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import StylesProvider from "@mui/styles/StylesProvider";
 import { theme, generateClassName, Logo } from "@gliff-ai/style";
 
@@ -63,21 +62,7 @@ interface Props {
   launchAuditCallback?: (projectUid: string) => void;
 }
 
-const useStyles = makeStyles(() => ({
-  appBar: {
-    backgroundColor: "white",
-    height: "90px !important",
-    paddingTop: "9px",
-    width: "100% !important",
-  },
-  logo: {
-    marginBottom: "5px",
-    marginTop: "7px",
-  },
-}));
-
 export function UserInterface(props: Props): JSX.Element {
-  const classes = useStyles();
   const [services, setServices] = useState<ServiceFunctions | null>(null);
   const auth = useAuth();
 
@@ -109,10 +94,25 @@ export function UserInterface(props: Props): JSX.Element {
   if (!auth?.user) return null;
 
   const appbar = props.showAppBar && (
-    <AppBar position="fixed" className={classes.appBar} elevation={0}>
+    <AppBar
+      position="fixed"
+      sx={{
+        backgroundColor: "white",
+        height: "90px !important",
+        paddingTop: "9px",
+        width: "100% !important",
+      }}
+      elevation={0}
+    >
       <Toolbar>
         <Grid container direction="row">
-          <Grid item className={classes.logo}>
+          <Grid
+            item
+            sx={{
+              marginBottom: "5px",
+              marginTop: "7px",
+            }}
+          >
             <Logo />
           </Grid>
         </Grid>
