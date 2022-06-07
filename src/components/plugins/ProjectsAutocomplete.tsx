@@ -74,7 +74,7 @@ export const ProjectsAutocomplete = ({
         onChange={updatePluginProjects}
         renderTags={() => null}
         options={allProjects}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option: Project) => option.name}
         renderOption={(props, option) => (
           <li {...props} className={classes.option}>
             <FormControlLabel

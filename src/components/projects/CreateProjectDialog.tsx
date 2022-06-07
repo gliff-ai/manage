@@ -160,7 +160,9 @@ export function CreateProjectDialog({
             {/* eslint-disable react/jsx-props-no-spreading */}
             <Autocomplete
               options={invitees}
-              getOptionLabel={(option) => `${option.name} — ${option.email}`}
+              getOptionLabel={(option: Profile) =>
+                `${option.name} — ${option.email}`
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
