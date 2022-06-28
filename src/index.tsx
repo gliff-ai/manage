@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, ReactNode } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import {
   AppBar,
@@ -60,6 +60,7 @@ interface Props {
   showAppBar: boolean;
   launchCurateCallback?: (projectUid: string) => void;
   launchAuditCallback?: (projectUid: string) => void;
+  ZooDialog?: ReactNode;
 }
 
 export function UserInterface(props: Props): JSX.Element {
@@ -132,17 +133,14 @@ export function UserInterface(props: Props): JSX.Element {
               display: "flex",
             }}
           >
-            <PageSelector user={auth.user} />
+            <PageSelector user={auth.user} ZooDialog={props.ZooDialog} />
             <Routes>
               <Route path="/" element={<Navigate to="projects" />} />
-
               <Route path="team" element={<TeamView services={services} />} />
-
               <Route
                 path="plugins"
                 element={<PluginsView services={services} />}
               />
-
               <Route
                 path="collaborators"
                 element={<CollaboratorsView services={services} />}
@@ -170,6 +168,7 @@ UserInterface.defaultProps = {
   user: undefined as User,
   launchCurateCallback: undefined,
   launchAuditCallback: undefined,
+  ZooDialog: null,
 };
 
 export type { Services };
