@@ -20,6 +20,7 @@ import { ServiceFunctions } from "@/api";
 import { FormLabelControl } from "./FormLabelControl";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
+import { Notepad } from "../Notepad";
 
 const whiteButtonStyle = {
   textTransform: "none",
@@ -60,6 +61,7 @@ interface Props {
 const defaultPlugin = {
   type: PluginType.Javascript,
   name: "",
+  description: "",
   url: "",
   products: Product.ALL,
   enabled: false,
@@ -210,6 +212,7 @@ export function AddPluginDialog({
       <TextField
         sx={{ ...marginTop }}
         placeholder="Plug-in Name"
+        value={newPlugin.name}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
         }}
@@ -219,12 +222,25 @@ export function AddPluginDialog({
         variant="outlined"
       />
       <Divider sx={{ ...divider }} />
+      <Notepad
+        placeholder="Plug-in Description (Optional)"
+        value={newPlugin.description}
+        onChange={(event) => {
+          setNewPlugin((p) => ({
+            ...p,
+            description: event.target.value,
+          }));
+        }}
+        rows={6}
+      />
+      <Divider sx={{ ...divider }} />
       <TextField
         sx={{ ...marginTop }}
         variant="outlined"
         placeholder="Plug-in URL"
         type="url"
         error={!validUrl}
+        value={newPlugin.url}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           const url = e.target.value.replace(/\/$/, ""); // remove trailing slash
           setValidUrl(isValidURL(url));

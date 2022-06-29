@@ -15,6 +15,7 @@ import { IPlugin, PluginType, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ServiceFunctions } from "../../api";
+import { Notepad } from "../Notepad";
 
 const tab = {
   display: "inline-block",
@@ -131,6 +132,18 @@ export function EditPluginDialog({
         variant="outlined"
       />
       <Divider sx={{ ...divider }} />
+      <Notepad
+        placeholder="Plug-in Description (Optional)"
+        value={newPlugin.description}
+        onChange={(event) => {
+          setNewPlugin((p) => ({
+            ...p,
+            description: event.target.value,
+          }));
+        }}
+        rows={6}
+      />
+      <Divider sx={{ ...divider }} />
       <Typography sx={{ fontWeight: 700 }}>
         Type:
         <Box component="span" sx={{ ...tab }}>
@@ -142,7 +155,7 @@ export function EditPluginDialog({
         <Box component="span" sx={{ ...tab }}>
           {plugin.url}
         </Box>
-      </Typography>{" "}
+      </Typography>
       <Divider sx={{ ...divider }} />
       <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
       <Divider sx={{ ...divider }} />

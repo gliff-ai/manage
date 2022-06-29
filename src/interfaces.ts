@@ -74,6 +74,7 @@ export interface IPlugin {
   username?: string;
   type: PluginType;
   name: string;
+  description: string;
   url: string;
   products: Product;
   enabled: boolean;
