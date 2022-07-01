@@ -11,7 +11,7 @@ import {
   Button,
   Typography,
 } from "@gliff-ai/style";
-import { IPlugin, PluginType, Project } from "@/interfaces";
+import { IPluginOut, PluginType, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ServiceFunctions } from "../../api";
@@ -39,21 +39,23 @@ const greenButtonStyle = {
 };
 
 interface Props {
-  plugin: IPlugin;
+  pendingProjectInvites: string[];
+  plugin: IPluginOut;
   allProjects: Project[] | null;
-  updatePlugins: (prevPlugin: IPlugin, plugin: IPlugin) => void;
+  updatePlugins: (prevPlugin: IPluginOut, plugin: IPluginOut) => void;
   services: ServiceFunctions;
   setError: (error: string) => void;
 }
 
 export function EditPluginDialog({
+  pendingProjectInvites,
   plugin,
   allProjects,
   updatePlugins,
   services,
   setError,
 }: Props): ReactElement {
-  const [newPlugin, setNewPlugin] = useState<IPlugin>(plugin);
+  const [newPlugin, setNewPlugin] = useState<IPluginOut>(plugin);
   const [closeDialog, setCloseDialog] = useState<boolean>(false);
 
   const resetDefaults = (): void => {
@@ -123,7 +125,7 @@ export function EditPluginDialog({
         value={newPlugin.name}
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
+          setNewPlugin((p) => ({ ...p, name: e.target.value } as IPluginOut));
         }}
         inputProps={{
           maxLength: 50, // NOTE: name for python or AI plugins cannot be over 50 characters, otherwise 500
@@ -147,6 +149,7 @@ export function EditPluginDialog({
       <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
       <Divider sx={{ ...divider }} />
       <ProjectsAutocomplete
+        pendingProjectInvites={pendingProjectInvites}
         allProjects={allProjects}
         plugin={newPlugin}
         setPlugin={setNewPlugin}

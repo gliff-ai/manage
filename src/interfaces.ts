@@ -70,12 +70,19 @@ export enum PluginType {
   "AI" = "AI",
 }
 
-export interface IPlugin {
+interface IPlugin {
   username?: string;
   type: PluginType;
   name: string;
   url: string;
   products: Product;
   enabled: boolean;
+}
+
+export interface IPluginIn extends IPlugin {
+  collection_uids: { uid: string; is_invite_pending: "True" | "False" }[];
+}
+
+export interface IPluginOut extends IPlugin {
   collection_uids: string[];
 }
