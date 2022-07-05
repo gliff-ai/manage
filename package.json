@@ -30,7 +30,6 @@
     "@emotion/styled": "^11.9.3",
     "@gliff-ai/eslint-config": "^0.2.4",
     "@gliff-ai/jest-browserstack-automate": "^6.0.8",
-    "@gliff-ai/style": "^14.5.1",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.8.6",
     "@mui/styles": "^5.8.6",
@@ -59,7 +58,6 @@
   "peerDependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@gliff-ai/style": "^14.0.0",
     "@mui/icons-material": "^5.8.0",
     "@mui/material": "^5.8.1",
     "@mui/styles": "^5.8.0",
@@ -70,6 +68,7 @@
     "react-router-dom": "^6.2.1"
   },
   "dependencies": {
+    "@gliff-ai/style": "file:gliff-ai-style-14.0.0.tgz",
     "axios": "^0.27.2",
     "react-inlinesvg": "^2.3.0"
   }
