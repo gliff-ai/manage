@@ -61,7 +61,7 @@
     "@emotion/styled": "^11.6.0",
     "@gliff-ai/style": "^14.5.1",
     "@mui/icons-material": "^5.8.0",
-    "@mui/material": "^5.8.1",
+    "@mui/material": "^5.8.7",
     "@mui/styles": "^5.8.0",
     "@mui/x-data-grid": "^5.12.0",
     "history": "5.0.1",
