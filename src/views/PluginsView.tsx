@@ -82,11 +82,14 @@ export const PluginsView = ({ services }: Props): ReactElement => {
     });
   };
 
-  const updateEnabled = (plugin: Plugin) => {
+  const togglePluginButton = (
+    plugin: Plugin,
+    key: "enabled" | "is_public"
+  ): void => {
     const newPlugin: Plugin = plugins.find(
       (p) => p.name === plugin.name && p.url === plugin.url
     );
-    newPlugin.enabled = !newPlugin.enabled;
+    newPlugin[key] = !newPlugin[key];
 
     if (newPlugin) {
       updatePlugins(plugin, newPlugin);
@@ -161,8 +164,9 @@ export const PluginsView = ({ services }: Props): ReactElement => {
               "Type",
               "Product",
               "Products",
-              "Enabled",
               "Added To",
+              "Enabled",
+              "Public",
             ]}
           >
             {plugins.map((iplugin) => {
@@ -172,6 +176,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
                 type,
                 products,
                 enabled,
+                is_public: isPublic,
                 collection_uids: collectionUids,
               } = iplugin;
               return (
@@ -180,15 +185,23 @@ export const PluginsView = ({ services }: Props): ReactElement => {
                   <TableCell>{type}</TableCell>
                   <TableCell>{url}</TableCell>
                   <TableCell>{products}</TableCell>
+                  <TableCell>{collectionUids.length}&nbsp;projects</TableCell>
                   <TableCell>
                     <Switch
                       size="small"
                       color="primary"
                       checked={enabled}
-                      onChange={(e) => updateEnabled(iplugin)}
+                      onChange={(e) => togglePluginButton(iplugin, "enabled")}
                     />
                   </TableCell>
-                  <TableCell>{collectionUids.length}&nbsp;projects</TableCell>
+                  <TableCell>
+                    <Switch
+                      size="small"
+                      color="primary"
+                      checked={isPublic}
+                      onChange={(e) => togglePluginButton(iplugin, "is_public")}
+                    />
+                  </TableCell>
                   <TableButtonsCell>
                     <EditPluginDialog
                       plugin={iplugin}
