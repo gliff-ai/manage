@@ -28,7 +28,7 @@ import {
   TableRow,
   TableButtonsCell,
 } from "@/components";
-import { IPlugin, Project } from "@/interfaces";
+import { Plugin, Project } from "@/interfaces";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -65,14 +65,14 @@ interface Props {
 export const PluginsView = ({ services }: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null);
-  const [plugins, setPlugins] = useState<IPlugin[] | null>(null);
+  const [plugins, setPlugins] = useState<Plugin[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const isMounted = useRef(false);
 
   const classes = useStyles()();
 
-  const updatePlugins = (prevPlugin: IPlugin, plugin: IPlugin) => {
+  const updatePlugins = (prevPlugin: Plugin, plugin: Plugin) => {
     void services.updatePlugin({ ...plugin }).then((result) => {
       if (result && isMounted.current) {
         setPlugins((prevPlugins) =>
@@ -82,8 +82,8 @@ export const PluginsView = ({ services }: Props): ReactElement => {
     });
   };
 
-  const updateEnabled = (plugin: IPlugin) => {
-    const newPlugin: IPlugin = plugins.find(
+  const updateEnabled = (plugin: Plugin) => {
+    const newPlugin: Plugin = plugins.find(
       (p) => p.name === plugin.name && p.url === plugin.url
     );
     newPlugin.enabled = !newPlugin.enabled;

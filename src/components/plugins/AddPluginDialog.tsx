@@ -15,7 +15,7 @@ import {
   Box,
   Divider,
 } from "@gliff-ai/style";
-import { IPlugin, Product, PluginType, Project } from "@/interfaces";
+import { Plugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { FormLabelControl } from "./FormLabelControl";
 import { ProductsRadioForm } from "./ProductsRadioForm";
@@ -66,6 +66,7 @@ const defaultPlugin = {
   products: Product.ALL,
   enabled: false,
   collection_uids: [] as string[],
+  is_public: false,
 };
 
 export function AddPluginDialog({
@@ -78,7 +79,7 @@ export function AddPluginDialog({
   const [key, setKey] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [dialogPage, setDialogPage] = useState(DialogPage.pickPluginType);
-  const [newPlugin, setNewPlugin] = useState<IPlugin>(defaultPlugin);
+  const [newPlugin, setNewPlugin] = useState<Plugin>(defaultPlugin);
   const [validUrl, setValidUrl] = useState<boolean>(true);
 
   useEffect(() => {
@@ -103,7 +104,7 @@ export function AddPluginDialog({
 
   if (!projects) return null;
 
-  const addPluginToProjects = async (plugin: IPlugin, email: string) => {
+  const addPluginToProjects = async (plugin: Plugin, email: string) => {
     await Promise.allSettled(
       plugin.collection_uids.map(async (projectUid) => {
         try {
@@ -150,7 +151,7 @@ export function AddPluginDialog({
     <Box>
       <FormControl
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, type: e.target.value } as IPlugin));
+          setNewPlugin((p) => ({ ...p, type: e.target.value } as Plugin));
         }}
       >
         <h3>What type of plug-in do you want to register?</h3>
@@ -214,7 +215,7 @@ export function AddPluginDialog({
         placeholder="Plug-in Name"
         value={newPlugin.name}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
+          setNewPlugin((p) => ({ ...p, name: e.target.value } as Plugin));
         }}
         inputProps={{
           maxLength: 50, // NOTE: name for python or AI plugins cannot be over 50 characters, otherwise 500
@@ -244,7 +245,7 @@ export function AddPluginDialog({
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           const url = e.target.value.replace(/\/$/, ""); // remove trailing slash
           setValidUrl(isValidURL(url));
-          setNewPlugin((p) => ({ ...p, url } as IPlugin));
+          setNewPlugin((p) => ({ ...p, url } as Plugin));
         }}
       />
       <Divider sx={{ ...divider }} />

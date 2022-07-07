@@ -11,7 +11,7 @@ import {
   Button,
   Typography,
 } from "@gliff-ai/style";
-import { IPlugin, PluginType, Project } from "@/interfaces";
+import { Plugin, PluginType, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ServiceFunctions } from "../../api";
@@ -40,9 +40,9 @@ const greenButtonStyle = {
 };
 
 interface Props {
-  plugin: IPlugin;
+  plugin: Plugin;
   allProjects: Project[] | null;
-  updatePlugins: (prevPlugin: IPlugin, plugin: IPlugin) => void;
+  updatePlugins: (prevPlugin: Plugin, plugin: Plugin) => void;
   services: ServiceFunctions;
   setError: (error: string) => void;
 }
@@ -54,7 +54,7 @@ export function EditPluginDialog({
   services,
   setError,
 }: Props): ReactElement {
-  const [newPlugin, setNewPlugin] = useState<IPlugin>(plugin);
+  const [newPlugin, setNewPlugin] = useState<Plugin>(plugin);
   const [closeDialog, setCloseDialog] = useState<boolean>(false);
 
   const resetDefaults = (): void => {
@@ -124,7 +124,7 @@ export function EditPluginDialog({
         value={newPlugin.name}
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
+          setNewPlugin((p) => ({ ...p, name: e.target.value } as Plugin));
         }}
         inputProps={{
           maxLength: 50, // NOTE: name for python or AI plugins cannot be over 50 characters, otherwise 500

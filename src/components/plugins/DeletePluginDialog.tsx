@@ -16,7 +16,7 @@ import {
   Typography,
   AdvancedDialog,
 } from "@gliff-ai/style";
-import { IPlugin } from "@/interfaces";
+import { Plugin } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 
 const purpleText = {
@@ -45,8 +45,8 @@ const purpleButtonStyle = {
 };
 
 interface Props {
-  plugin: IPlugin;
-  setPlugins: Dispatch<SetStateAction<IPlugin[]>>;
+  plugin: Plugin;
+  setPlugins: Dispatch<SetStateAction<Plugin[]>>;
   services: ServiceFunctions;
 }
 

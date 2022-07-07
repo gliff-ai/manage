@@ -11,7 +11,7 @@ import {
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
 import { icons, lightGrey } from "@gliff-ai/style";
-import { IPlugin, Project } from "@/interfaces";
+import { Plugin, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
   marginTop: { marginTop: "15px" },
@@ -32,8 +32,8 @@ const useStyles = makeStyles({
 
 interface Props {
   allProjects: Project[];
-  plugin: IPlugin;
-  setPlugin: Dispatch<SetStateAction<IPlugin>>;
+  plugin: Plugin;
+  setPlugin: Dispatch<SetStateAction<Plugin>>;
 }
 
 export const ProjectsAutocomplete = ({

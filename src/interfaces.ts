@@ -70,13 +70,16 @@ export enum PluginType {
   "AI" = "AI",
 }
 
-export interface IPlugin {
-  username?: string;
+export interface Plugin {
+  username?: string; // trusted-service username (i.e., email address)
   type: PluginType;
   name: string;
   description: string;
-  url: string;
+  url: string; // base_url for trusted-services and url for plugins
   products: Product;
   enabled: boolean;
-  collection_uids: string[];
+  collection_uids: string[]; // collection uids for the projects the plugin has been added to
+  is_public: boolean;
+  public_key?: string;
+  encrypted_access_key?: string;
 }

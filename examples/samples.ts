@@ -1,6 +1,6 @@
 import {
   UserAccess,
-  IPlugin,
+  Plugin,
   PluginType,
   Product,
   Progress,
@@ -107,7 +107,7 @@ export const config = {
         key: "key key key",
         email: "1234@trustedservice.gliff.app",
       }),
-    getPlugins: (data): Promise<IPlugin[]> =>
+    getPlugins: (data): Promise<Plugin[]> =>
       Promise.resolve([
         {
           username: "1234@trustedservice.gliff.app",
@@ -117,7 +117,7 @@ export const config = {
           products: Product.ALL,
           enabled: false,
           collection_uids: ["1"],
-        } as IPlugin,
+        } as Plugin,
         {
           type: PluginType.Javascript,
           name: "js-plugin",
@@ -125,7 +125,7 @@ export const config = {
           products: Product.CURATE,
           enabled: true,
           collection_uids: [],
-        } as IPlugin,
+        } as Plugin,
       ]),
     updatePlugin: (data): Promise<number> => Promise.resolve(1),
     deletePlugin: (data): Promise<number> => Promise.resolve(1),

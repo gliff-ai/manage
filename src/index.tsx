@@ -173,3 +173,4 @@ UserInterface.defaultProps = {
 
 export type { Services };
 export { ProvideAuth } from "@/hooks/use-auth";
+export type { Plugin, Product, PluginType } from "./interfaces";
