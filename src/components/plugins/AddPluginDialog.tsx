@@ -56,6 +56,7 @@ interface Props {
   services: ServiceFunctions;
   setError: (error: string) => void;
   getPlugins: () => void;
+  launchDocs: () => Window | null;
 }
 
 const defaultPlugin = {
@@ -74,6 +75,7 @@ export function AddPluginDialog({
   setError,
   projects,
   getPlugins,
+  launchDocs,
 }: Props): ReactElement {
   const [closeDialog, setCloseDialog] = useState<boolean>(false);
   const [key, setKey] = useState<string | null>(null);
@@ -187,7 +189,7 @@ export function AddPluginDialog({
       >
         <Button
           variant="outlined"
-          onClick={() => services.launchDocs()}
+          onClick={launchDocs}
           sx={{ ...whiteButtonStyle }}
         >
           Learn more

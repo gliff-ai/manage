@@ -60,9 +60,10 @@ const useStyles = () =>
 
 interface Props {
   services: ServiceFunctions;
+  launchDocs: () => Window | null;
 }
 
-export const PluginsView = ({ services }: Props): ReactElement => {
+export const PluginsView = ({ services, launchDocs }: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [plugins, setPlugins] = useState<Plugin[] | null>(null);
@@ -146,7 +147,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
             <IconButton
               tooltip={{ name: "Docs" }}
               icon={icons.documentHelp}
-              onClick={() => services.launchDocs()}
+              onClick={launchDocs}
               tooltipPlacement="top"
             />
             <AddPluginDialog
@@ -154,6 +155,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
               setError={setError}
               projects={projects}
               getPlugins={getPlugins}
+              launchDocs={launchDocs}
             />
           </ButtonGroup>
         </Paper>

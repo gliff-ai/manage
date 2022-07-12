@@ -138,7 +138,6 @@ export const config = {
         1: { total: 12, complete: 1 },
         2: { total: 0, complete: 0 },
       }),
-    launchDocs: (): Promise<void> => Promise.resolve(),
     downloadDemoData: (): Promise<string | null> => Promise.resolve("2"),
   } as Services,
 };

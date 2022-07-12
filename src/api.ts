@@ -30,7 +30,6 @@ interface Services {
   deletePlugin: APIRoute | ServiceFunction;
   updatePlugin: APIRoute | ServiceFunction;
   getAnnotationProgress: APIRoute | ServiceFunction;
-  launchDocs: APIRoute | ServiceFunction;
   downloadDemoData: APIRoute | ServiceFunction;
 }
 
