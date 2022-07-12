@@ -1,8 +1,8 @@
 export interface User {
-  email: string;
-  authToken: string;
-  userAccess: UserAccess;
-  tierID: number;
+  email: string | null;
+  authToken: string | null;
+  userAccess: UserAccess | null;
+  tierID: number | null;
 }
 
 export type Progress = {
@@ -71,8 +71,9 @@ export enum PluginType {
 }
 
 export interface Plugin {
-  username?: string; // trusted-service username (i.e., email address)
   type: PluginType;
+  author?: string; // only for input plugin data
+  origin_id?: number | null; // only for output plugin data
   name: string;
   description: string;
   url: string; // base_url for trusted-services and url for plugins
@@ -80,6 +81,7 @@ export interface Plugin {
   enabled: boolean;
   collection_uids: string[]; // collection uids for the projects the plugin has been added to
   is_public: boolean;
-  public_key?: string;
-  encrypted_access_key?: string;
+  username?: string; // python and AI plugins' username (i.e., email address)
+  public_key?: string; // python and AI plugins only
+  encrypted_access_key?: string; // python and AI plugins only
 }
