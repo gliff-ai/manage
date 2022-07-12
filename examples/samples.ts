@@ -4,7 +4,7 @@ import {
   PluginType,
   Product,
   Progress,
-} from "@/interfaces";
+} from "../src/interfaces";
 import type { Services } from "../src";
 
 export const user = {
@@ -114,17 +114,21 @@ export const config = {
           type: PluginType.Python,
           name: "python-plugin",
           url: "https://ts.gliff.app",
+          description: "",
           products: Product.ALL,
           enabled: false,
           collection_uids: ["1"],
+          is_public: false,
         } as Plugin,
         {
           type: PluginType.Javascript,
           name: "js-plugin",
           url: "https://plugin.gliff.app",
+          description: "",
           products: Product.CURATE,
           enabled: true,
           collection_uids: [],
+          is_public: true,
         } as Plugin,
       ]),
     updatePlugin: (data): Promise<number> => Promise.resolve(1),

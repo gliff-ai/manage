@@ -17,15 +17,8 @@
     }
   },
   "include": [
-    "typings/**/*",
-    "examples/**/*.ts*",
-    "src/**/*.tsx",
-    "src/**/*.ts",
-    "__tests__/**/*.ts",
-    "typings/**/*.ts",
-    "./jest-setup.ts",
-    "src/assets/*.svg"
+    "src/**/**/*.tsx",
+    "src/**/**/*.ts",
   ],
-  "exclude": ["src/**/*_.tsx",
-    "__tests__/*"]
+  "exclude": ["src/**/**/*_.tsx","src/**/**/*test.tsx"]
 }
