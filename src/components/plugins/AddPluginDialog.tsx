@@ -123,7 +123,10 @@ export function AddPluginDialog({
 
   const createPlugin = async (): Promise<boolean> => {
     try {
-      const result = (await services.createPlugin({ ...newPlugin })) as {
+      const result = (await services.createPlugin({
+        ...newPlugin,
+        url: newPlugin.url.replace(/\/$/, ""), // remove trailing slash
+      })) as {
         key: string;
         email: string;
       } | null;
@@ -245,7 +248,7 @@ export function AddPluginDialog({
         error={!validUrl}
         value={newPlugin.url}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          const url = e.target.value.replace(/\/$/, ""); // remove trailing slash
+          const url = e.target.value;
           setValidUrl(isValidURL(url));
           setNewPlugin((p) => ({ ...p, url } as Plugin));
         }}
