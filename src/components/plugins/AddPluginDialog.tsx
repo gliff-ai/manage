@@ -59,8 +59,9 @@ interface Props {
   launchDocs: () => Window | null;
 }
 
-const defaultPlugin = {
+const defaultPlugin: Plugin = {
   type: PluginType.Javascript,
+  origin_id: null,
   name: "",
   description: "",
   url: "",

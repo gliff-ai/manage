@@ -73,7 +73,7 @@ export enum PluginType {
 export interface Plugin {
   type: PluginType;
   author?: string; // only for input plugin data
-  origin_id?: number | null; // only for output plugin data
+  origin_id: number | null;
   name: string;
   description: string;
   url: string; // base_url for trusted-services and url for plugins
