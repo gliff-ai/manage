@@ -21,25 +21,6 @@ import { FormLabelControl } from "./FormLabelControl";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 
-const whiteButtonStyle = {
-  textTransform: "none",
-  backgroundColor: "transparent",
-  borderColor: `${lightGrey} !important`,
-  ":hover": {
-    borderColor: lightGrey,
-  },
-};
-
-const greenButtonStyle = {
-  backgroundColor: `${theme.palette.primary.main} !important`,
-  "&:disabled": {
-    backgroundColor: lightGrey,
-  },
-  textTransform: "none",
-  ":hover": {
-    backgroundColor: theme.palette.info.main,
-  },
-};
 
 const marginTop = { marginTop: "15px" };
 const divider = { width: "500px !important", margin: "12px -20px !important" };
@@ -184,15 +165,15 @@ export function AddPluginDialog({
       >
         <Button
           variant="outlined"
+          color="secondary"
           onClick={() => services.launchDocs()}
-          sx={{ ...whiteButtonStyle }}
         >
           Learn more
         </Button>
         <Button
-          variant="outlined"
+          color="primary"
+          variant="contained"
           onClick={() => setDialogPage((page) => page + 1)}
-          sx={{ ...greenButtonStyle }}
         >
           Continue
         </Button>
@@ -204,6 +185,8 @@ export function AddPluginDialog({
     const pattern = new RegExp("^https?:\\/\\/");
     return pattern.test(url);
   };
+
+  const disabled = newPlugin.url === "" || newPlugin.name === "" || creating
 
   const enterValuesDialog = dialogPage === DialogPage.enterValues && (
     <>
@@ -248,15 +231,15 @@ export function AddPluginDialog({
       >
         <Button
           variant="outlined"
+          color="secondary"
           onClick={() => setDialogPage((page) => page - 1)}
-          sx={{ ...whiteButtonStyle }}
         >
           Back
         </Button>
         <Button
-          variant="outlined"
-          sx={{ ...greenButtonStyle }}
-          disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
+          variant= {disabled ? "outlined" : "contained" }
+          color={disabled ? "secondary" : "primary"}
+          disabled={disabled}
           onClick={() => {
             if (!validUrl) return;
             setCreating(true);
@@ -298,9 +281,8 @@ export function AddPluginDialog({
 
         <Box sx={{ display: "flex", justifyContent: "end" }}>
           <Button
-            sx={{
-              ...greenButtonStyle,
-            }}
+            variant="contained"
+            color="primary"
             onClick={() => {
               setCloseDialog(true);
               resetDefaults();
