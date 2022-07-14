@@ -40,11 +40,6 @@ const useStyles = makeStyles({
   cancelButton: {
     textTransform: "none",
   },
-  OKButton: {
-    "&:hover": {
-      backgroundColor: theme.palette.info.main,
-    },
-  },
   chipLabel: {
     margin: "5px 5px 0 0",
     borderColor: "black",
@@ -224,6 +219,8 @@ export function CreateProjectDialog({
                   setDialogOpen(false);
                 }}
                 className={classes.cancelButton}
+              variant="outlined"
+              color="secondary"
               >
                 Cancel
               </Button>
