@@ -197,12 +197,16 @@ export const PluginsView = ({ services, launchDocs }: Props): ReactElement => {
                     />
                   </TableCell>
                   <TableCell>
-                    <Switch
-                      size="small"
-                      color="primary"
-                      checked={isPublic}
-                      onChange={(e) => togglePluginButton(iplugin, "is_public")}
-                    />
+                    {isPublic !== null && (
+                      <Switch
+                        size="small"
+                        color="primary"
+                        checked={isPublic}
+                        onChange={(e) =>
+                          togglePluginButton(iplugin, "is_public")
+                        }
+                      />
+                    )}
                   </TableCell>
                   <TableButtonsCell>
                     <EditPluginDialog

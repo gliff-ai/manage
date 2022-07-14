@@ -80,7 +80,7 @@ export interface Plugin {
   products: Product;
   enabled: boolean;
   collection_uids: string[]; // collection uids for the projects the plugin has been added to
-  is_public: boolean;
+  is_public: boolean | null; // is_public is only set for origin plugins, while copies of a plugin cannot be shared
   username?: string; // python and AI plugins' username (i.e., email address)
   public_key?: string; // python and AI plugins only
   encrypted_access_key?: string; // python and AI plugins only

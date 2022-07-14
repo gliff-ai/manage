@@ -118,6 +118,7 @@ export const config = {
           products: Product.ALL,
           enabled: false,
           collection_uids: ["1"],
+          origin_id: null,
           is_public: false,
         } as Plugin,
         {
@@ -128,7 +129,8 @@ export const config = {
           products: Product.CURATE,
           enabled: true,
           collection_uids: [],
-          is_public: true,
+          origin_id: 2,
+          is_public: null,
         } as Plugin,
       ]),
     updatePlugin: (data): Promise<number> => Promise.resolve(1),
