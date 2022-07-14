@@ -1,13 +1,11 @@
 import { useState, ReactElement, useEffect } from "react";
 import {
   Paper,
-  IconButton,
   Typography,
   Card,
   List,
   Chip,
   Avatar,
-  Dialog,
   TextField,
   DialogActions,
   Button,
@@ -19,7 +17,9 @@ import {
   theme,
   icons,
   lightGrey,
-  IconButton as GliffIconButton,
+  IconButton,
+  Dialog,
+  Box,
 } from "@gliff-ai/style";
 import { Profile, Project, ProjectDetails } from "@/interfaces";
 import { Notepad } from "@/components";
@@ -98,34 +98,22 @@ export function CreateProjectDialog({
   return (
     <>
       {isOpen === null && (
-        <GliffIconButton
-          id="create-project"
-          tooltip={{ name: "Add New Project" }}
-          icon={icons.add}
-          onClick={() => setDialogOpen(true)}
-          tooltipPlacement="top"
-        />
-      )}
-      <Dialog open={dialogOpen} onClose={closeDialog}>
-        <Card>
-          <Paper
-            className={classes.paperHeader}
-            elevation={0}
-            variant="outlined"
-            square
-          >
-            <Typography className={classes.projectsTopography}>
-              Create Project
-            </Typography>
-            <IconButton onClick={closeDialog}>
-              <SVG src={icons.removeLabel} className={classes.closeIcon} />
-            </IconButton>
-          </Paper>
-          <Paper
-            elevation={0}
-            square
-            style={{ width: "350px", margin: "20px" }}
-          >
+        <Dialog
+          title="Add Plug-in"
+          close={closeDialog}
+          TriggerButton={
+            <IconButton
+              tooltip={{
+                name: "Add New Project",
+              }}
+              tooltipPlacement="top"
+              icon={icons.add}
+              size="small"
+              id="add-plugin"
+            />
+          }
+        >
+          <Box>
             <TextField
               placeholder="Project Name"
               style={{ width: "100%" }}
@@ -215,8 +203,8 @@ export function CreateProjectDialog({
                 onClick={() => {
                   setDialogOpen(false);
                 }}
-              variant="outlined"
-              color="secondary"
+                variant="outlined"
+                color="secondary"
               >
                 Cancel
               </Button>
@@ -257,9 +245,9 @@ export function CreateProjectDialog({
                 OK
               </Button>
             </DialogActions>
-          </Paper>
-        </Card>
-      </Dialog>
+          </Box>
+        </Dialog>
+      )}
     </>
   );
 }

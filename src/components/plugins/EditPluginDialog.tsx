@@ -27,7 +27,6 @@ const divider = {
   margin: "12px -20px !important",
 };
 
-
 interface Props {
   plugin: IPlugin;
   allProjects: Project[] | null;

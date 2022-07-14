@@ -21,7 +21,6 @@ import { FormLabelControl } from "./FormLabelControl";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 
-
 const marginTop = { marginTop: "15px" };
 const divider = { width: "500px !important", margin: "12px -20px !important" };
 
@@ -186,7 +185,7 @@ export function AddPluginDialog({
     return pattern.test(url);
   };
 
-  const disabled = newPlugin.url === "" || newPlugin.name === "" || creating
+  const disabled = newPlugin.url === "" || newPlugin.name === "" || creating;
 
   const enterValuesDialog = dialogPage === DialogPage.enterValues && (
     <>
@@ -237,7 +236,7 @@ export function AddPluginDialog({
           Back
         </Button>
         <Button
-          variant= {disabled ? "outlined" : "contained" }
+          variant={disabled ? "outlined" : "contained"}
           color={disabled ? "secondary" : "primary"}
           disabled={disabled}
           onClick={() => {
