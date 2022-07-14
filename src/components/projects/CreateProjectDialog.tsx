@@ -24,32 +24,14 @@ import {
 import { Profile, Project, ProjectDetails } from "@/interfaces";
 import { Notepad } from "@/components";
 
-const useStyles = makeStyles({
-  paperHeader: {
-    padding: "10px",
-    backgroundColor: `${theme.palette.primary.main} !important`,
-    display: "flex",
-    justifyContent: "space-between",
-  },
-  projectsTopography: {
-    color: "#000000",
-    display: "inline",
-    fontSize: "21px",
-    marginLeft: "8px",
-  },
-  chipLabel: {
-    margin: "5px 5px 0 0",
+const chip = {
     borderColor: "black",
-    borderRadius: "9px",
     maxWidth: "300px",
     fontSize: "14px",
-  },
-  iconSize: {
-    width: "15px",
-  },
-  addButton: {
-    color: "#000000",
-  },
+}
+
+const useStyles = makeStyles({
+
   closeIcon: { width: "15px" },
   option: {
     backgroundColor: `#FFFFFF !important`,
@@ -186,15 +168,15 @@ export function CreateProjectDialog({
                       }}
                     >
                       <SVG
-                        className={classes.iconSize}
                         src={icons.removeLabel}
                         fill="inherit"
+                        width= "15px"
                       />
                     </Avatar>
                   }
-                  className={classes.chipLabel}
                   label={profile.name}
                   variant="outlined"
+                  sx={{...chip}}
                 />
               ))}
             </List>
