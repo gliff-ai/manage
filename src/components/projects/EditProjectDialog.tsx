@@ -302,7 +302,8 @@ export function EditProjectDialog({
       <DialogActions>
         <Button
           className={classes.confirmButton}
-          variant="outlined"
+          variant="contained"
+          color="primary"
           onClick={updateProject}
         >
           Confirm

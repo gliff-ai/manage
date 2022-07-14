@@ -37,9 +37,6 @@ const useStyles = makeStyles({
     fontSize: "21px",
     marginLeft: "8px",
   },
-  cancelButton: {
-    textTransform: "none",
-  },
   chipLabel: {
     margin: "5px 5px 0 0",
     borderColor: "black",
@@ -218,7 +215,6 @@ export function CreateProjectDialog({
                 onClick={() => {
                   setDialogOpen(false);
                 }}
-                className={classes.cancelButton}
               variant="outlined"
               color="secondary"
               >
