@@ -5,6 +5,14 @@ on:
     - cron: "00 06 * * 1,2,3,4,5"
 
 jobs:
+  clear_stale:
+    uses: devjoes/pr-automation@v0.1.0
+    with:
+      token: ${{ secrets.ROBOT_PAT }}
+      autoCloseLabel: dependencies
+      warnClosingAfter: 6d
+      autoCloseAfterWarn: 1d
+      deleteOnClose: true
   npm_update:
     uses: gliff-ai/.github/.github/workflows/update-gliff-ai.yml@main
     secrets:
