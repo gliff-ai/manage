@@ -27,16 +27,6 @@ const divider = {
   margin: "12px -20px !important",
 };
 
-const greenButtonStyle = {
-  backgroundColor: `${theme.palette.primary.main} !important`,
-  "&:disabled": {
-    backgroundColor: lightGrey,
-  },
-  textTransform: "none",
-  ":hover": {
-    backgroundColor: theme.palette.info.main,
-  },
-};
 
 interface Props {
   plugin: IPlugin;
@@ -182,8 +172,8 @@ export function EditPluginDialog({
             }}
           >
             <Button
-              variant="outlined"
-              sx={{ ...greenButtonStyle }}
+              variant="contained"
+              color="primary"
               disabled={JSON.stringify(newPlugin) === JSON.stringify(plugin)}
               onClick={async () => {
                 const finalColUids = await updatePluginProjects();
