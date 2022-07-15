@@ -8,27 +8,9 @@ import {
   Chip,
   Autocomplete,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
 import { icons, lightGrey } from "@gliff-ai/style";
 import { IPlugin, Project } from "@/interfaces";
-
-const useStyles = makeStyles({
-  marginTop: { marginTop: "15px" },
-  option: {
-    fontSize: "14px",
-    backgroundColor: `#FFFFFF !important`,
-    "&:hover": { backgroundColor: `${lightGrey} !important` },
-    padding: "5px 10px",
-  },
-  checkboxIcon: { width: "18px", height: "auto" },
-  chipLabel: {
-    margin: "5px 5px 0 0",
-    borderColor: "black",
-    borderRadius: "9px",
-  },
-  closeIcon: { width: "15px", height: "auto" },
-});
 
 interface Props {
   allProjects: Project[];
@@ -41,8 +23,6 @@ export const ProjectsAutocomplete = ({
   plugin,
   setPlugin,
 }: Props): ReactElement => {
-  const classes = useStyles();
-
   const removePluginFromProject = (projectUid: string) =>
     setPlugin((prevPlugin) => ({
       ...prevPlugin,
@@ -64,7 +44,7 @@ export const ProjectsAutocomplete = ({
     <>
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
-        className={classes.marginTop}
+        sx={{ marginTop: "15px" }}
         multiple
         disableCloseOnSelect
         disableClearable
@@ -82,11 +62,12 @@ export const ProjectsAutocomplete = ({
               control={
                 <Checkbox
                   style={{ padding: "10px" }}
-                  icon={<div className={classes.checkboxIcon} />}
+                  icon={<Box sx={{ ...checkboxIcon }} />}
                   checkedIcon={
                     <SVG
-                      className={classes.checkboxIcon}
                       src={icons.multipleImageSelection}
+                      width="18px"
+                      height="auto"
                     />
                   }
                   checked={plugin.collection_uids.includes(option.uid)}
@@ -110,7 +91,7 @@ export const ProjectsAutocomplete = ({
             <Chip
               variant="outlined"
               key={project.name}
-              className={classes.chipLabel}
+              sx={{ borderColor: "black" }}
               label={project.name}
               avatar={
                 <Avatar
@@ -120,8 +101,9 @@ export const ProjectsAutocomplete = ({
                 >
                   <SVG
                     fill="inherit"
-                    className={classes.closeIcon}
                     src={icons.removeLabel}
+                    widths="15px"
+                    height="auto"
                   />
                 </Avatar>
               }

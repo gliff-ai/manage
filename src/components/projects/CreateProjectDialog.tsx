@@ -3,7 +3,6 @@ import {
   Paper,
   Typography,
   Card,
-  List,
   Chip,
   Avatar,
   TextField,
@@ -11,7 +10,6 @@ import {
   Button,
   Autocomplete,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
 import {
   theme,
@@ -20,26 +18,16 @@ import {
   IconButton,
   Dialog,
   Box,
+  List,
 } from "@gliff-ai/style";
 import { Profile, Project, ProjectDetails } from "@/interfaces";
 import { Notepad } from "@/components";
 
 const chip = {
-    borderColor: "black",
-    maxWidth: "300px",
-    fontSize: "14px",
-}
-
-const useStyles = makeStyles({
-
-  closeIcon: { width: "15px" },
-  option: {
-    backgroundColor: `#FFFFFF !important`,
-    fontSize: "14px",
-    "&:hover": { backgroundColor: `${lightGrey} !important` },
-    padding: "5px 10px",
-  },
-});
+  borderColor: "black",
+  maxWidth: "300px",
+  fontSize: "14px",
+};
 
 interface Props {
   projects: Project[] | null;
@@ -64,8 +52,6 @@ export function CreateProjectDialog({
   );
   const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]);
 
-  const classes = useStyles();
-
   const closeDialog = (): void => {
     setDialogOpen(false);
     setProjectDetails(INITIAL_PROJECT_DETAILS);
@@ -81,8 +67,7 @@ export function CreateProjectDialog({
     <>
       {isOpen === null && (
         <Dialog
-          title="Add Plug-in"
-          close={closeDialog}
+          title="Create Project"
           TriggerButton={
             <IconButton
               tooltip={{
@@ -95,7 +80,7 @@ export function CreateProjectDialog({
             />
           }
         >
-          <Box>
+          <Box sx={{ width: "350px" }}>
             <TextField
               placeholder="Project Name"
               style={{ width: "100%" }}
@@ -133,11 +118,11 @@ export function CreateProjectDialog({
                 />
               )}
               renderOption={(props, option) => (
-                <li {...props} className={classes.option}>
+                <li {...props}>
                   {option.name} — {option.email}
                 </li>
               )}
-              style={{ marginTop: "26px" }}
+              sx={{ marginTop: "26px" }}
               onChange={(event, value) => {
                 // add the selected user profile to dialogInvitees if it's not already there:
                 if (!value) return;
@@ -170,13 +155,13 @@ export function CreateProjectDialog({
                       <SVG
                         src={icons.removeLabel}
                         fill="inherit"
-                        width= "15px"
+                        width="15px"
                       />
                     </Avatar>
                   }
                   label={profile.name}
                   variant="outlined"
-                  sx={{...chip}}
+                  sx={{ ...chip }}
                 />
               ))}
             </List>
@@ -191,7 +176,6 @@ export function CreateProjectDialog({
                 Cancel
               </Button>
               <Button
-                className={classes.OKButton}
                 variant="contained"
                 color="primary"
                 disabled={
