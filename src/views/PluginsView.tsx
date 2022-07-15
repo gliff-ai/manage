@@ -126,7 +126,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
         newPlugins.map((p) => {
           if (p.type !== PluginType.Javascript) {
             newPendingInvites[`${p.url}`] = p.collection_uids
-              .filter(({ is_invite_pending }) => is_invite_pending === "True")
+              .filter(({ is_invite_pending }) => is_invite_pending)
               .map(({ uid }) => uid);
           }
           return {

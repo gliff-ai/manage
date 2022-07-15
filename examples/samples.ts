@@ -116,7 +116,7 @@ export const config = {
           url: "https://ts.gliff.app",
           products: Product.ALL,
           enabled: false,
-          collection_uids: [{ uid: "1", is_invite_pending: "True" }],
+          collection_uids: [{ uid: "1", is_invite_pending: true }],
         } as IPluginIn,
         {
           type: PluginType.Javascript,

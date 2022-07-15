@@ -80,7 +80,7 @@ interface IPlugin {
 }
 
 export interface IPluginIn extends IPlugin {
-  collection_uids: { uid: string; is_invite_pending: "True" | "False" }[];
+  collection_uids: { uid: string; is_invite_pending: boolean }[];
 }
 
 export interface IPluginOut extends IPlugin {
