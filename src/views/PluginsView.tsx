@@ -61,9 +61,14 @@ const useStyles = () =>
 interface Props {
   services: ServiceFunctions;
   launchDocs: () => Window | null;
+  rerender?: number;
 }
 
-export const PluginsView = ({ services, launchDocs }: Props): ReactElement => {
+export const PluginsView = ({
+  services,
+  launchDocs,
+  rerender,
+}: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [plugins, setPlugins] = useState<Plugin[] | null>(null);
@@ -114,7 +119,7 @@ export const PluginsView = ({ services, launchDocs }: Props): ReactElement => {
   useEffect(() => {
     // fetch plugins (should run once at mount)
     getPlugins();
-  }, [getPlugins]);
+  }, [getPlugins, rerender]);
 
   useEffect(() => {
     // fetch projects (should run once at mount)
@@ -241,4 +246,6 @@ export const PluginsView = ({ services, launchDocs }: Props): ReactElement => {
   );
 };
 
-PluginsView.defaultProps = {};
+PluginsView.defaultProps = {
+  rerender: 0,
+};

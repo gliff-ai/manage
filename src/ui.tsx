@@ -61,6 +61,7 @@ interface Props {
   launchAuditCallback?: (projectUid: string) => void;
   launchDocs: () => Window | null;
   ZooDialog?: ReactNode;
+  pluginsRerender?: number;
 }
 
 export function UserInterface(props: Props): JSX.Element {
@@ -143,6 +144,7 @@ export function UserInterface(props: Props): JSX.Element {
                   <PluginsView
                     services={services}
                     launchDocs={props.launchDocs}
+                    rerender={props.pluginsRerender}
                   />
                 }
               />
@@ -174,4 +176,5 @@ UserInterface.defaultProps = {
   launchCurateCallback: undefined,
   launchAuditCallback: undefined,
   ZooDialog: null,
+  pluginsRerender: 0,
 };
