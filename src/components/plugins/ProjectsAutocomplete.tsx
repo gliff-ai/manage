@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { icons, lightGrey, theme, middleGrey } from "@gliff-ai/style";
+import { icons, lightGrey, middleGrey } from "@gliff-ai/style";
 import { IPluginOut, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
