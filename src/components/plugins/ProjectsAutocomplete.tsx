@@ -102,7 +102,7 @@ export const ProjectsAutocomplete = ({
                   <SVG
                     fill="inherit"
                     src={icons.removeLabel}
-                    widths="15px"
+                    width="15px"
                     height="auto"
                   />
                 </Avatar>
