@@ -15,7 +15,7 @@ import {
   Box,
   Divider,
 } from "@gliff-ai/style";
-import { IPlugin, Product, PluginType, Project } from "@/interfaces";
+import { IPluginOut, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { FormLabelControl } from "./FormLabelControl";
 import { ProductsRadioForm } from "./ProductsRadioForm";
@@ -76,7 +76,7 @@ export function AddPluginDialog({
   const [key, setKey] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [dialogPage, setDialogPage] = useState(DialogPage.pickPluginType);
-  const [newPlugin, setNewPlugin] = useState<IPlugin>(defaultPlugin);
+  const [newPlugin, setNewPlugin] = useState<IPluginOut>(defaultPlugin);
   const [validUrl, setValidUrl] = useState<boolean>(true);
 
   useEffect(() => {
@@ -101,7 +101,7 @@ export function AddPluginDialog({
 
   if (!projects) return null;
 
-  const addPluginToProjects = async (plugin: IPlugin, email: string) => {
+  const addPluginToProjects = async (plugin: IPluginOut, email: string) => {
     await Promise.allSettled(
       plugin.collection_uids.map(async (projectUid) => {
         try {
@@ -148,7 +148,7 @@ export function AddPluginDialog({
     <Box>
       <FormControl
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, type: e.target.value } as IPlugin));
+          setNewPlugin((p) => ({ ...p, type: e.target.value } as IPluginOut));
         }}
       >
         <h3>What type of plug-in do you want to register?</h3>
@@ -211,7 +211,7 @@ export function AddPluginDialog({
         sx={{ ...marginTop }}
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, name: e.target.value } as IPlugin));
+          setNewPlugin((p) => ({ ...p, name: e.target.value } as IPluginOut));
         }}
         inputProps={{
           maxLength: 50, // NOTE: name for python or AI plugins cannot be over 50 characters, otherwise 500
@@ -228,7 +228,7 @@ export function AddPluginDialog({
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
           const url = e.target.value.replace(/\/$/, ""); // remove trailing slash
           setValidUrl(isValidURL(url));
-          setNewPlugin((p) => ({ ...p, url } as IPlugin));
+          setNewPlugin((p) => ({ ...p, url } as IPluginOut));
         }}
       />
       <Divider sx={{ ...divider }} />
