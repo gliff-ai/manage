@@ -40,6 +40,7 @@ const greenButtonStyle = {
 };
 
 interface Props {
+  pendingProjectInvites: string[];
   plugin: Plugin;
   allProjects: Project[] | null;
   updatePlugins: (prevPlugin: Plugin, plugin: Plugin) => void;
@@ -48,6 +49,7 @@ interface Props {
 }
 
 export function EditPluginDialog({
+  pendingProjectInvites,
   plugin,
   allProjects,
   updatePlugins,
@@ -77,8 +79,8 @@ export function EditPluginDialog({
       await Promise.all(
         allProjects.map(async ({ uid, name }) => {
           if (
-            !plugin.collection_uids.includes(uid) &&
-            newPlugin.collection_uids.includes(uid)
+            !plugin.collection_uids?.includes(uid) &&
+            newPlugin.collection_uids?.includes(uid)
           ) {
             try {
               await services.inviteToProject({
@@ -160,6 +162,7 @@ export function EditPluginDialog({
       <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
       <Divider sx={{ ...divider }} />
       <ProjectsAutocomplete
+        pendingProjectInvites={pendingProjectInvites}
         allProjects={allProjects}
         plugin={newPlugin}
         setPlugin={setNewPlugin}

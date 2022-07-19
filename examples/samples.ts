@@ -118,7 +118,7 @@ export const config = {
           description: "",
           products: Product.ALL,
           enabled: false,
-          collection_uids: ["1"],
+          collection_uids: [{ uid: "1", is_invite_pending: true }],
           origin_id: null,
           is_public: false,
         } as Plugin,

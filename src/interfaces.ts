@@ -85,3 +85,7 @@ export interface Plugin {
   public_key?: string; // python and AI plugins only
   encrypted_access_key?: string; // python and AI plugins only
 }
+
+export interface PluginWithExtra extends Omit<Plugin, "collection_uids"> {
+  collection_uids: { uid: string; is_invite_pending: boolean }[]; // collection uids for the projects the plugin has been added to
+}

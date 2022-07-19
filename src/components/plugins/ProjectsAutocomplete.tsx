@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import { icons, lightGrey } from "@gliff-ai/style";
+import { icons, lightGrey, middleGrey } from "@gliff-ai/style";
 import { Plugin, Project } from "@/interfaces";
 
 const useStyles = makeStyles({
@@ -25,6 +25,13 @@ const useStyles = makeStyles({
   chipLabel: {
     margin: "5px 5px 0 0",
     borderColor: "black",
+    color: "black",
+    borderRadius: "9px",
+  },
+  chipLabelPending: {
+    margin: "5px 5px 0 0",
+    borderColor: middleGrey,
+    color: middleGrey,
     borderRadius: "9px",
   },
   closeIcon: { width: "15px", height: "auto" },
@@ -34,12 +41,14 @@ interface Props {
   allProjects: Project[];
   plugin: Plugin;
   setPlugin: Dispatch<SetStateAction<Plugin>>;
+  pendingProjectInvites?: string[];
 }
 
 export const ProjectsAutocomplete = ({
   allProjects,
   plugin,
   setPlugin,
+  pendingProjectInvites,
 }: Props): ReactElement => {
   const classes = useStyles();
 
@@ -73,7 +82,9 @@ export const ProjectsAutocomplete = ({
         )}
         onChange={updatePluginProjects}
         renderTags={() => null}
-        options={allProjects}
+        options={allProjects.filter(
+          ({ uid }) => !pendingProjectInvites.includes(uid)
+        )}
         getOptionLabel={(option: Project) => option.name}
         renderOption={(props, option) => (
           <li {...props} className={classes.option}>
@@ -105,12 +116,16 @@ export const ProjectsAutocomplete = ({
       />
       <List>
         {allProjects
-          .filter(({ uid }) => plugin.collection_uids.includes(uid))
+          .filter(
+            ({ uid }) =>
+              plugin.collection_uids.includes(uid) &&
+              !pendingProjectInvites.includes(uid)
+          )
           ?.map((project) => (
             <Chip
               variant="outlined"
-              key={project.name}
               className={classes.chipLabel}
+              key={project.name}
               label={project.name}
               avatar={
                 <Avatar
@@ -127,7 +142,25 @@ export const ProjectsAutocomplete = ({
               }
             />
           ))}
+        {allProjects
+          .filter(
+            ({ uid }) =>
+              plugin.collection_uids.includes(uid) &&
+              pendingProjectInvites.includes(uid)
+          )
+          ?.map((project) => (
+            <Chip
+              variant="outlined"
+              className={classes.chipLabelPending}
+              key={project.name}
+              label={project.name}
+            />
+          ))}
       </List>
     </>
   );
+};
+
+ProjectsAutocomplete.defaultProps = {
+  pendingProjectInvites: [],
 };

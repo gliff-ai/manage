@@ -28,7 +28,7 @@ import {
   TableRow,
   TableButtonsCell,
 } from "@/components";
-import { Plugin, Project } from "@/interfaces";
+import { PluginType, PluginWithExtra, Plugin, Project } from "@/interfaces";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -58,6 +58,10 @@ const useStyles = () =>
     },
   }));
 
+export interface PendingProjectInvites {
+  [plugin_url: string]: string[]; // array of project uids for which an invite is still pending.
+}
+
 interface Props {
   services: ServiceFunctions;
   launchDocs: () => Window | null;
@@ -73,6 +77,8 @@ export const PluginsView = ({
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [plugins, setPlugins] = useState<Plugin[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pendingProjectInvites, setPendingProjectInvites] =
+    useState<PendingProjectInvites>({});
 
   const isMounted = useRef(false);
 
@@ -82,7 +88,25 @@ export const PluginsView = ({
     void services.updatePlugin({ ...plugin }).then((result) => {
       if (result && isMounted.current) {
         setPlugins((prevPlugins) =>
-          prevPlugins.map((p) => (prevPlugin === p ? plugin : p))
+          prevPlugins.map((p) => {
+            if (prevPlugin === p && plugin.type !== PluginType.Javascript) {
+              // update list of pending invites
+              setPendingProjectInvites((prevValues: PendingProjectInvites) => {
+                const newPendingProjectInvites = { ...prevValues };
+
+                newPendingProjectInvites[plugin.url] = [
+                  ...newPendingProjectInvites[plugin.url],
+                  ...(plugin.collection_uids.filter(
+                    (uid) => !prevPlugin.collection_uids.includes(uid)
+                  ) || []),
+                ];
+                return newPendingProjectInvites;
+              });
+
+              return plugin;
+            }
+            return p;
+          })
         );
       }
     });
@@ -104,7 +128,24 @@ export const PluginsView = ({
 
   const getPlugins = useCallback(() => {
     if (!auth?.user?.email) return;
-    void services.getPlugins().then(setPlugins);
+    void services.getPlugins().then((newPlugins: PluginWithExtra[]) => {
+      const newPendingInvites: PendingProjectInvites = {};
+
+      setPlugins(
+        newPlugins.map((p) => {
+          if (p.type !== PluginType.Javascript) {
+            newPendingInvites[`${p.url}`] = p.collection_uids
+              .filter(({ is_invite_pending }) => is_invite_pending)
+              .map(({ uid }) => uid);
+          }
+          return {
+            ...p,
+            collection_uids: p.collection_uids.map((d) => d.uid),
+          };
+        })
+      );
+      setPendingProjectInvites(newPendingInvites);
+    });
   }, [auth?.user?.email, services]);
 
   useEffect(() => {
@@ -223,6 +264,7 @@ export const PluginsView = ({
                       updatePlugins={updatePlugins}
                       services={services}
                       setError={setError}
+                      pendingProjectInvites={pendingProjectInvites[url]}
                     />
                     <DeletePluginDialog
                       plugin={iplugin}
