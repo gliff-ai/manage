@@ -169,7 +169,8 @@ export const PluginsView = ({
             header={[
               "Name",
               "Type",
-              "Product",
+              "URL",
+              "Author",
               "Products",
               "Added To",
               "Enabled",
@@ -181,6 +182,7 @@ export const PluginsView = ({
                 name,
                 url,
                 type,
+                author,
                 products,
                 enabled,
                 is_public: isPublic,
@@ -191,6 +193,7 @@ export const PluginsView = ({
                   <TableCell>{name}</TableCell>
                   <TableCell>{type}</TableCell>
                   <TableCell>{url}</TableCell>
+                  <TableCell>{author}</TableCell>
                   <TableCell>{products}</TableCell>
                   <TableCell>{collectionUids.length}&nbsp;projects</TableCell>
                   <TableCell>

@@ -113,6 +113,7 @@ export const config = {
           username: "1234@trustedservice.gliff.app",
           type: PluginType.Python,
           name: "python-plugin",
+          author: "mike's team",
           url: "https://ts.gliff.app",
           description: "",
           products: Product.ALL,
@@ -124,6 +125,7 @@ export const config = {
         {
           type: PluginType.Javascript,
           name: "js-plugin",
+          author: "jane's team",
           url: "https://plugin.gliff.app",
           description: "",
           products: Product.CURATE,
