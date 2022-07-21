@@ -1,9 +1,16 @@
 import { ReactElement, ChangeEvent, Dispatch, SetStateAction } from "react";
 import SVG from "react-inlinesvg";
-import { icons, Avatar, Checkbox, FormControlLabel, List,   TextField,   Chip,   Autocomplete,
-
-
- } from "@gliff-ai/style";
+import {
+  icons,
+  Avatar,
+  Checkbox,
+  FormControlLabel,
+  List,
+  Box,
+  TextField,
+  Chip,
+  Autocomplete,
+} from "@gliff-ai/style";
 import { IPluginOut, Project } from "@/interfaces";
 
 interface Props {
@@ -118,11 +125,7 @@ export const ProjectsAutocomplete = ({
               pendingProjectInvites.includes(uid)
           )
           ?.map((project) => (
-            <Chip
-              variant="outlined"
-              key={project.name}
-              label={project.name}
-            />
+            <Chip variant="outlined" key={project.name} label={project.name} />
           ))}
       </List>
     </>
