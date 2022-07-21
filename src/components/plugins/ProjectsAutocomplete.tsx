@@ -67,7 +67,7 @@ export const ProjectsAutocomplete = ({
               control={
                 <Checkbox
                   style={{ padding: "10px" }}
-                  icon={<Box sx={{ ...checkboxIcon }} />}
+                  icon={<Box sx={{ width: "18px", height: "auto" }} />}
                   checkedIcon={
                     <SVG
                       src={icons.multipleImageSelection}

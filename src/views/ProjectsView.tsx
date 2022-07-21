@@ -103,7 +103,7 @@ export const ProjectsView = ({
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
   const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null); // users in each project
   const [createProjectIsOpen, setCreateProjectIsOpen] =
-    useState<boolean | null>(null);
+    useState<boolean>(false);
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -418,6 +418,8 @@ export const ProjectsView = ({
             createProject={createProject}
             inviteToProject={inviteToProject}
             isOpen={createProjectIsOpen}
+            setIsOpen={setCreateProjectIsOpen}
+            showTriggerButton={projects?.length > 0}
           />
         )}
       </Paper>
