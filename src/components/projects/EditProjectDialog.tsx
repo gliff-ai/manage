@@ -8,9 +8,6 @@ import {
 import {
   Paper,
   Button,
-  Card,
-  IconButton,
-  Typography,
   TextField,
   DialogActions,
   List,
@@ -22,7 +19,7 @@ import {
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
 import {
-  IconButton as GliffIconButton,
+  IconButton,
   theme,
   icons,
   lightGrey,
@@ -335,11 +332,13 @@ export function EditProjectDialog({
           />
         }
       >
+        <>
         {editProjectSection}
         <Divider className={classes.divider} />
         {editUsersSection}
         <Divider className={classes.divider} />
         {listUsersSection}
+        </>
       </Dialogue>
     </>
   );

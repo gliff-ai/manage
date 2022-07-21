@@ -175,7 +175,8 @@ export function CreateProjectDialog({
                 console.error(err);
               }
             );
-            setCloseDialog(!closeDialog);
+            
+            setIsOpen(false);
           }}
         >
           OK
@@ -203,14 +204,12 @@ export function CreateProjectDialog({
 
       <AdvancedDialog
         title="Advanced Dialogue"
-        open={Boolean(isOpen)}
-        children={dialogContent}
+        open={isOpen}
         onClose={() => {
           setIsOpen(false);
         }}
-      />
+      >{dialogContent}</AdvancedDialog>
     </>
   );
 }
 
-CreateProjectDialog.defaultProps = { isOpen: null };
