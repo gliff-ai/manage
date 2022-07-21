@@ -9,7 +9,6 @@ import {
   Paper,
   Button,
   Card,
-  Dialog,
   IconButton,
   Typography,
   TextField,
@@ -27,6 +26,7 @@ import {
   theme,
   icons,
   lightGrey,
+  Dialogue,
 } from "@gliff-ai/style";
 import { Profile, ProjectDetails, ProjectUser } from "@/interfaces";
 import { Notepad } from "@/components";
@@ -320,36 +320,27 @@ export function EditProjectDialog({
 
   return (
     <>
-      <GliffIconButton
-        id={`edit-project-${projectUid}`}
-        data-testid={`edit-${projectUid}`}
-        onClick={() => setOpen(!open)}
-        icon={icons.edit}
-        tooltip={{ name: "Edit Project" }}
-        tooltipPlacement="top"
-      />
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Card className={classes.card}>
-          <Paper
-            elevation={0}
-            variant="outlined"
-            square
-            className={classes.paperHeader}
-          >
-            <Typography className={classes.userInviteTopography}>
-              Edit Project
-            </Typography>
-            <IconButton onClick={() => setOpen(false)} size="small">
-              <SVG src={icons.removeLabel} className={classes.closeIcon} />
-            </IconButton>
-          </Paper>
-          {editProjectSection}
-          <Divider className={classes.divider} />
-          {editUsersSection}
-          <Divider className={classes.divider} />
-          {listUsersSection}
-        </Card>
-      </Dialog>
+      <Dialogue
+        title="Edit Project"
+        TriggerButton={
+          <IconButton
+            id={`edit-project-${projectUid}`}
+            data-testid={`edit-${projectUid}`}
+            tooltip={{
+              name: "Edit Project",
+            }}
+            icon={icons.edit}
+            size="small"
+            tooltipPlacement="top"
+          />
+        }
+      >
+        {editProjectSection}
+        <Divider className={classes.divider} />
+        {editUsersSection}
+        <Divider className={classes.divider} />
+        {listUsersSection}
+      </Dialogue>
     </>
   );
 }

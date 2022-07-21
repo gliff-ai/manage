@@ -1,9 +1,5 @@
 import { useState, ReactElement, useEffect } from "react";
 import {
-  Paper,
-  Typography,
-  Card,
-
   Chip,
   Avatar,
   TextField,
@@ -12,23 +8,15 @@ import {
   Autocomplete,
 } from "@mui/material";
 import SVG from "react-inlinesvg";
-import {
-  theme,
-  icons,
-  lightGrey,
-  IconButton,
-  Dialog,
-  Box,
-  List,
-} from "@gliff-ai/style";
+import { icons, IconButton, Dialogue, Box, List } from "@gliff-ai/style";
 import { Profile, Project, ProjectDetails } from "@/interfaces";
 import { Notepad } from "@/components";
 
 const chip = {
-    borderColor: "black",
-    maxWidth: "300px",
-    fontSize: "14px",
-}
+  borderColor: "black",
+  maxWidth: "300px",
+  fontSize: "14px",
+};
 
 interface Props {
   projects: Project[] | null;
@@ -53,7 +41,7 @@ export function CreateProjectDialog({
   );
   const [dialogInvitees, setDialogInvitees] = useState<Profile[] | null>([]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (closeDialog) {
       setCloseDialog(false);
     }
@@ -68,10 +56,12 @@ export function CreateProjectDialog({
   return (
     <>
       {isOpen === null && (
-        <Dialog
+        <Dialogue
           title="Create Project"
           close={closeDialog}
-          afterClose={()=>{setProjectDetails(INITIAL_PROJECT_DETAILS)}}
+          afterClose={() => {
+            setProjectDetails(INITIAL_PROJECT_DETAILS);
+          }}
           TriggerButton={
             <IconButton
               tooltip={{
@@ -84,7 +74,7 @@ export function CreateProjectDialog({
             />
           }
         >
-          <Box sx={{width: "350px"}}>
+          <Box sx={{ width: "350px" }}>
             <TextField
               placeholder="Project Name"
               style={{ width: "100%" }}
@@ -109,7 +99,7 @@ export function CreateProjectDialog({
               rows={6}
             />
             {/* eslint-disable react/jsx-props-no-spreading */}
-            <Autocomplete 
+            <Autocomplete
               options={invitees}
               getOptionLabel={(option: Profile) =>
                 `${option.name} — ${option.email}`
@@ -159,21 +149,23 @@ export function CreateProjectDialog({
                       <SVG
                         src={icons.removeLabel}
                         fill="inherit"
-                        width= "15px"
+                        width="15px"
                       />
                     </Avatar>
                   }
                   label={profile.name}
                   variant="outlined"
-                  sx={{...chip}}
+                  sx={{ ...chip }}
                 />
               ))}
             </List>
-            <DialogActions  sx={{
-              display: "flex",
-              marginTop: "20px",
-              justifyContent: "space-between",
-            }}>
+            <DialogActions
+              sx={{
+                display: "flex",
+                marginTop: "20px",
+                justifyContent: "space-between",
+              }}
+            >
               <Button
                 onClick={() => {
                   setCloseDialog(!closeDialog);
@@ -213,14 +205,14 @@ export function CreateProjectDialog({
                       console.error(err);
                     }
                   );
-                  setCloseDialog(!closeDialog)
+                  setCloseDialog(!closeDialog);
                 }}
               >
                 OK
               </Button>
             </DialogActions>
           </Box>
-        </Dialog>
+        </Dialogue>
       )}
     </>
   );

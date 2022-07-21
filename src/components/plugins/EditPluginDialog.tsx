@@ -1,10 +1,8 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import {
-  theme,
   IconButton,
   icons,
-  lightGrey,
-  Dialog,
+  Dialogue,
   Box,
   Divider,
   TextField,
@@ -145,7 +143,7 @@ export function EditPluginDialog({
 
   return (
     <>
-      <Dialog
+      <Dialogue
         title="Edit Plug-in"
         close={closeDialog}
         TriggerButton={
@@ -189,7 +187,7 @@ export function EditPluginDialog({
             </Button>
           </Box>
         </Box>
-      </Dialog>
+      </Dialogue>
     </>
   );
 }

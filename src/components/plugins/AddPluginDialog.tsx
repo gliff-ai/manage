@@ -1,11 +1,9 @@
 import { ReactElement, useState, ChangeEvent, useEffect } from "react";
 
 import {
-  theme,
   icons,
-  lightGrey,
   IconButton,
-  Dialog,
+  Dialogue,
   Typography,
   Button,
   Paper,
@@ -295,7 +293,7 @@ export function AddPluginDialog({
 
   return (
     <>
-      <Dialog
+      <Dialogue
         title="Add Plug-in"
         close={closeDialog}
         TriggerButton={
@@ -316,7 +314,7 @@ export function AddPluginDialog({
           {enterValuesDialog}
           {accessKeyDialog}
         </Box>
-      </Dialog>
+      </Dialogue>
     </>
   );
 }

@@ -9,7 +9,7 @@ import {
   Autocomplete,
 } from "@mui/material";
 import SVG from "react-inlinesvg";
-import { icons, lightGrey } from "@gliff-ai/style";
+import { icons } from "@gliff-ai/style";
 import { IPlugin, Project } from "@/interfaces";
 
 interface Props {
@@ -56,7 +56,7 @@ export const ProjectsAutocomplete = ({
         options={allProjects}
         getOptionLabel={(option: Project) => option.name}
         renderOption={(props, option) => (
-          <li {...props} className={classes.option}>
+          <li {...props}>
             <FormControlLabel
               label={option.name}
               control={
