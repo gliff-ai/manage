@@ -1,27 +1,23 @@
 import { ReactElement, ChangeEvent, Dispatch, SetStateAction } from "react";
-import {
-  Avatar,
-  Checkbox,
-  FormControlLabel,
-  List,
-  TextField,
-  Chip,
-  Autocomplete,
-} from "@mui/material";
 import SVG from "react-inlinesvg";
-import { icons } from "@gliff-ai/style";
-import { IPlugin, Project } from "@/interfaces";
+import { icons, Avatar, Checkbox, FormControlLabel, List,   TextField,   Chip,   Autocomplete,
+
+
+ } from "@gliff-ai/style";
+import { IPluginOut, Project } from "@/interfaces";
 
 interface Props {
   allProjects: Project[];
-  plugin: IPlugin;
-  setPlugin: Dispatch<SetStateAction<IPlugin>>;
+  plugin: IPluginOut;
+  setPlugin: Dispatch<SetStateAction<IPluginOut>>;
+  pendingProjectInvites?: string[];
 }
 
 export const ProjectsAutocomplete = ({
   allProjects,
   plugin,
   setPlugin,
+  pendingProjectInvites,
 }: Props): ReactElement => {
   const removePluginFromProject = (projectUid: string) =>
     setPlugin((prevPlugin) => ({
@@ -53,7 +49,9 @@ export const ProjectsAutocomplete = ({
         )}
         onChange={updatePluginProjects}
         renderTags={() => null}
-        options={allProjects}
+        options={allProjects.filter(
+          ({ uid }) => !pendingProjectInvites.includes(uid)
+        )}
         getOptionLabel={(option: Project) => option.name}
         renderOption={(props, option) => (
           <li {...props}>
@@ -86,7 +84,11 @@ export const ProjectsAutocomplete = ({
       />
       <List>
         {allProjects
-          .filter(({ uid }) => plugin.collection_uids.includes(uid))
+          .filter(
+            ({ uid }) =>
+              plugin.collection_uids.includes(uid) &&
+              !pendingProjectInvites.includes(uid)
+          )
           ?.map((project) => (
             <Chip
               variant="outlined"
@@ -109,7 +111,24 @@ export const ProjectsAutocomplete = ({
               }
             />
           ))}
+        {allProjects
+          .filter(
+            ({ uid }) =>
+              plugin.collection_uids.includes(uid) &&
+              pendingProjectInvites.includes(uid)
+          )
+          ?.map((project) => (
+            <Chip
+              variant="outlined"
+              key={project.name}
+              label={project.name}
+            />
+          ))}
       </List>
     </>
   );
+};
+
+ProjectsAutocomplete.defaultProps = {
+  pendingProjectInvites: [],
 };
