@@ -1,4 +1,4 @@
-import { useState, ReactElement} from "react";
+import { useState, ReactElement } from "react";
 import {
   Chip,
   Avatar,
@@ -8,13 +8,7 @@ import {
   Autocomplete,
 } from "@mui/material";
 import SVG from "react-inlinesvg";
-import {
-  icons,
-  IconButton,
-  Box,
-  List,
-  AdvancedDialog,
-} from "@gliff-ai/style";
+import { icons, IconButton, Box, List, AdvancedDialog } from "@gliff-ai/style";
 import { Profile, Project, ProjectDetails } from "@/interfaces";
 import { Notepad } from "@/components";
 

@@ -125,12 +125,11 @@ export function EditProjectDialog({
     otherProps.projectDetails
   );
 
-   useEffect(() => {
+  useEffect(() => {
     if (closeDialog) {
       setCloseDialog(false);
     }
   }, [closeDialog]);
-
 
   const alreadyInvited = useCallback(
     (username: string): boolean =>
@@ -194,8 +193,8 @@ export function EditProjectDialog({
     }
 
     triggerRefetch(projectUid);
-      setCloseDialog(!closeDialog);
-};
+    setCloseDialog(!closeDialog);
+  };
 
   const getChips = ({ name, username, isPending }: ProjectUser) => (
     <Chip
