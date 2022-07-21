@@ -119,11 +119,18 @@ export function EditProjectDialog({
   ...otherProps
 }: Props): ReactElement | null {
   const classes = useStyles();
-  const [open, setOpen] = useState<boolean>(false);
+  const [closeDialog, setCloseDialog] = useState<boolean>(false);
   const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>(null);
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>(
     otherProps.projectDetails
   );
+
+   useEffect(() => {
+    if (closeDialog) {
+      setCloseDialog(false);
+    }
+  }, [closeDialog]);
+
 
   const alreadyInvited = useCallback(
     (username: string): boolean =>
@@ -187,8 +194,8 @@ export function EditProjectDialog({
     }
 
     triggerRefetch(projectUid);
-    setOpen(false);
-  };
+      setCloseDialog(!closeDialog);
+};
 
   const getChips = ({ name, username, isPending }: ProjectUser) => (
     <Chip
@@ -313,6 +320,7 @@ export function EditProjectDialog({
     <>
       <Dialogue
         title="Edit Project"
+        close={closeDialog}
         TriggerButton={
           <IconButton
             id={`edit-project-${projectUid}`}
