@@ -175,7 +175,7 @@ export function CreateProjectDialog({
                 console.error(err);
               }
             );
-            
+
             setIsOpen(false);
           }}
         >
@@ -208,8 +208,9 @@ export function CreateProjectDialog({
         onClose={() => {
           setIsOpen(false);
         }}
-      >{dialogContent}</AdvancedDialog>
+      >
+        {dialogContent}
+      </AdvancedDialog>
     </>
   );
 }
-

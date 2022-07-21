@@ -18,13 +18,7 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import {
-  IconButton,
-  theme,
-  icons,
-  lightGrey,
-  Dialogue,
-} from "@gliff-ai/style";
+import { IconButton, theme, icons, lightGrey, Dialogue } from "@gliff-ai/style";
 import { Profile, ProjectDetails, ProjectUser } from "@/interfaces";
 import { Notepad } from "@/components";
 
@@ -333,11 +327,11 @@ export function EditProjectDialog({
         }
       >
         <>
-        {editProjectSection}
-        <Divider className={classes.divider} />
-        {editUsersSection}
-        <Divider className={classes.divider} />
-        {listUsersSection}
+          {editProjectSection}
+          <Divider className={classes.divider} />
+          {editUsersSection}
+          <Divider className={classes.divider} />
+          {listUsersSection}
         </>
       </Dialogue>
     </>
