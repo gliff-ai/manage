@@ -1,41 +1,17 @@
 import { ReactElement, ChangeEvent, Dispatch, SetStateAction } from "react";
+import SVG from "react-inlinesvg";
 import {
+  icons,
   Avatar,
   Checkbox,
   FormControlLabel,
   List,
+  Box,
   TextField,
   Chip,
   Autocomplete,
-} from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
-import SVG from "react-inlinesvg";
-import { icons, lightGrey, middleGrey } from "@gliff-ai/style";
+} from "@gliff-ai/style";
 import { IPluginOut, Project } from "@/interfaces";
-
-const useStyles = makeStyles({
-  marginTop: { marginTop: "15px" },
-  option: {
-    fontSize: "14px",
-    backgroundColor: `#FFFFFF !important`,
-    "&:hover": { backgroundColor: `${lightGrey} !important` },
-    padding: "5px 10px",
-  },
-  checkboxIcon: { width: "18px", height: "auto" },
-  chipLabel: {
-    margin: "5px 5px 0 0",
-    borderColor: "black",
-    color: "black",
-    borderRadius: "9px",
-  },
-  chipLabelPending: {
-    margin: "5px 5px 0 0",
-    borderColor: middleGrey,
-    color: middleGrey,
-    borderRadius: "9px",
-  },
-  closeIcon: { width: "15px", height: "auto" },
-});
 
 interface Props {
   allProjects: Project[];
@@ -50,8 +26,6 @@ export const ProjectsAutocomplete = ({
   setPlugin,
   pendingProjectInvites,
 }: Props): ReactElement => {
-  const classes = useStyles();
-
   const removePluginFromProject = (projectUid: string) =>
     setPlugin((prevPlugin) => ({
       ...prevPlugin,
@@ -73,7 +47,7 @@ export const ProjectsAutocomplete = ({
     <>
       {/* eslint-disable react/jsx-props-no-spreading */}
       <Autocomplete
-        className={classes.marginTop}
+        sx={{ marginTop: "15px" }}
         multiple
         disableCloseOnSelect
         disableClearable
@@ -87,17 +61,18 @@ export const ProjectsAutocomplete = ({
         )}
         getOptionLabel={(option: Project) => option.name}
         renderOption={(props, option) => (
-          <li {...props} className={classes.option}>
+          <li {...props}>
             <FormControlLabel
               label={option.name}
               control={
                 <Checkbox
                   style={{ padding: "10px" }}
-                  icon={<div className={classes.checkboxIcon} />}
+                  icon={<Box sx={{ width: "18px", height: "auto" }} />}
                   checkedIcon={
                     <SVG
-                      className={classes.checkboxIcon}
                       src={icons.multipleImageSelection}
+                      width="18px"
+                      height="auto"
                     />
                   }
                   checked={plugin.collection_uids.includes(option.uid)}
@@ -124,8 +99,8 @@ export const ProjectsAutocomplete = ({
           ?.map((project) => (
             <Chip
               variant="outlined"
-              className={classes.chipLabel}
               key={project.name}
+              sx={{ borderColor: "black" }}
               label={project.name}
               avatar={
                 <Avatar
@@ -135,8 +110,9 @@ export const ProjectsAutocomplete = ({
                 >
                   <SVG
                     fill="inherit"
-                    className={classes.closeIcon}
                     src={icons.removeLabel}
+                    width="15px"
+                    height="auto"
                   />
                 </Avatar>
               }
@@ -149,12 +125,7 @@ export const ProjectsAutocomplete = ({
               pendingProjectInvites.includes(uid)
           )
           ?.map((project) => (
-            <Chip
-              variant="outlined"
-              className={classes.chipLabelPending}
-              key={project.name}
-              label={project.name}
-            />
+            <Chip variant="outlined" key={project.name} label={project.name} />
           ))}
       </List>
     </>

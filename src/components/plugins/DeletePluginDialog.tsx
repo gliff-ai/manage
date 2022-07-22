@@ -10,7 +10,6 @@ import {
   theme,
   IconButton,
   icons,
-  lightGrey,
   Box,
   Button,
   Typography,
@@ -23,25 +22,6 @@ const purpleText = {
   color: theme.palette.info.light,
   fontWeight: 500,
   display: "inline",
-};
-
-const whiteButtonStyle = {
-  textTransform: "none",
-  backgroundColor: "transparent",
-  borderColor: `${lightGrey} !important`,
-  ":hover": {
-    borderColor: lightGrey,
-  },
-};
-
-const purpleButtonStyle = {
-  backgroundColor: `${theme.palette.info.light} !important`,
-  borderColor: `${theme.palette.info.light} !important`,
-  textTransform: "none",
-  color: "#FFFFFF",
-  ":hover": {
-    backgroundColor: theme.palette.info.light,
-  },
 };
 
 interface Props {
@@ -125,24 +105,17 @@ export function DeletePluginDialog({
           >
             <Button
               variant="outlined"
-              sx={{
-                ...whiteButtonStyle,
-              }}
+              color="secondary"
               onClick={() => setOpen(false)}
-            >
-              Cancel
-            </Button>
+              text="Cancel"
+            />
             <Button
-              variant="outlined"
-              sx={{
-                ...purpleButtonStyle,
-              }}
+              color="secondary"
               onClick={() => {
                 setCanDelete(true);
               }}
-            >
-              Confirm
-            </Button>
+              text="Confirm"
+            />
           </Box>
         </Box>
       </AdvancedDialog>

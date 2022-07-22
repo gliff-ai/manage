@@ -1,10 +1,8 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from "react";
 import {
-  theme,
   IconButton,
   icons,
-  lightGrey,
-  Dialog,
+  Dialogue,
   Box,
   Divider,
   TextField,
@@ -25,17 +23,6 @@ const tab = {
 const divider = {
   width: "500px !important",
   margin: "12px -20px !important",
-};
-
-const greenButtonStyle = {
-  backgroundColor: `${theme.palette.primary.main} !important`,
-  "&:disabled": {
-    backgroundColor: lightGrey,
-  },
-  textTransform: "none",
-  ":hover": {
-    backgroundColor: theme.palette.info.main,
-  },
 };
 
 interface Props {
@@ -159,7 +146,7 @@ export function EditPluginDialog({
 
   return (
     <>
-      <Dialog
+      <Dialogue
         title="Edit Plug-in"
         close={closeDialog}
         TriggerButton={
@@ -185,8 +172,8 @@ export function EditPluginDialog({
             }}
           >
             <Button
-              variant="outlined"
-              sx={{ ...greenButtonStyle }}
+              variant="contained"
+              color="primary"
               disabled={JSON.stringify(newPlugin) === JSON.stringify(plugin)}
               onClick={async () => {
                 const finalColUids = await updatePluginProjects();
@@ -198,12 +185,11 @@ export function EditPluginDialog({
                 setCloseDialog(true);
                 resetDefaults();
               }}
-            >
-              Confirm
-            </Button>
+              text="Confirm"
+            />
           </Box>
         </Box>
-      </Dialog>
+      </Dialogue>
     </>
   );
 }

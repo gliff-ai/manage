@@ -1,11 +1,9 @@
 import { ReactElement, useState, ChangeEvent, useEffect } from "react";
 
 import {
-  theme,
   icons,
-  lightGrey,
   IconButton,
-  Dialog,
+  Dialogue,
   Typography,
   Button,
   Paper,
@@ -20,26 +18,6 @@ import { ServiceFunctions } from "@/api";
 import { FormLabelControl } from "./FormLabelControl";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
-
-const whiteButtonStyle = {
-  textTransform: "none",
-  backgroundColor: "transparent",
-  borderColor: `${lightGrey} !important`,
-  ":hover": {
-    borderColor: lightGrey,
-  },
-};
-
-const greenButtonStyle = {
-  backgroundColor: `${theme.palette.primary.main} !important`,
-  "&:disabled": {
-    backgroundColor: lightGrey,
-  },
-  textTransform: "none",
-  ":hover": {
-    backgroundColor: theme.palette.info.main,
-  },
-};
 
 const marginTop = { marginTop: "15px" };
 const divider = { width: "500px !important", margin: "12px -20px !important" };
@@ -184,18 +162,16 @@ export function AddPluginDialog({
       >
         <Button
           variant="outlined"
+          color="secondary"
           onClick={() => services.launchDocs()}
-          sx={{ ...whiteButtonStyle }}
-        >
-          Learn more
-        </Button>
+          text="Learn more"
+        />
         <Button
-          variant="outlined"
+          color="primary"
+          variant="contained"
           onClick={() => setDialogPage((page) => page + 1)}
-          sx={{ ...greenButtonStyle }}
-        >
-          Continue
-        </Button>
+          text="Continue"
+        />
       </Box>
     </Box>
   );
@@ -248,14 +224,13 @@ export function AddPluginDialog({
       >
         <Button
           variant="outlined"
+          color="secondary"
           onClick={() => setDialogPage((page) => page - 1)}
-          sx={{ ...whiteButtonStyle }}
-        >
-          Back
-        </Button>
+          text="Back"
+        />
         <Button
-          variant="outlined"
-          sx={{ ...greenButtonStyle }}
+          variant="contained"
+          color="primary"
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={() => {
             if (!validUrl) return;
@@ -267,9 +242,8 @@ export function AddPluginDialog({
               }
             });
           }}
-        >
-          {creating ? "Loading..." : "Confirm"}
-        </Button>
+          text={creating ? "Loading..." : "Confirm"}
+        />
       </Box>
     </>
   );
@@ -298,23 +272,21 @@ export function AddPluginDialog({
 
         <Box sx={{ display: "flex", justifyContent: "end" }}>
           <Button
-            sx={{
-              ...greenButtonStyle,
-            }}
+            variant="contained"
+            color="primary"
             onClick={() => {
               setCloseDialog(true);
               resetDefaults();
             }}
-          >
-            OK
-          </Button>
+            text="OK"
+          />
         </Box>
       </Paper>
     ) : null;
 
   return (
     <>
-      <Dialog
+      <Dialogue
         title="Add Plug-in"
         close={closeDialog}
         TriggerButton={
@@ -335,7 +307,7 @@ export function AddPluginDialog({
           {enterValuesDialog}
           {accessKeyDialog}
         </Box>
-      </Dialog>
+      </Dialogue>
     </>
   );
 }

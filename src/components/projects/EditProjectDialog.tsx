@@ -8,10 +8,6 @@ import {
 import {
   Paper,
   Button,
-  Card,
-  Dialog,
-  IconButton,
-  Typography,
   TextField,
   DialogActions,
   List,
@@ -22,12 +18,7 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import SVG from "react-inlinesvg";
-import {
-  IconButton as GliffIconButton,
-  theme,
-  icons,
-  lightGrey,
-} from "@gliff-ai/style";
+import { IconButton, theme, icons, lightGrey, Dialogue } from "@gliff-ai/style";
 import { Profile, ProjectDetails, ProjectUser } from "@/interfaces";
 import { Notepad } from "@/components";
 
@@ -128,11 +119,17 @@ export function EditProjectDialog({
   ...otherProps
 }: Props): ReactElement | null {
   const classes = useStyles();
-  const [open, setOpen] = useState<boolean>(false);
+  const [closeDialog, setCloseDialog] = useState<boolean>(false);
   const [selectedInvitees, setSelectedInvitees] = useState<Profile[]>(null);
   const [projectDetails, setProjectDetails] = useState<ProjectDetails>(
     otherProps.projectDetails
   );
+
+  useEffect(() => {
+    if (closeDialog) {
+      setCloseDialog(false);
+    }
+  }, [closeDialog]);
 
   const alreadyInvited = useCallback(
     (username: string): boolean =>
@@ -196,7 +193,7 @@ export function EditProjectDialog({
     }
 
     triggerRefetch(projectUid);
-    setOpen(false);
+    setCloseDialog(!closeDialog);
   };
 
   const getChips = ({ name, username, isPending }: ProjectUser) => (
@@ -302,7 +299,8 @@ export function EditProjectDialog({
       <DialogActions>
         <Button
           className={classes.confirmButton}
-          variant="outlined"
+          variant="contained"
+          color="primary"
           onClick={updateProject}
         >
           Confirm
@@ -319,36 +317,31 @@ export function EditProjectDialog({
 
   return (
     <>
-      <GliffIconButton
-        id={`edit-project-${projectUid}`}
-        data-testid={`edit-${projectUid}`}
-        onClick={() => setOpen(!open)}
-        icon={icons.edit}
-        tooltip={{ name: "Edit Project" }}
-        tooltipPlacement="top"
-      />
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <Card className={classes.card}>
-          <Paper
-            elevation={0}
-            variant="outlined"
-            square
-            className={classes.paperHeader}
-          >
-            <Typography className={classes.userInviteTopography}>
-              Edit Project
-            </Typography>
-            <IconButton onClick={() => setOpen(false)} size="small">
-              <SVG src={icons.removeLabel} className={classes.closeIcon} />
-            </IconButton>
-          </Paper>
+      <Dialogue
+        title="Edit Project"
+        close={closeDialog}
+        TriggerButton={
+          <IconButton
+            id={`edit-project-${projectUid}`}
+            data-testid={`edit-${projectUid}`}
+            tooltip={{
+              name: "Edit Project",
+            }}
+            icon={icons.edit}
+            size="small"
+            tooltipPlacement="top"
+          />
+        }
+      >
+        <>
+          <Divider className={classes.divider} />
           {editProjectSection}
           <Divider className={classes.divider} />
           {editUsersSection}
           <Divider className={classes.divider} />
           {listUsersSection}
-        </Card>
-      </Dialog>
+        </>
+      </Dialogue>
     </>
   );
 }
