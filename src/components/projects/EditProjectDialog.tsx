@@ -334,6 +334,7 @@ export function EditProjectDialog({
         }
       >
         <>
+          <Divider className={classes.divider} />
           {editProjectSection}
           <Divider className={classes.divider} />
           {editUsersSection}

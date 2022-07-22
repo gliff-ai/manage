@@ -183,8 +183,6 @@ export function AddPluginDialog({
     return pattern.test(url);
   };
 
-  const disabled = newPlugin.url === "" || newPlugin.name === "" || creating;
-
   const enterValuesDialog = dialogPage === DialogPage.enterValues && (
     <>
       <TextField
@@ -234,9 +232,9 @@ export function AddPluginDialog({
           Back
         </Button>
         <Button
-          variant={disabled ? "outlined" : "contained"}
-          color={disabled ? "secondary" : "primary"}
-          disabled={disabled}
+          variant={"contained"}
+          color={"primary"}
+          disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={() => {
             if (!validUrl) return;
             setCreating(true);

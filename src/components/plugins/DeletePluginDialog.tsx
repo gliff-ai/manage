@@ -125,9 +125,7 @@ export function DeletePluginDialog({
           >
             <Button
               variant="outlined"
-              sx={{
-                ...whiteButtonStyle,
-              }}
+              color="secondary"
               onClick={() => setOpen(false)}
             >
               Cancel

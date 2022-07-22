@@ -6,14 +6,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import {
-  Paper,
-  Box,
-  Typography,
-  Card,
-  DialogActions,
-  Button,
-} from "@mui/material";
+import { Paper, Box, Typography, Card, DialogActions } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import {
   theme,
@@ -21,6 +14,7 @@ import {
   LoadingSpinner,
   icons,
   lightGrey,
+  Button,
 } from "@gliff-ai/style";
 import SVG from "react-inlinesvg";
 import { ServiceFunctions } from "@/api";
@@ -288,7 +282,7 @@ export const ProjectsView = ({
             >
               <Button
                 variant="outlined"
-                className={classes.whiteButton}
+                color="secondary"
                 onClick={async () => {
                   const newProjectUid: string =
                     (await services.downloadDemoData()) as string;
@@ -313,8 +307,8 @@ export const ProjectsView = ({
                 Open Demo Project
               </Button>
               <Button
-                variant="outlined"
-                className={classes.greenButton}
+                variant="contained"
+                color="primary"
                 onClick={() => setCreateProjectIsOpen(true)}
               >
                 Create New Project
