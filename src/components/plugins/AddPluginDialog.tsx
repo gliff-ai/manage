@@ -232,8 +232,8 @@ export function AddPluginDialog({
           Back
         </Button>
         <Button
-          variant={"contained"}
-          color={"primary"}
+          variant="contained"
+          color="primary"
           disabled={newPlugin.url === "" || newPlugin.name === "" || creating}
           onClick={() => {
             if (!validUrl) return;
