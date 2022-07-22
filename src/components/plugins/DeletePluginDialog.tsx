@@ -24,16 +24,6 @@ const purpleText = {
   display: "inline",
 };
 
-const purpleButtonStyle = {
-  backgroundColor: `${theme.palette.info.light} !important`,
-  borderColor: `${theme.palette.info.light} !important`,
-  textTransform: "none",
-  color: "#FFFFFF",
-  ":hover": {
-    backgroundColor: theme.palette.info.light,
-  },
-};
-
 interface Props {
   plugin: IPluginOut;
   setPlugins: Dispatch<SetStateAction<IPluginOut[]>>;
@@ -120,10 +110,7 @@ export function DeletePluginDialog({
               text="Cancel"
             />
             <Button
-              variant="outlined"
-              sx={{
-                ...purpleButtonStyle,
-              }}
+              color="secondary"
               onClick={() => {
                 setCanDelete(true);
               }}
