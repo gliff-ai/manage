@@ -229,18 +229,6 @@ export function AddPluginDialog({
         variant="outlined"
       />
       <Divider sx={{ ...divider }} />
-      <Notepad
-        placeholder="Plug-in Description (Optional)"
-        value={newPlugin.description}
-        onChange={(event) => {
-          setNewPlugin((p) => ({
-            ...p,
-            description: event.target.value,
-          }));
-        }}
-        rows={6}
-      />
-      <Divider sx={{ ...divider }} />
       <TextField
         sx={{ ...marginTop }}
         variant="outlined"
@@ -253,6 +241,18 @@ export function AddPluginDialog({
           setValidUrl(isValidURL(url));
           setNewPlugin((p) => ({ ...p, url } as Plugin));
         }}
+      />
+      <Divider sx={{ ...divider }} />
+      <Notepad
+        placeholder="Plug-in Description (Optional)"
+        value={newPlugin.description}
+        onChange={(event) => {
+          setNewPlugin((p) => ({
+            ...p,
+            description: event.target.value,
+          }));
+        }}
+        rows={6}
       />
       <Divider sx={{ ...divider }} />
       <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
