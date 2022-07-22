@@ -185,9 +185,8 @@ export function EditPluginDialog({
                 setCloseDialog(true);
                 resetDefaults();
               }}
-            >
-              Confirm
-            </Button>
+              text="Confirm"
+            />
           </Box>
         </Box>
       </Dialogue>

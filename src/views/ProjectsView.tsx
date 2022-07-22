@@ -303,16 +303,14 @@ export const ProjectsView = ({
                     triggerRefetch(newProjectUid);
                   }
                 }}
-              >
-                Open Demo Project
-              </Button>
+                text="Open Demo Project"
+              />
               <Button
                 variant="contained"
                 color="primary"
                 onClick={() => setCreateProjectIsOpen(true)}
-              >
-                Create New Project
-              </Button>
+                text="Create New Project"
+              />
             </DialogActions>
           )}
         </Card>

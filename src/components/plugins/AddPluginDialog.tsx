@@ -164,16 +164,14 @@ export function AddPluginDialog({
           variant="outlined"
           color="secondary"
           onClick={() => services.launchDocs()}
-        >
-          Learn more
-        </Button>
+          text="Learn more"
+        />
         <Button
           color="primary"
           variant="contained"
           onClick={() => setDialogPage((page) => page + 1)}
-        >
-          Continue
-        </Button>
+          text="Continue"
+        />
       </Box>
     </Box>
   );
@@ -228,9 +226,8 @@ export function AddPluginDialog({
           variant="outlined"
           color="secondary"
           onClick={() => setDialogPage((page) => page - 1)}
-        >
-          Back
-        </Button>
+          text="Back"
+        />
         <Button
           variant="contained"
           color="primary"
@@ -245,9 +242,8 @@ export function AddPluginDialog({
               }
             });
           }}
-        >
-          {creating ? "Loading..." : "Confirm"}
-        </Button>
+          text={creating ? "Loading..." : "Confirm"}
+        />
       </Box>
     </>
   );
@@ -282,9 +278,8 @@ export function AddPluginDialog({
               setCloseDialog(true);
               resetDefaults();
             }}
-          >
-            OK
-          </Button>
+            text="OK"
+          />
         </Box>
       </Paper>
     ) : null;
