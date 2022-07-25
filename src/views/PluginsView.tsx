@@ -28,7 +28,13 @@ import {
   TableRow,
   TableButtonsCell,
 } from "@/components";
-import { PluginType, PluginWithExtra, Plugin, Project } from "@/interfaces";
+import {
+  PluginType,
+  PluginWithExtra,
+  Plugin,
+  Project,
+  CollectionUidsWithExtra,
+} from "@/interfaces";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -132,16 +138,27 @@ export const PluginsView = ({
       const newPendingInvites: PendingProjectInvites = {};
 
       setPlugins(
-        newPlugins.map((p) => {
-          if (p.type !== PluginType.Javascript) {
-            newPendingInvites[`${p.url}`] = p.collection_uids
+        newPlugins.map((p: Plugin | PluginWithExtra): Plugin => {
+          const unifiedPlugin: Plugin =
+            p.type === PluginType.Javascript
+              ? (p as Plugin)
+              : {
+                  ...p,
+                  collection_uids: (
+                    p.collection_uids as CollectionUidsWithExtra[]
+                  ).map((d) => d.uid),
+                };
+
+          // if plugin is of type Python or AI, update pending invites
+          if (p.type === PluginType.Python || p.type === PluginType.AI) {
+            newPendingInvites[`${p.url}`] = (
+              p.collection_uids as CollectionUidsWithExtra[]
+            )
               .filter(({ is_invite_pending }) => is_invite_pending)
               .map(({ uid }) => uid);
           }
-          return {
-            ...p,
-            collection_uids: p.collection_uids.map((d) => d.uid),
-          };
+
+          return unifiedPlugin;
         })
       );
       setPendingProjectInvites(newPendingInvites);

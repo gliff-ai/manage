@@ -63,11 +63,12 @@ export const ProjectsAutocomplete = ({
   const updatePluginProjects = (
     event: ChangeEvent<HTMLSelectElement>,
     value: Project[]
-  ) =>
+  ) => {
     setPlugin((p) => ({
       ...p,
       collection_uids: value.map(({ uid }) => uid),
     }));
+  };
 
   return (
     <>

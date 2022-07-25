@@ -86,6 +86,11 @@ export interface Plugin {
   encrypted_access_key?: string; // python and AI plugins only
 }
 
+export interface CollectionUidsWithExtra {
+  uid: string;
+  is_invite_pending: boolean;
+}
+
 export interface PluginWithExtra extends Omit<Plugin, "collection_uids"> {
-  collection_uids: { uid: string; is_invite_pending: boolean }[]; // collection uids for the projects the plugin has been added to
+  collection_uids: CollectionUidsWithExtra[]; // collection uids for the projects the plugin has been added to
 }
