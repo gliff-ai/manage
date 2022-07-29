@@ -6,14 +6,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import {
-  Paper,
-  Box,
-  Typography,
-  Card,
-  DialogActions,
-  Button,
-} from "@mui/material";
+import { Paper, Box, Typography, Card, DialogActions } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import {
   theme,
@@ -21,6 +14,7 @@ import {
   LoadingSpinner,
   icons,
   lightGrey,
+  Button,
 } from "@gliff-ai/style";
 import SVG from "react-inlinesvg";
 import { ServiceFunctions } from "@/api";
@@ -103,7 +97,7 @@ export const ProjectsView = ({
   const [invitees, setInvitees] = useState<Profile[] | null>(null); // all team users
   const [projectUsers, setProjectUsers] = useState<ProjectUsers | null>(null); // users in each project
   const [createProjectIsOpen, setCreateProjectIsOpen] =
-    useState<boolean | null>(null);
+    useState<boolean>(false);
 
   const classes = useStyles();
   const isMounted = useRef(false);
@@ -288,7 +282,7 @@ export const ProjectsView = ({
             >
               <Button
                 variant="outlined"
-                className={classes.whiteButton}
+                color="secondary"
                 onClick={async () => {
                   const newProjectUid: string =
                     (await services.downloadDemoData()) as string;
@@ -309,16 +303,14 @@ export const ProjectsView = ({
                     triggerRefetch(newProjectUid);
                   }
                 }}
-              >
-                Open Demo Project
-              </Button>
+                text="Open Demo Project"
+              />
               <Button
-                variant="outlined"
-                className={classes.greenButton}
+                variant="contained"
+                color="primary"
                 onClick={() => setCreateProjectIsOpen(true)}
-              >
-                Create New Project
-              </Button>
+                text="Create New Project"
+              />
             </DialogActions>
           )}
         </Card>
@@ -418,6 +410,8 @@ export const ProjectsView = ({
             createProject={createProject}
             inviteToProject={inviteToProject}
             isOpen={createProjectIsOpen}
+            setIsOpen={setCreateProjectIsOpen}
+            showTriggerButton={projects?.length > 0}
           />
         )}
       </Paper>
