@@ -196,7 +196,7 @@ export function CreateProjectDialog({
       )}
 
       <AdvancedDialog
-        title="Advanced Dialogue"
+        title="Create Project"
         open={isOpen}
         onClose={() => {
           setIsOpen(false);
