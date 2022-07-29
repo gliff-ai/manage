@@ -28,7 +28,13 @@ import {
   TableRow,
   TableButtonsCell,
 } from "@/components";
-import { IPluginIn, IPluginOut, PluginType, Project } from "@/interfaces";
+import {
+  PluginType,
+  PluginWithExtra,
+  Plugin,
+  Project,
+  CollectionUidsWithExtra,
+} from "@/interfaces";
 
 const useStyles = () =>
   makeStyles(() => ({
@@ -64,12 +70,18 @@ export interface PendingProjectInvites {
 
 interface Props {
   services: ServiceFunctions;
+  launchDocs: () => Window | null;
+  rerender?: number;
 }
 
-export const PluginsView = ({ services }: Props): ReactElement => {
+export const PluginsView = ({
+  services,
+  launchDocs,
+  rerender,
+}: Props): ReactElement => {
   const auth = useAuth();
   const [projects, setProjects] = useState<Project[] | null>(null);
-  const [plugins, setPlugins] = useState<IPluginOut[] | null>(null);
+  const [plugins, setPlugins] = useState<Plugin[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pendingProjectInvites, setPendingProjectInvites] =
     useState<PendingProjectInvites>({});
@@ -78,7 +90,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
 
   const classes = useStyles()();
 
-  const updatePlugins = (prevPlugin: IPluginOut, plugin: IPluginOut) => {
+  const updatePlugins = (prevPlugin: Plugin, plugin: Plugin) => {
     void services.updatePlugin({ ...plugin }).then((result) => {
       if (result && isMounted.current) {
         setPlugins((prevPlugins) =>
@@ -106,11 +118,14 @@ export const PluginsView = ({ services }: Props): ReactElement => {
     });
   };
 
-  const updateEnabled = (plugin: IPluginOut) => {
-    const newPlugin: IPluginOut = plugins.find(
+  const togglePluginButton = (
+    plugin: Plugin,
+    key: "enabled" | "is_public"
+  ): void => {
+    const newPlugin: Plugin = plugins.find(
       (p) => p.name === plugin.name && p.url === plugin.url
     );
-    newPlugin.enabled = !newPlugin.enabled;
+    newPlugin[key] = !newPlugin[key];
 
     if (newPlugin) {
       updatePlugins(plugin, newPlugin);
@@ -119,20 +134,31 @@ export const PluginsView = ({ services }: Props): ReactElement => {
 
   const getPlugins = useCallback(() => {
     if (!auth?.user?.email) return;
-    void services.getPlugins().then((newPlugins: IPluginIn[]) => {
+    void services.getPlugins().then((newPlugins: PluginWithExtra[]) => {
       const newPendingInvites: PendingProjectInvites = {};
 
       setPlugins(
-        newPlugins.map((p) => {
-          if (p.type !== PluginType.Javascript) {
-            newPendingInvites[`${p.url}`] = p.collection_uids
+        newPlugins.map((p: Plugin | PluginWithExtra): Plugin => {
+          const unifiedPlugin: Plugin =
+            p.type === PluginType.Javascript
+              ? (p as Plugin)
+              : {
+                  ...p,
+                  collection_uids: (
+                    p.collection_uids as CollectionUidsWithExtra[]
+                  ).map((d) => d.uid),
+                };
+
+          // if plugin is of type Python or AI, update pending invites
+          if (p.type === PluginType.Python || p.type === PluginType.AI) {
+            newPendingInvites[`${p.url}`] = (
+              p.collection_uids as CollectionUidsWithExtra[]
+            )
               .filter(({ is_invite_pending }) => is_invite_pending)
               .map(({ uid }) => uid);
           }
-          return {
-            ...p,
-            collection_uids: p.collection_uids.map((d) => d.uid),
-          };
+
+          return unifiedPlugin;
         })
       );
       setPendingProjectInvites(newPendingInvites);
@@ -151,7 +177,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
   useEffect(() => {
     // fetch plugins (should run once at mount)
     getPlugins();
-  }, [getPlugins]);
+  }, [getPlugins, rerender]);
 
   useEffect(() => {
     // fetch projects (should run once at mount)
@@ -184,7 +210,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
             <IconButton
               tooltip={{ name: "Docs" }}
               icon={icons.documentHelp}
-              onClick={() => services.launchDocs()}
+              onClick={launchDocs}
               tooltipPlacement="top"
             />
             <AddPluginDialog
@@ -192,6 +218,7 @@ export const PluginsView = ({ services }: Props): ReactElement => {
               setError={setError}
               projects={projects}
               getPlugins={getPlugins}
+              launchDocs={launchDocs}
             />
           </ButtonGroup>
         </Paper>
@@ -200,10 +227,12 @@ export const PluginsView = ({ services }: Props): ReactElement => {
             header={[
               "Name",
               "Type",
-              "Product",
+              "URL",
+              "Author",
               "Products",
-              "Enabled",
               "Added To",
+              "Enabled",
+              "Public",
             ]}
           >
             {plugins.map((iplugin) => {
@@ -211,8 +240,10 @@ export const PluginsView = ({ services }: Props): ReactElement => {
                 name,
                 url,
                 type,
+                author,
                 products,
                 enabled,
+                is_public: isPublic,
                 collection_uids: collectionUids,
               } = iplugin;
               return (
@@ -220,16 +251,29 @@ export const PluginsView = ({ services }: Props): ReactElement => {
                   <TableCell>{name}</TableCell>
                   <TableCell>{type}</TableCell>
                   <TableCell>{url}</TableCell>
+                  <TableCell>{author}</TableCell>
                   <TableCell>{products}</TableCell>
+                  <TableCell>{collectionUids.length}&nbsp;projects</TableCell>
                   <TableCell>
                     <Switch
                       size="small"
                       color="primary"
                       checked={enabled}
-                      onChange={(e) => updateEnabled(iplugin)}
+                      onChange={(e) => togglePluginButton(iplugin, "enabled")}
                     />
                   </TableCell>
-                  <TableCell>{collectionUids.length}&nbsp;projects</TableCell>
+                  <TableCell>
+                    {isPublic !== null && (
+                      <Switch
+                        size="small"
+                        color="primary"
+                        checked={isPublic}
+                        onChange={(e) =>
+                          togglePluginButton(iplugin, "is_public")
+                        }
+                      />
+                    )}
+                  </TableCell>
                   <TableButtonsCell>
                     <EditPluginDialog
                       plugin={iplugin}
@@ -264,4 +308,6 @@ export const PluginsView = ({ services }: Props): ReactElement => {
   );
 };
 
-PluginsView.defaultProps = {};
+PluginsView.defaultProps = {
+  rerender: 0,
+};

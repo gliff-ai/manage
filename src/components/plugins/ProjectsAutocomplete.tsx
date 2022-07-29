@@ -1,5 +1,4 @@
 import { ReactElement, ChangeEvent, Dispatch, SetStateAction } from "react";
-import SVG from "react-inlinesvg";
 import {
   icons,
   Avatar,
@@ -11,12 +10,13 @@ import {
   Chip,
   Autocomplete,
 } from "@gliff-ai/style";
-import { IPluginOut, Project } from "@/interfaces";
+import SVG from "react-inlinesvg";
+import { Plugin, Project } from "@/interfaces";
 
 interface Props {
   allProjects: Project[];
-  plugin: IPluginOut;
-  setPlugin: Dispatch<SetStateAction<IPluginOut>>;
+  plugin: Plugin;
+  setPlugin: Dispatch<SetStateAction<Plugin>>;
   pendingProjectInvites?: string[];
 }
 
@@ -37,11 +37,12 @@ export const ProjectsAutocomplete = ({
   const updatePluginProjects = (
     event: ChangeEvent<HTMLSelectElement>,
     value: Project[]
-  ) =>
+  ) => {
     setPlugin((p) => ({
       ...p,
       collection_uids: value.map(({ uid }) => uid),
     }));
+  };
 
   return (
     <>

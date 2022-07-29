@@ -2,9 +2,9 @@
 import ReactDOM from "react-dom";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { fireEvent, screen, act } from "@testing-library/react";
-import { ProvideAuth, UserInterface } from "./index";
-import { user, config } from "../examples/samples";
-import { UserAccess } from "./interfaces";
+import { user, config } from "../../examples/samples";
+import { UserAccess } from "../../src/interfaces";
+import { ProvideAuth, UserInterface } from "../../src/index";
 
 let container: HTMLDivElement;
 const getComponent = (userAccess: UserAccess, tierID: number): JSX.Element => (

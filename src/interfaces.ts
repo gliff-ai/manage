@@ -1,8 +1,8 @@
 export interface User {
-  email: string;
-  authToken: string;
-  userAccess: UserAccess;
-  tierID: number;
+  email: string | null;
+  authToken: string | null;
+  userAccess: UserAccess | null;
+  tierID: number | null;
 }
 
 export type Progress = {
@@ -70,19 +70,27 @@ export enum PluginType {
   "AI" = "AI",
 }
 
-interface IPlugin {
-  username?: string;
+export interface Plugin {
   type: PluginType;
+  author?: string; // only for input plugin data
+  origin_id: number | null;
   name: string;
-  url: string;
+  description: string;
+  url: string; // base_url for trusted-services and url for plugins
   products: Product;
   enabled: boolean;
+  collection_uids: string[]; // collection uids for the projects the plugin has been added to
+  is_public: boolean | null; // is_public is only set for origin plugins, while copies of a plugin cannot be shared
+  username?: string; // python and AI plugins' username (i.e., email address)
+  public_key?: string; // python and AI plugins only
+  encrypted_access_key?: string; // python and AI plugins only
 }
 
-export interface IPluginIn extends IPlugin {
-  collection_uids: { uid: string; is_invite_pending: boolean }[];
+export interface CollectionUidsWithExtra {
+  uid: string;
+  is_invite_pending: boolean;
 }
 
-export interface IPluginOut extends IPlugin {
-  collection_uids: string[];
+export interface PluginWithExtra extends Omit<Plugin, "collection_uids"> {
+  collection_uids: CollectionUidsWithExtra[]; // collection uids for the projects the plugin has been added to
 }

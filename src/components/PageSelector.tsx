@@ -1,7 +1,6 @@
-import { ButtonGroup } from "@mui/material";
-import { ReactElement } from "react";
+import { ReactElement, ReactNode } from "react";
 import { Link, useLocation, useResolvedPath } from "react-router-dom";
-import { IconButton, icons } from "@gliff-ai/style";
+import { IconButton, ButtonGroup, icons, MuiCard } from "@gliff-ai/style";
 import { User, UserAccess } from "@/interfaces";
 
 const pageIcons: { [name: string]: string } = {
@@ -32,7 +31,12 @@ function NavLink({ name }: { name: string }): ReactElement {
   );
 }
 
-export function PageSelector({ user }: { user: User }): ReactElement {
+interface Props {
+  user: User;
+  ZooDialog: ReactNode;
+}
+
+export function PageSelector({ user, ZooDialog }: Props): ReactElement {
   let links;
 
   const isOwnerOrMember =
@@ -50,6 +54,9 @@ export function PageSelector({ user }: { user: User }): ReactElement {
   return (
     <div
       style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
         flexGrow: 0,
         flexShrink: 0,
         marginLeft: "20px",
@@ -61,6 +68,19 @@ export function PageSelector({ user }: { user: User }): ReactElement {
           <NavLink name={name} key={name} />
         ))}
       </ButtonGroup>
+      {ZooDialog && (
+        <MuiCard
+          variant="outlined"
+          sx={{
+            borderRadius: "9px",
+            "& > span > button": {
+              minWidth: "57px !important",
+            },
+          }}
+        >
+          {ZooDialog}
+        </MuiCard>
+      )}
     </div>
   );
 }

@@ -13,11 +13,12 @@ import {
   Box,
   Divider,
 } from "@gliff-ai/style";
-import { IPluginOut, Product, PluginType, Project } from "@/interfaces";
+import { Plugin, Product, PluginType, Project } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { FormLabelControl } from "./FormLabelControl";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
+import { Notepad } from "../Notepad";
 
 const marginTop = { marginTop: "15px" };
 const divider = { width: "500px !important", margin: "12px -20px !important" };
@@ -33,15 +34,19 @@ interface Props {
   services: ServiceFunctions;
   setError: (error: string) => void;
   getPlugins: () => void;
+  launchDocs: () => Window | null;
 }
 
-const defaultPlugin = {
+const defaultPlugin: Plugin = {
   type: PluginType.Javascript,
+  origin_id: null,
   name: "",
+  description: "",
   url: "",
   products: Product.ALL,
   enabled: false,
   collection_uids: [] as string[],
+  is_public: false,
 };
 
 export function AddPluginDialog({
@@ -49,12 +54,13 @@ export function AddPluginDialog({
   setError,
   projects,
   getPlugins,
+  launchDocs,
 }: Props): ReactElement {
   const [closeDialog, setCloseDialog] = useState<boolean>(false);
   const [key, setKey] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [dialogPage, setDialogPage] = useState(DialogPage.pickPluginType);
-  const [newPlugin, setNewPlugin] = useState<IPluginOut>(defaultPlugin);
+  const [newPlugin, setNewPlugin] = useState<Plugin>(defaultPlugin);
   const [validUrl, setValidUrl] = useState<boolean>(true);
 
   useEffect(() => {
@@ -79,7 +85,7 @@ export function AddPluginDialog({
 
   if (!projects) return null;
 
-  const addPluginToProjects = async (plugin: IPluginOut, email: string) => {
+  const addPluginToProjects = async (plugin: Plugin, email: string) => {
     await Promise.allSettled(
       plugin.collection_uids.map(async (projectUid) => {
         try {
@@ -96,7 +102,10 @@ export function AddPluginDialog({
 
   const createPlugin = async (): Promise<boolean> => {
     try {
-      const result = (await services.createPlugin({ ...newPlugin })) as {
+      const result = (await services.createPlugin({
+        ...newPlugin,
+        url: newPlugin.url.replace(/\/$/, ""), // remove trailing slash
+      })) as {
         key: string;
         email: string;
       } | null;
@@ -126,7 +135,7 @@ export function AddPluginDialog({
     <Box>
       <FormControl
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, type: e.target.value } as IPluginOut));
+          setNewPlugin((p) => ({ ...p, type: e.target.value } as Plugin));
         }}
       >
         <h3>What type of plug-in do you want to register?</h3>
@@ -163,7 +172,7 @@ export function AddPluginDialog({
         <Button
           variant="outlined"
           color="secondary"
-          onClick={() => services.launchDocs()}
+          onClick={launchDocs}
           text="Learn more"
         />
         <Button
@@ -186,8 +195,9 @@ export function AddPluginDialog({
       <TextField
         sx={{ ...marginTop }}
         placeholder="Plug-in Name"
+        value={newPlugin.name}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, name: e.target.value } as IPluginOut));
+          setNewPlugin((p) => ({ ...p, name: e.target.value } as Plugin));
         }}
         inputProps={{
           maxLength: 50, // NOTE: name for python or AI plugins cannot be over 50 characters, otherwise 500
@@ -201,11 +211,24 @@ export function AddPluginDialog({
         placeholder="Plug-in URL"
         type="url"
         error={!validUrl}
+        value={newPlugin.url}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          const url = e.target.value.replace(/\/$/, ""); // remove trailing slash
+          const url = e.target.value;
           setValidUrl(isValidURL(url));
-          setNewPlugin((p) => ({ ...p, url } as IPluginOut));
+          setNewPlugin((p) => ({ ...p, url } as Plugin));
         }}
+      />
+      <Divider sx={{ ...divider }} />
+      <Notepad
+        placeholder="Plug-in Description (Optional)"
+        value={newPlugin.description}
+        onChange={(event) => {
+          setNewPlugin((p) => ({
+            ...p,
+            description: event.target.value,
+          }));
+        }}
+        rows={6}
       />
       <Divider sx={{ ...divider }} />
       <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />

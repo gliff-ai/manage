@@ -17,6 +17,9 @@ ReactDOM.render(
               user={user}
               services={config.services}
               showAppBar
+              launchDocs={() =>
+                window.open("https://docs.gliff.app/", "_blank")
+              }
             />
           }
         />
