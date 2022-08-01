@@ -1,10 +1,10 @@
 import {
   UserAccess,
+  Plugin,
   PluginType,
   Product,
   Progress,
-  IPluginIn,
-} from "@/interfaces";
+} from "../src/interfaces";
 import type { Services } from "../src";
 
 export const user = {
@@ -107,25 +107,33 @@ export const config = {
         key: "key key key",
         email: "1234@trustedservice.gliff.app",
       }),
-    getPlugins: (data): Promise<IPluginIn[]> =>
+    getPlugins: (data): Promise<Plugin[]> =>
       Promise.resolve([
         {
           username: "1234@trustedservice.gliff.app",
           type: PluginType.Python,
           name: "python-plugin",
+          author: "mike's team",
           url: "https://ts.gliff.app",
+          description: "",
           products: Product.ALL,
           enabled: false,
           collection_uids: [{ uid: "1", is_invite_pending: true }],
-        } as IPluginIn,
+          origin_id: null,
+          is_public: false,
+        } as Plugin,
         {
           type: PluginType.Javascript,
           name: "js-plugin",
+          author: "jane's team",
           url: "https://plugin.gliff.app",
+          description: "",
           products: Product.CURATE,
           enabled: true,
           collection_uids: [],
-        } as IPluginIn,
+          origin_id: 2,
+          is_public: null,
+        } as Plugin,
       ]),
     updatePlugin: (data): Promise<number> => Promise.resolve(1),
     deletePlugin: (data): Promise<number> => Promise.resolve(1),
@@ -134,7 +142,6 @@ export const config = {
         1: { total: 12, complete: 1 },
         2: { total: 0, complete: 0 },
       }),
-    launchDocs: (): Promise<void> => Promise.resolve(),
     downloadDemoData: (): Promise<string | null> => Promise.resolve("2"),
   } as Services,
 };

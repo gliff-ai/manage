@@ -2,7 +2,7 @@ import { ReactElement, ChangeEvent, Dispatch, SetStateAction } from "react";
 import { RadioGroup, FormControl } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { FormLabelControl } from "./FormLabelControl";
-import { IPluginOut, Product } from "@/interfaces";
+import { Plugin, Product } from "@/interfaces";
 
 const useStyles = makeStyles({
   marginTop: { marginTop: "15px" },
@@ -11,8 +11,8 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  newPlugin: IPluginOut;
-  setNewPlugin: Dispatch<SetStateAction<IPluginOut>>;
+  newPlugin: Plugin;
+  setNewPlugin: Dispatch<SetStateAction<Plugin>>;
 }
 
 export const ProductsRadioForm = ({
@@ -25,7 +25,7 @@ export const ProductsRadioForm = ({
     <FormControl
       className={classes.marginTop}
       onChange={(e: ChangeEvent<HTMLInputElement>) => {
-        setNewPlugin((p) => ({ ...p, products: e.target.value } as IPluginOut));
+        setNewPlugin((p) => ({ ...p, products: e.target.value } as Plugin));
       }}
     >
       <p className={classes.textFontSize}>Add plugin to:</p>

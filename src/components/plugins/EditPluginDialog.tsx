@@ -9,10 +9,11 @@ import {
   Button,
   Typography,
 } from "@gliff-ai/style";
-import { IPluginOut, PluginType, Project } from "@/interfaces";
+import { Plugin, PluginType, Project } from "@/interfaces";
 import { ProjectsAutocomplete } from "./ProjectsAutocomplete";
 import { ProductsRadioForm } from "./ProductsRadioForm";
 import { ServiceFunctions } from "../../api";
+import { Notepad } from "../Notepad";
 
 const tab = {
   display: "inline-block",
@@ -27,9 +28,9 @@ const divider = {
 
 interface Props {
   pendingProjectInvites: string[];
-  plugin: IPluginOut;
+  plugin: Plugin;
   allProjects: Project[] | null;
-  updatePlugins: (prevPlugin: IPluginOut, plugin: IPluginOut) => void;
+  updatePlugins: (prevPlugin: Plugin, plugin: Plugin) => void;
   services: ServiceFunctions;
   setError: (error: string) => void;
 }
@@ -42,7 +43,7 @@ export function EditPluginDialog({
   services,
   setError,
 }: Props): ReactElement {
-  const [newPlugin, setNewPlugin] = useState<IPluginOut>(plugin);
+  const [newPlugin, setNewPlugin] = useState<Plugin>(plugin);
   const [closeDialog, setCloseDialog] = useState<boolean>(false);
 
   const resetDefaults = (): void => {
@@ -65,8 +66,8 @@ export function EditPluginDialog({
       await Promise.all(
         allProjects.map(async ({ uid, name }) => {
           if (
-            !plugin.collection_uids.includes(uid) &&
-            newPlugin.collection_uids.includes(uid)
+            !plugin.collection_uids?.includes(uid) &&
+            newPlugin.collection_uids?.includes(uid)
           ) {
             try {
               await services.inviteToProject({
@@ -112,12 +113,24 @@ export function EditPluginDialog({
         value={newPlugin.name}
         placeholder="Plug-in Name"
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setNewPlugin((p) => ({ ...p, name: e.target.value } as IPluginOut));
+          setNewPlugin((p) => ({ ...p, name: e.target.value } as Plugin));
         }}
         inputProps={{
           maxLength: 50, // NOTE: name for python or AI plugins cannot be over 50 characters, otherwise 500
         }}
         variant="outlined"
+      />
+      <Divider sx={{ ...divider }} />
+      <Notepad
+        placeholder="Plug-in Description (Optional)"
+        value={newPlugin.description}
+        onChange={(event) => {
+          setNewPlugin((p) => ({
+            ...p,
+            description: event.target.value,
+          }));
+        }}
+        rows={6}
       />
       <Divider sx={{ ...divider }} />
       <Typography sx={{ fontWeight: 700 }}>
@@ -131,7 +144,7 @@ export function EditPluginDialog({
         <Box component="span" sx={{ ...tab }}>
           {plugin.url}
         </Box>
-      </Typography>{" "}
+      </Typography>
       <Divider sx={{ ...divider }} />
       <ProductsRadioForm newPlugin={newPlugin} setNewPlugin={setNewPlugin} />
       <Divider sx={{ ...divider }} />
