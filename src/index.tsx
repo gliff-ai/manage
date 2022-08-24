@@ -35,6 +35,7 @@ const defaultServices = {
   loginUser: "POST /user/login",
   inviteUser: "POST /user/invite",
   inviteCollaborator: "POST /user/invite/collaborator",
+  deleteInvite: "POST /user/invite/delete",
   getProjects: "GET /projects",
   updateProjectDetails: "POST /project/uid",
   getProject: "GET /project", // TODO: Support named params for GET? Body works tho...

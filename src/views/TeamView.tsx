@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import {
   Paper,
-  IconButton,
+  IconButton as MuiIconButton,
   Typography,
   Card,
   List,
@@ -12,7 +12,13 @@ import {
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { Send } from "@mui/icons-material";
-import { LoadingSpinner, WarningSnackbar, theme } from "@gliff-ai/style";
+import {
+  LoadingSpinner,
+  WarningSnackbar,
+  IconButton,
+  icons,
+  theme,
+} from "@gliff-ai/style";
 import { Team } from "@/interfaces";
 import { ServiceFunctions } from "@/api";
 import { useAuth } from "@/hooks/use-auth";
@@ -96,6 +102,9 @@ export const TeamView = ({ services }: Props): JSX.Element => {
       console.error(`${(e as Error).message}`);
     }
   };
+
+  const deleteInvite = (email: string) => () =>
+    services.deleteInvite({ email }).catch((e) => console.error(e));
 
   useEffect(() => {
     if (!auth?.user?.authToken) return;
@@ -218,6 +227,12 @@ export const TeamView = ({ services }: Props): JSX.Element => {
                   ({ email, sent_date, is_collaborator }) =>
                     !is_collaborator && (
                       <ListItem key={email}>
+                        <IconButton
+                          tooltip={{ name: "Revoke invite" }}
+                          icon={icons.delete}
+                          onClick={deleteInvite(email)}
+                          tooltipPlacement="top"
+                        />
                         {email} - {sent_date}
                       </ListItem>
                     )
@@ -241,9 +256,9 @@ export const TeamView = ({ services }: Props): JSX.Element => {
                   className={classes.textField}
                   variant="filled"
                 />
-                <IconButton type="submit" size="large">
+                <MuiIconButton type="submit" size="large">
                   <Send />
-                </IconButton>
+                </MuiIconButton>
               </div>
             </form>
           </Paper>

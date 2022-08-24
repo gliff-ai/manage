@@ -75,6 +75,7 @@ export const config = {
     createProject: (data): Promise<string> => Promise.resolve("3"),
     inviteUser: (data): Promise<boolean> => Promise.resolve(true),
     inviteCollaborator: (data): Promise<boolean> => Promise.resolve(true),
+    deleteInvite: (data): Promise<boolean> => Promise.resolve(true),
     inviteToProject: (data): Promise<boolean> => Promise.resolve(true),
     removeFromProject: (data): Promise<void> => Promise.resolve(),
     getCollectionsMembers: () =>
