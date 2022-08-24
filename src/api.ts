@@ -16,6 +16,7 @@ interface Services {
   loginUser: APIRoute | ServiceFunction;
   inviteUser: APIRoute | ServiceFunction;
   inviteCollaborator: APIRoute | ServiceFunction;
+  deleteInvite: APIRoute | ServiceFunction;
   getProjects: APIRoute | ServiceFunction;
   updateProjectDetails: APIRoute | ServiceFunction;
   getProject: APIRoute | ServiceFunction;
