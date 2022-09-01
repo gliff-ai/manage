@@ -340,13 +340,19 @@ export const ProjectsView = ({
     if (!isOwnerOrMember || !invitees) return;
 
     void services.getCollectionsMembers().then((newUsers: ProjectUsers) => {
+      console.log("called");
       if (newUsers) {
+        console.log(newUsers);
         // add users' names
         for (const key of Object.keys(newUsers)) {
+          console.log(newUsers[key]);
           newUsers[key] = newUsers[key]
             .filter(({ username }) => !isTrustedServices(username))
             .map((user) => ({
-              name: invitees.find(({ email }) => email === user.username).name,
+              name: invitees.find(({ email }) => {
+                console.log(email === user.username);
+                return email === user.username;
+              })?.name,
               ...user,
             }));
         }
