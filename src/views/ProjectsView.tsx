@@ -346,7 +346,7 @@ export const ProjectsView = ({
           newUsers[key] = newUsers[key]
             .filter(({ username }) => !isTrustedServices(username))
             .map((user) => ({
-              name: invitees.find(({ email }) => email === user.username).name,
+              name: invitees.find(({ email }) => email === user.username)?.name,
               ...user,
             }));
         }
