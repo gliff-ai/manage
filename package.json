@@ -32,7 +32,7 @@
     "@gliff-ai/jest-browserstack-automate": "^6.0.8",
     "@gliff-ai/style": "^16.3.1",
     "@mui/icons-material": "^5.10.2",
-    "@mui/material": "^5.10.2",
+    "@mui/material": "^7.0.1",
     "@mui/styles": "^5.10.2",
     "@mui/x-data-grid": "^5.15.3",
     "@percy/cli": "1.0.0-beta.76",
